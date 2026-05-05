@@ -238,7 +238,7 @@ input[type=file]{display:none;}
 .de-left{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:0;}
 .de-right{display:flex;flex-direction:column;overflow:hidden;}
 .de-section{padding:14px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);}
-.de-upload{margin:6px 12px;border:2px dashed var(--border2);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;transition:.2s;position:relative;}
+.de-upload{margin:6px 12px;border:2px dashed var(--border2);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;transition:.2s;position:relative;display:block;text-decoration:none;}
 .de-upload:hover,.de-upload.drag{border-color:var(--accent);background:rgba(124,109,250,.05);}
 .de-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10;}
 .de-upload .de-icon,.de-upload .de-label,.de-upload .de-sub{pointer-events:none;position:relative;z-index:1;}
@@ -454,23 +454,29 @@ input[type=file]{display:none;}
 <!-- LEFT: Upload Panel -->
 <div class="de-left">
   <div class="de-section">Template Document</div>
-  <div class="de-upload" id="deTemplateZone" ondragover="deDrag(event,'deTemplateZone')" ondragleave="deUnDrag('deTemplateZone')" ondrop="deDrop(event,'template')" onclick="document.getElementById('deTemplateInput').click()">
-    <input type="file" id="deTemplateInput" accept=".docx,.txt,.md,.pdf" onchange="deLoadTemplate(this.files[0])" style="display:none">
+  <input type="file" id="deTemplateInput" accept=".docx,.txt,.md,.pdf" onchange="deLoadTemplate(this.files[0])" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+  <label for="deTemplateInput" class="de-upload" id="deTemplateZone"
+    ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)'"
+    ondragleave="this.style.borderColor=''"
+    ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';deLoadTemplate(event.dataTransfer.files[0])">
     <div class="de-icon">📄</div>
     <div class="de-label">Click or drop template here</div>
     <div class="de-sub">.docx · .txt · .md — with {{PLACEHOLDERS}} and numbered clauses</div>
-  </div>
+  </label>
   <div id="deTemplateCard" style="display:none"></div>
 
   <div class="de-divider"></div>
 
   <div class="de-section">Employee Data Sheet</div>
-  <div class="de-upload" id="deSheetZone" ondragover="deDrag(event,'deSheetZone')" ondragleave="deUnDrag('deSheetZone')" ondrop="deDrop(event,'sheet')" onclick="document.getElementById('deSheetInput').click()">
-    <input type="file" id="deSheetInput" accept=".xlsx,.xls,.csv" onchange="deLoadSheet(this.files[0])" style="display:none">
+  <input type="file" id="deSheetInput" accept=".xlsx,.xls,.csv" onchange="deLoadSheet(this.files[0])" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">
+  <label for="deSheetInput" class="de-upload" id="deSheetZone"
+    ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='var(--accent)'"
+    ondragleave="this.style.borderColor=''"
+    ondrop="event.preventDefault();event.stopPropagation();this.style.borderColor='';deLoadSheet(event.dataTransfer.files[0])">
     <div class="de-icon">📊</div>
     <div class="de-label">Click or drop employee sheet here</div>
     <div class="de-sub">.xlsx · .csv — one row per employee</div>
-  </div>
+  </label>
   <div id="deSheetCard" style="display:none"></div>
 
   <div class="de-divider"></div>
@@ -1761,18 +1767,10 @@ const DE = {
   results: [],
 };
 
-// ── Drag and Drop ──────────────────────────────────────────────
-function deDrag(e, id) { e.preventDefault(); document.getElementById(id)?.classList.add('drag'); }
-function deUnDrag(id)   { document.getElementById(id)?.classList.remove('drag'); }
-function deDrop(e, type) {
-  e.preventDefault();
-  const id = type === 'template' ? 'deTemplateZone' : 'deSheetZone';
-  deUnDrag(id);
-  const f = e.dataTransfer.files[0];
-  if (!f) return;
-  if (type === 'template') deLoadTemplate(f);
-  else deLoadSheet(f);
-}
+// ── Drag and Drop — handled inline on upload zones ─────────────
+function deDrag(e, id) { e.preventDefault(); }
+function deUnDrag(id)   { }
+function deDrop(e, type) { e.preventDefault(); }
 
 // ── Toggle ─────────────────────────────────────────────────────
 function deToggle(id) {
@@ -1839,7 +1837,8 @@ async function deLoadTemplate(file) {
 function deClearTemplate() {
   DE.templateText = null; DE.clauses = [];
   document.getElementById('deTemplateCard').style.display = 'none';
-  document.getElementById('deTemplateZone').style.display = '';
+  document.getElementById('deTemplateZone').style.display = 'block';
+  document.getElementById('deTemplateInput').value = '';
   document.getElementById('deClauseEmpty').style.display = '';
   document.getElementById('deClauseEditor').style.display = 'none';
   deCheckReady();
@@ -1874,7 +1873,8 @@ async function deLoadSheet(file) {
 function deClearSheet() {
   DE.sheetData = []; DE.sheetHeaders = [];
   document.getElementById('deSheetCard').style.display = 'none';
-  document.getElementById('deSheetZone').style.display = '';
+  document.getElementById('deSheetZone').style.display = 'block';
+  document.getElementById('deSheetInput').value = '';
   deCheckReady();
 }
 
