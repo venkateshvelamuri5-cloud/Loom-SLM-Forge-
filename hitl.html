@@ -333,6 +333,19 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outl
     </div>
 
     <div id="reviewCards"></div>
+
+    <!-- ── Aggregate Metrics Panel (shown after Submit All) ── -->
+    <div id="reviewMetricsPanel" style="display:none;margin-top:20px">
+      <div style="font-size:15px;font-weight:700;color:var(--text1);border-bottom:2px solid var(--accent);padding-bottom:8px;margin-bottom:14px">
+        📊 Human Review — Aggregate Quality Metrics
+      </div>
+      <div id="reviewMetricsSummary" style="margin-bottom:16px"></div>
+      <div id="reviewMetricsGrid" class="metric-grid" style="margin-bottom:16px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-success" onclick="downloadHITLReport()">⬇ Download Full Metrics Report (Excel)</button>
+        <button class="btn" onclick="generateHITLLeadershipReport()" style="background:rgba(21,128,61,.1);border:1px solid rgba(21,128,61,.3);color:#4ADE80">📄 Leadership Report (PDF-ready)</button>
+      </div>
+    </div>
   </div>
 
   <!-- ARCHIVED panel -->
@@ -877,6 +890,8 @@ function submitRow(id) {
   item.submitted = true; item.reviewedAt = new Date().toISOString();
   renderReview(); updateReviewStats(); updateSubmitGate();
   saveReviewProgress();
+  // Update rolling metrics panel after each row
+  computeAndShowHITLMetrics();
   // Unlock partial download after first submission
   const submitted = reviewItems.filter(r=>r.submitted).length;
   if (submitted >= 1) {
@@ -904,6 +919,7 @@ function submitAllReviews() {
   });
   renderReview(); updateReviewStats(); updateSubmitGate();
   archiveCurrentBatch();
+  computeAndShowHITLMetrics();
   localStorage.removeItem('hitl_review_progress');
   const dlBtn = document.getElementById('reviewDlBtn');
   if (dlBtn) { dlBtn.style.display = 'inline-flex'; dlBtn.textContent = '⬇ Download All Results'; }
@@ -951,12 +967,13 @@ function archiveCurrentBatch() {
   const entry = {
     id: submitted[0]?.batchId||('batch_'+Date.now()),
     archivedAt: new Date().toISOString(),
-    slmName: submitted[0]?.slmName||'—',
+    slmName: submitted[0]?.slmName||document.getElementById('reviewSlmName')?.value||'—',
     total: submitted.length,
     hallucinated: submitted.filter(r=>r.hallucination===true).length,
     incomplete: submitted.filter(r=>r.completeness===false).length,
     corrected: submitted.filter(r=>r.correctAnswer).length,
     items: submitted,
+    metrics: _hitlAggMetrics || null,
   };
   archivedBatches.unshift(entry);
   try { localStorage.setItem('hitl_archive', JSON.stringify(archivedBatches.slice(0,50))); } catch(e){}
@@ -976,18 +993,22 @@ function renderArchive() {
     const d = new Date(b.archivedAt).toLocaleString();
     const hallPct = Math.round(b.hallucinated/Math.max(b.total,1)*100);
     const compPct = Math.round((b.total-b.incomplete)/Math.max(b.total,1)*100);
+    const m = b.metrics;
     return `<div class="archive-batch">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div style="font-size:13px;font-weight:700;color:var(--text1);flex:1">📦 ${esc(b.slmName)} — ${b.total} rows</div>
         <div style="font-size:11px;color:var(--text3)">${d}</div>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
         <span class="arch-stat" style="background:rgba(239,68,68,.12);color:#F87171">🔴 Hallucination: ${hallPct}%</span>
         <span class="arch-stat" style="background:rgba(34,197,94,.1);color:#4ADE80">✅ Completeness: ${compPct}%</span>
         <span class="arch-stat" style="background:rgba(251,191,36,.1);color:#FBBF24">✏️ Corrections: ${b.corrected}</span>
+        ${m ? `<span class="arch-stat" style="background:var(--surface2);color:var(--text2)">📊 Accuracy: ${m.accuracy}%</span>` : ''}
+        ${m ? `<span class="arch-stat" style="background:var(--surface2);color:var(--text2)">🎯 Overall: ${m.overall}%</span>` : ''}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-sm btn-success" onclick="exportArchiveBatch(${bi})">⬇ Export Excel</button>
+        <button class="btn btn-sm" onclick="generateArchiveLeadershipReport(${bi})" style="color:#4ADE80;border-color:rgba(34,197,94,.3)">📄 Leadership Report</button>
         <button class="btn btn-sm" onclick="reopenArchiveBatch(${bi})">🔄 Re-open for Editing</button>
         <button class="btn btn-sm" onclick="applyFeedbackToGS(${bi})">🏅 Save to Gold Standard</button>
         <button class="btn btn-sm btn-danger" onclick="deleteArchiveBatch(${bi})">🗑 Delete</button>
@@ -1003,7 +1024,77 @@ function exportArchiveBatch(idx) {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'HITL Review');
   XLSX.writeFile(wb, `hitl-${b.slmName.replace(/\s+/g,'-')}-${b.id}.xlsx`);
 }
+function exportArchiveBatch(idx) {
+  const b = archivedBatches[idx]; if (!b) return;
+  const wb = XLSX.utils.book_new();
+  // Row-level sheet with NLP metrics per row
+  const rows = b.items.map(r => {
+    const hyp = r.aiAnswer||'', ref = r.expectedAnswer||r.correctAnswer||r.question||'';
+    const mt  = compute13Metrics(hyp, ref, r.hallucination!==null?(r.hallucination?1:0):null, r.completeness!==null?(r.completeness?1:0):null, null);
+    return {
+      Row:r.id+1, Question:r.question, AI_Answer:r.aiAnswer, Expected_Answer:r.expectedAnswer||'',
+      'Hallucination (Human)':r.hallucination?'Yes':'No',
+      'Completeness (Human)':r.completeness?'Yes':'No',
+      Correct_Answer:r.correctAnswer||'',
+      'ROUGE-1':mt.rouge1+'%','ROUGE-L':mt.rougeL+'%','F1':mt.f1+'%',
+      'Faithfulness':mt.faithfulness+'%','Precision':mt.precision+'%',
+      'Recall':mt.recall+'%','BLEU':mt.bleu+'%','WER':mt.wer+'%',
+      'Overall (Auto)':mt.overall+'%',
+      Model:r.slmName||'', Submitted_At:r.reviewedAt||'',
+    };
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'HITL Review');
+  // Metrics summary sheet
+  const m = b.metrics;
+  if (m) {
+    const ms = [
+      ['Metric','Value','Source','Benchmark','Status'],
+      ['Accuracy (Blended)',    m.accuracy+'%',         'Human+Auto','≥70%', m.accuracy>=70?'✅ Good':m.accuracy>=40?'⚠️ Review':'❌ Needs Work'],
+      ['Completeness Rate',     m.completenessRate+'%', 'Human',     '≥70%', m.completenessRate>=70?'✅ Good':m.completenessRate>=40?'⚠️ Review':'❌ Needs Work'],
+      ['Hallucination Rate ↓',  m.hallucinationRate+'%','Human',     '≤25%', m.hallucinationRate<=25?'✅ Good':m.hallucinationRate<=45?'⚠️ Review':'❌ Needs Work'],
+      ['Faithfulness',          m.faithfulness+'%',     'Auto-NLP',  '≥70%', m.faithfulness>=70?'✅ Good':m.faithfulness>=40?'⚠️ Review':'❌ Needs Work'],
+      ['ROUGE-1',               m.rouge1+'%',           'Auto-NLP',  '≥50%', m.rouge1>=50?'✅ Good':m.rouge1>=30?'⚠️ Review':'❌ Needs Work'],
+      ['ROUGE-L',               m.rougeL+'%',           'Auto-NLP',  '≥45%', m.rougeL>=45?'✅ Good':m.rougeL>=25?'⚠️ Review':'❌ Needs Work'],
+      ['F1 Score',              m.f1+'%',               'Auto-NLP',  '≥60%', m.f1>=60?'✅ Good':m.f1>=35?'⚠️ Review':'❌ Needs Work'],
+      ['Overall (Auto-NLP)',    m.overall+'%',          'Auto-NLP',  '≥70%', m.overall>=70?'✅ Good':m.overall>=40?'⚠️ Review':'❌ Needs Work'],
+      [],
+      ['Total Reviewed', m.sampleCount], ['Hallucinated', m.hallucinated],
+      ['Complete', m.complete], ['Corrections', m.corrected],
+      ['Model', m.slmName], ['Generated', new Date(m.generatedAt).toLocaleString()],
+    ];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ms), 'Metrics Summary');
+  } else {
+    // Basic summary without stored metrics
+    const hallPct = Math.round(b.hallucinated/Math.max(b.total,1)*100);
+    const compPct = Math.round((b.total-b.incomplete)/Math.max(b.total,1)*100);
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+      ['Metric','Value'],
+      ['Total Reviewed', b.total],
+      ['Hallucination Rate', hallPct+'%'],
+      ['Completeness Rate', compPct+'%'],
+      ['Corrections', b.corrected],
+      ['Model', b.slmName],
+    ]), 'Metrics Summary');
+  }
+  XLSX.writeFile(wb, `hitl-${b.slmName.replace(/\s+/g,'-')}-${b.id}.xlsx`);
+}
 window.exportArchiveBatch = exportArchiveBatch;
+
+function generateArchiveLeadershipReport(idx) {
+  const b = archivedBatches[idx]; if (!b) return;
+  if (b.metrics) {
+    // Restore metrics into global and generate report
+    _hitlAggMetrics = b.metrics;
+    generateHITLLeadershipReport();
+  } else {
+    // Compute on the fly from archived items
+    reviewItems = b.items.map(r=>({...r, submitted:true}));
+    computeAndShowHITLMetrics();
+    generateHITLLeadershipReport();
+    reviewItems = [];
+  }
+}
+window.generateArchiveLeadershipReport = generateArchiveLeadershipReport;
 
 // Re-open archived batch for editing
 function reopenArchiveBatch(idx) {
@@ -1061,6 +1152,455 @@ function updateReviewStats() {
     {val:corrected,                          lbl:'Corrected',   col:'#818CF8'},
   ].map(s=>`<div class="stat-tile"><div class="stat-val" style="color:${s.col}">${s.val}</div><div class="stat-lbl">${s.lbl}</div></div>`).join('');
 }
+
+// ═══════════════════════════════════════════════════════════
+//  HITL AGGREGATE METRICS — computed from human annotations
+// ═══════════════════════════════════════════════════════════
+let _hitlAggMetrics = null;
+
+function computeAndShowHITLMetrics() {
+  const submitted = reviewItems.filter(r=>r.submitted);
+  if (!submitted.length) return;
+  const n = submitted.length;
+
+  // ── Human-labelled signals ──────────────────────────────
+  const hallCount  = submitted.filter(r=>r.hallucination===true).length;
+  const compCount  = submitted.filter(r=>r.completeness===true).length;
+  const hallRate   = Math.round(hallCount/n*100);
+  const compRate   = Math.round(compCount/n*100);
+  const corrCount  = submitted.filter(r=>r.correctAnswer&&r.correctAnswer.trim()).length;
+
+  // ── Auto-computed NLP metrics (per row, then averaged) ──
+  let sumR1=0,sumRL=0,sumF1=0,sumFaith=0,sumPrec=0,sumRec=0,sumBleu=0,sumSem=0,sumWer=0,sumOverall=0;
+  let sumRelev=0,sumDiv=0,sumCoh=0,sumSpec=0,sumConc=0,sumBias=0,sumAcc=0;
+  submitted.forEach(r => {
+    const hyp = r.aiAnswer || '';
+    const ref = r.expectedAnswer || r.correctAnswer || r.question || '';
+    const m = compute13Metrics(hyp, ref,
+      r.hallucination !== null ? (r.hallucination ? 1 : 0) : null,
+      r.completeness  !== null ? (r.completeness  ? 1 : 0) : null,
+      null
+    );
+    sumR1    += m.rouge1;    sumRL   += m.rougeL;   sumF1   += m.f1;
+    sumFaith += m.faithfulness; sumPrec += m.precision; sumRec += m.recall;
+    sumBleu  += m.bleu;     sumSem  += m.semanticSim; sumWer += m.wer;
+    sumOverall += m.overall; sumAcc  += m.accuracy;
+    // Extended metrics
+    const htoks = tokenize(hyp), rtoks = tokenize(ref);
+    const rSet = new Set(rtoks), htokSet = new Set(htoks);
+    const sentences = hyp.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>5);
+    sumRelev += rtoks.length ? htoks.filter(t=>rSet.has(t)).length/rtoks.length : 0;
+    sumDiv   += htoks.length ? htokSet.size/htoks.length : 0;
+    const biasTrms=['always','never','definitely','certainly','absolutely','guaranteed','impossible'];
+    sumBias  += Math.min(biasTrms.filter(t=>hyp.toLowerCase().includes(t)).length/Math.max(sentences.length,1),1);
+    const idealLen=Math.max(rtoks.length*3,20), rWords=hyp.split(/\s+/).filter(Boolean);
+    sumConc  += Math.max(0,1-Math.max(0,rWords.length-idealLen*2)/(idealLen*4));
+    let coh=0; for(let i=1;i<sentences.length;i++){const p=new Set(tokenize(sentences[i-1])),c=tokenize(sentences[i]);coh+=c.filter(t=>p.has(t)).length/Math.max(c.length,1);}
+    sumCoh   += sentences.length>1 ? coh/(sentences.length-1) : 1;
+    const specTerms=(hyp.match(/\b\d+[\.,\d]*\b|[A-Z][a-z]+\s[A-Z][a-z]+|\d{1,2}\/\d{1,2}\/\d{2,4}/g)||[]);
+    sumSpec  += Math.min(specTerms.length/Math.max(sentences.length,1),1);
+  });
+
+  const pct = v => Math.round(v/n*100);
+  const pctRaw = v => Math.round(v/n*100);
+
+  // ── Composite accuracy: blend ROUGE-L + human completeness + faithfulness ──
+  const blendedAccuracy = Math.round(
+    (sumRL/n * 0.30) +   // ROUGE-L (sequence match)
+    (compRate/100 * 0.35) + // human completeness signal
+    (sumFaith/n * 0.0035) + // faithfulness
+    ((100-hallRate)/100 * 0.35) // inverse hallucination
+  * 100);
+  // Actually compute it cleanly:
+  const autoAccuracy   = Math.round(sumOverall/n);
+  const humanAccuracy  = Math.round(((compRate/100)*0.5 + ((100-hallRate)/100)*0.5)*100);
+  const blendedAcc     = Math.round(autoAccuracy*0.5 + humanAccuracy*0.5);
+
+  _hitlAggMetrics = {
+    sampleCount:    n,
+    // Human-labelled
+    hallucinationRate:  hallRate,        // % responses with hallucination = Yes
+    completenessRate:   compRate,        // % responses with completeness = Yes
+    hallucinated:       hallCount,
+    complete:           compCount,
+    corrected:          corrCount,
+    // Auto-NLP metrics (averaged, already as %)
+    rouge1:      Math.round(sumR1/n),
+    rougeL:      Math.round(sumRL/n),
+    f1:          Math.round(sumF1/n),
+    faithfulness:Math.round(sumFaith/n),
+    precision:   Math.round(sumPrec/n),
+    recall:      Math.round(sumRec/n),
+    bleu:        Math.round(sumBleu/n),
+    semanticSim: Math.round(sumSem/n),
+    wer:         Math.round(sumWer/n),
+    relevance:   pct(sumRelev),
+    diversity:   pct(sumDiv),
+    coherence:   pct(sumCoh),
+    specificity: pct(sumSpec),
+    conciseness: pct(sumConc),
+    bias:        pct(sumBias),
+    // Blended
+    accuracy:    blendedAcc,
+    overall:     Math.round(sumOverall/n),
+    generatedAt: new Date().toISOString(),
+    slmName:     submitted[0]?.slmName || document.getElementById('reviewSlmName')?.value || 'SLM Assistant',
+  };
+
+  // ── Render summary box ──────────────────────────────────
+  const m = _hitlAggMetrics;
+  const col = v => v>=70?'#4ADE80':v>=40?'#FBBF24':'#F87171';
+  const colInv = v => v<=25?'#4ADE80':v<=45?'#FBBF24':'#F87171';
+
+  const summaryHtml = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+      ${[
+        {l:'Accuracy (Blended)',  v:m.accuracy,          inv:false, desc:'Auto + human signals combined'},
+        {l:'Hallucination Rate ↓',v:m.hallucinationRate, inv:true,  desc:'% responses that hallucinated'},
+        {l:'Completeness Rate',   v:m.completenessRate,  inv:false, desc:'% responses fully answered'},
+        {l:'Faithfulness',        v:m.faithfulness,      inv:false, desc:'Grounded in source content'},
+        {l:'ROUGE-L',             v:m.rougeL,            inv:false, desc:'Sequence match vs reference'},
+        {l:'F1 Score',            v:m.f1,                inv:false, desc:'Precision × Recall harmonic mean'},
+      ].map(t=>`<div class="metric-tile ${t.inv?(t.v<=25?'good':t.v<=45?'warn':'bad'):(t.v>=70?'good':t.v>=40?'warn':'bad')}">
+        <div class="mt-val" style="color:${t.inv?colInv(t.v):col(t.v)}">${t.v}%</div>
+        <div class="mt-lbl">${t.l}</div>
+        <div class="mt-desc">${t.desc}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--text3);line-height:1.7;background:var(--surface2);border-radius:8px;padding:12px 14px">
+      <strong style="color:var(--text2)">📋 Review Summary</strong><br>
+      <strong>${n}</strong> responses reviewed &nbsp;·&nbsp;
+      <strong style="color:${colInv(m.hallucinationRate)}">${hallCount} hallucinated (${m.hallucinationRate}%)</strong> &nbsp;·&nbsp;
+      <strong style="color:${col(m.completenessRate)}">${compCount} complete (${m.completenessRate}%)</strong> &nbsp;·&nbsp;
+      <strong style="color:#818CF8">${corrCount} corrections provided</strong><br>
+      Blended accuracy (human + auto-NLP): <strong style="color:${col(m.accuracy)}">${m.accuracy}%</strong>
+    </div>`;
+
+  const panel = document.getElementById('reviewMetricsPanel');
+  const grid  = document.getElementById('reviewMetricsGrid');
+  const sum   = document.getElementById('reviewMetricsSummary');
+  if (!panel) return;
+
+  sum.innerHTML = summaryHtml;
+
+  // Full 23-metric breakdown grid
+  const metrics = [
+    {label:'Accuracy (Blended)',  val:m.accuracy,          low:false, desc:'Human completeness + auto-NLP combined'},
+    {label:'Completeness Rate',   val:m.completenessRate,  low:false, desc:'% responses human-marked complete'},
+    {label:'Hallucination Rate ↓',val:m.hallucinationRate, low:true,  desc:'% human-marked as hallucinated'},
+    {label:'Faithfulness',        val:m.faithfulness,      low:false, desc:'Groundedness in source'},
+    {label:'ROUGE-1',             val:m.rouge1,            low:false, desc:'Word-level match vs reference'},
+    {label:'ROUGE-L',             val:m.rougeL,            low:false, desc:'Longest sequence match'},
+    {label:'F1 Score',            val:m.f1,                low:false, desc:'Harmonic mean of precision & recall'},
+    {label:'Precision',           val:m.precision,         low:false, desc:'Relevant words in response'},
+    {label:'Recall',              val:m.recall,            low:false, desc:'Reference words found in response'},
+    {label:'BLEU',                val:m.bleu,              low:false, desc:'N-gram precision score'},
+    {label:'Semantic Sim.',       val:m.semanticSim,       low:false, desc:'Semantic overlap estimate'},
+    {label:'Relevance',           val:m.relevance,         low:false, desc:'Query-response alignment'},
+    {label:'Coherence',           val:m.coherence,         low:false, desc:'Sentence-to-sentence continuity'},
+    {label:'Specificity',         val:m.specificity,       low:false, desc:'Numbers & named entities'},
+    {label:'Diversity',           val:m.diversity,         low:false, desc:'Vocabulary richness'},
+    {label:'Conciseness',         val:m.conciseness,       low:false, desc:'Response length appropriateness'},
+    {label:'Bias Score ↓',        val:m.bias,              low:true,  desc:'Overconfident language (lower=better)'},
+    {label:'WER ↓',               val:m.wer,               low:true,  desc:'Word Error Rate (lower=better)'},
+    {label:'Overall (Auto)',      val:m.overall,           low:false, desc:'Weighted auto-NLP composite'},
+  ];
+  grid.innerHTML = metrics.map(mt=>metricTile(mt.label,mt.val,mt.desc,mt.low)).join('');
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+window.computeAndShowHITLMetrics = computeAndShowHITLMetrics;
+
+function downloadHITLReport() {
+  const submitted = reviewItems.filter(r=>r.submitted);
+  if (!submitted.length && !_hitlAggMetrics) { alert('No submitted rows yet. Submit at least one row first.'); return; }
+  const toExport = submitted.length ? submitted : (archivedBatches[0]?.items || []);
+  if (!toExport.length) { alert('No data to export.'); return; }
+  if (!_hitlAggMetrics) computeAndShowHITLMetrics();
+  const m = _hitlAggMetrics;
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: per-row detail
+  const rowData = toExport.map((r,i) => {
+    const hyp = r.aiAnswer || '';
+    const ref = r.expectedAnswer || r.correctAnswer || r.question || '';
+    const mt = compute13Metrics(hyp, ref,
+      r.hallucination !== null ? (r.hallucination?1:0) : null,
+      r.completeness  !== null ? (r.completeness ?1:0) : null, null);
+    return {
+      '#': i+1, Question: r.question, AI_Response: hyp, Expected_Answer: r.expectedAnswer||'',
+      Correct_Answer: r.correctAnswer||'',
+      'Hallucination (Human)': r.hallucination?'Yes':'No',
+      'Completeness (Human)':  r.completeness ?'Yes':'No',
+      'ROUGE-1': mt.rouge1+'%', 'ROUGE-L': mt.rougeL+'%',
+      'F1': mt.f1+'%', 'Faithfulness': mt.faithfulness+'%',
+      'Precision': mt.precision+'%', 'Recall': mt.recall+'%',
+      'BLEU': mt.bleu+'%', 'Semantic Sim': mt.semanticSim+'%',
+      'WER': mt.wer+'%', 'Overall (Auto)': mt.overall+'%',
+      Model: r.slmName||'', Reviewed_At: r.reviewedAt||'',
+    };
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rowData), 'Row Level Detail');
+
+  // Sheet 2: aggregate metrics summary
+  const sumData = [
+    ['Metric', 'Value', 'Source', 'Benchmark', 'Status'],
+    ['Accuracy (Blended)',    m.accuracy+'%',         'Human + Auto', '≥70%', m.accuracy>=70?'✅ Good':m.accuracy>=40?'⚠️ Review':'❌ Needs Work'],
+    ['Completeness Rate',     m.completenessRate+'%', 'Human',        '≥70%', m.completenessRate>=70?'✅ Good':m.completenessRate>=40?'⚠️ Review':'❌ Needs Work'],
+    ['Hallucination Rate ↓',  m.hallucinationRate+'%','Human',        '≤25%', m.hallucinationRate<=25?'✅ Good':m.hallucinationRate<=45?'⚠️ Review':'❌ Needs Work'],
+    ['Faithfulness',          m.faithfulness+'%',     'Auto-NLP',     '≥70%', m.faithfulness>=70?'✅ Good':m.faithfulness>=40?'⚠️ Review':'❌ Needs Work'],
+    ['ROUGE-1',               m.rouge1+'%',           'Auto-NLP',     '≥50%', m.rouge1>=50?'✅ Good':m.rouge1>=30?'⚠️ Review':'❌ Needs Work'],
+    ['ROUGE-L',               m.rougeL+'%',           'Auto-NLP',     '≥45%', m.rougeL>=45?'✅ Good':m.rougeL>=25?'⚠️ Review':'❌ Needs Work'],
+    ['F1 Score',              m.f1+'%',               'Auto-NLP',     '≥60%', m.f1>=60?'✅ Good':m.f1>=35?'⚠️ Review':'❌ Needs Work'],
+    ['Precision',             m.precision+'%',        'Auto-NLP',     '≥60%', m.precision>=60?'✅ Good':m.precision>=35?'⚠️ Review':'❌ Needs Work'],
+    ['Recall',                m.recall+'%',           'Auto-NLP',     '≥60%', m.recall>=60?'✅ Good':m.recall>=35?'⚠️ Review':'❌ Needs Work'],
+    ['BLEU',                  m.bleu+'%',             'Auto-NLP',     '≥40%', m.bleu>=40?'✅ Good':m.bleu>=20?'⚠️ Review':'❌ Needs Work'],
+    ['Semantic Similarity',   m.semanticSim+'%',      'Auto-NLP',     '≥60%', m.semanticSim>=60?'✅ Good':m.semanticSim>=35?'⚠️ Review':'❌ Needs Work'],
+    ['WER ↓',                 m.wer+'%',              'Auto-NLP',     '≤30%', m.wer<=30?'✅ Good':m.wer<=55?'⚠️ Review':'❌ Needs Work'],
+    ['Coherence',             m.coherence+'%',        'Auto-NLP',     '≥65%', m.coherence>=65?'✅ Good':m.coherence>=40?'⚠️ Review':'❌ Needs Work'],
+    ['Relevance',             m.relevance+'%',        'Auto-NLP',     '≥60%', m.relevance>=60?'✅ Good':m.relevance>=35?'⚠️ Review':'❌ Needs Work'],
+    ['Diversity',             m.diversity+'%',        'Auto-NLP',     '≥50%', m.diversity>=50?'✅ Good':m.diversity>=30?'⚠️ Review':'❌ Needs Work'],
+    ['Conciseness',           m.conciseness+'%',      'Auto-NLP',     '≥60%', m.conciseness>=60?'✅ Good':m.conciseness>=35?'⚠️ Review':'❌ Needs Work'],
+    ['Bias ↓',                m.bias+'%',             'Auto-NLP',     '≤20%', m.bias<=20?'✅ Good':m.bias<=40?'⚠️ Review':'❌ Needs Work'],
+    ['Overall (Auto)',        m.overall+'%',          'Auto-NLP',     '≥70%', m.overall>=70?'✅ Good':m.overall>=40?'⚠️ Review':'❌ Needs Work'],
+    [],
+    ['Responses Reviewed', m.sampleCount, '', '', ''],
+    ['Hallucinated', m.hallucinated, '', '', ''],
+    ['Complete', m.complete, '', '', ''],
+    ['Corrections Provided', m.corrected, '', '', ''],
+    ['Model', m.slmName, '', '', ''],
+    ['Generated At', new Date(m.generatedAt).toLocaleString(), '', '', ''],
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sumData), 'Metrics Summary');
+  XLSX.writeFile(wb, `hitl-metrics-${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+window.downloadHITLReport = downloadHITLReport;
+
+function generateHITLLeadershipReport() {
+  if (!_hitlAggMetrics) computeAndShowHITLMetrics();
+  const m = _hitlAggMetrics;
+  if (!m) { alert('No metrics available. Submit at least one row first.'); return; }
+  const name  = m.slmName || 'SLM Assistant';
+  const date  = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  function rag(v, good=70, warn=40) {
+    if (v>=good) return {label:'Good',           col:'#15803D',bg:'#DCFCE7',icon:'✅'};
+    if (v>=warn) return {label:'Needs Attention',col:'#B45309',bg:'#FEF3C7',icon:'⚠️'};
+    return              {label:'Needs Improvement',col:'#B91C1C',bg:'#FEE2E2',icon:'❌'};
+  }
+  function ragLow(v, bad=25) {
+    if (v<=bad)    return {label:'Good',            col:'#15803D',bg:'#DCFCE7',icon:'✅'};
+    if (v<=bad+20) return {label:'Needs Attention', col:'#B45309',bg:'#FEF3C7',icon:'⚠️'};
+    return                {label:'Needs Improvement',col:'#B91C1C',bg:'#FEE2E2',icon:'❌'};
+  }
+
+  const acc   = rag(m.accuracy);
+  const comp  = rag(m.completenessRate);
+  const hall  = ragLow(m.hallucinationRate);
+  const faith = rag(m.faithfulness);
+  const overallVal = Math.round(m.accuracy*0.35 + m.completenessRate*0.30 + (100-m.hallucinationRate)*0.20 + m.faithfulness*0.0015);
+  const overallActual = Math.round(m.accuracy*0.35 + m.completenessRate*0.30 + (100-m.hallucinationRate)*0.20 + m.faithfulness*0.15);
+  const overall = rag(overallActual);
+  const overallLabel = overallActual>=75?'Performing Well':overallActual>=50?'Needs Attention':'Needs Improvement';
+
+  function rec(key, status) {
+    const map = {
+      accuracy: {
+        'Good':'The assistant is providing accurate answers. Continue monitoring with monthly batch tests.',
+        'Needs Attention':'Review the Knowledge Base for gaps. Ensure the most common topics are covered with clear, full explanations.',
+        'Needs Improvement':'The Knowledge Base needs significant expansion. Upload additional documents and consider rewriting existing content in clearer language.',
+      },
+      completeness: {
+        'Good':'The assistant is providing full, complete answers — a sign of well-structured Knowledge Base content.',
+        'Needs Attention':'Some answers are partial. Ensure documents contain complete explanations, not just bullet points or short fragments.',
+        'Needs Improvement':'Many answers are incomplete. Expand the Knowledge Base with detailed content for the most commonly asked topics.',
+      },
+      hallucination: {
+        'Good':'Low hallucination — the assistant is reliably grounded in verified information. No immediate action required.',
+        'Needs Attention':'Some hallucination detected. Enable Strict Mode in the SLM Studio and review Knowledge Base content for ambiguous information.',
+        'Needs Improvement':'High hallucination rate — the assistant is frequently inventing answers. Enable Strict Mode immediately and expand Knowledge Base coverage of common topics.',
+      },
+      faithfulness: {
+        'Good':'The assistant is reliably using only its approved Knowledge Base — a strong compliance and trust signal.',
+        'Needs Attention':'The assistant occasionally draws on information outside the Knowledge Base. Enable Strict Mode and review Knowledge Base quality.',
+        'Needs Improvement':'High out-of-Knowledge-Base usage. This is a compliance risk. Enable Strict Mode immediately and expand KB coverage.',
+      },
+    };
+    return (map[key]||{})[status] || 'Continue monitoring this metric.';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Quality Report — ${name} (Human Review)</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#F8FAFC;color:#0F172A}
+  .page{max-width:920px;margin:0 auto;background:#fff;padding:48px;min-height:100vh}
+  .header{background:linear-gradient(135deg,#0D1B2A,#1B4FD8);color:#fff;padding:36px;border-radius:12px;margin-bottom:36px}
+  .header h1{font-size:26px;font-weight:700;margin-bottom:6px}
+  .header .sub{font-size:13px;opacity:.75;margin-bottom:4px}
+  .header .meta{display:flex;gap:28px;margin-top:20px;font-size:13px;flex-wrap:wrap}
+  .header .meta div{opacity:.85}
+  .header .meta strong{display:block;font-size:20px;font-weight:700;opacity:1}
+  .section{margin-bottom:36px}
+  .section-title{font-size:17px;font-weight:700;color:#0D1B2A;border-bottom:3px solid #1B4FD8;padding-bottom:8px;margin-bottom:18px}
+  .summary-box{border-radius:10px;padding:24px 28px;margin-bottom:20px;border:1px solid}
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .mc{border-radius:8px;padding:18px 20px;border:1px solid}
+  .mc .ml{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+  .mc .ms{font-size:34px;font-weight:800;margin-bottom:4px}
+  .mc .mst{font-size:12px;font-weight:600;margin-bottom:10px}
+  .mc .mp{font-size:12px;line-height:1.65;color:#475569;margin-bottom:10px}
+  .mc .mr{font-size:12px;line-height:1.6;padding:10px;border-radius:6px;background:rgba(0,0,0,.04)}
+  .mc .mr strong{display:block;margin-bottom:3px;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+  .narrative{background:#F0F7FF;border:1px solid #BFDBFE;border-radius:10px;padding:22px 26px;line-height:1.85;font-size:13px;color:#1E3A5F}
+  .narrative p{margin-bottom:12px}
+  .narrative p:last-child{margin-bottom:0}
+  .at-glance{display:flex;gap:14px;flex-wrap:wrap}
+  .ag{flex:1;min-width:120px;border-radius:8px;padding:14px 16px;text-align:center;border:1px solid}
+  .ag-val{font-size:28px;font-weight:800}
+  .ag-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+  .ag-src{font-size:9px;opacity:.65;margin-top:2px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#0D1B2A;color:#fff;padding:10px 14px;text-align:left}
+  th:first-child{border-radius:6px 0 0 6px}th:last-child{border-radius:0 6px 6px 0}
+  td{padding:10px 14px;vertical-align:top}
+  .footer{margin-top:48px;text-align:center;font-size:11px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:20px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+  @media print{body{background:#fff}.page{padding:20px}button{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div style="text-align:right;margin-bottom:16px">
+    <button onclick="window.print()" style="padding:10px 20px;background:#1B4FD8;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">🖨 Print / Save as PDF</button>
+  </div>
+
+  <div class="header">
+    <div class="sub">AI Assistant Performance Report — Human Review (HITL)</div>
+    <h1>${name}</h1>
+    <div class="meta">
+      <div><strong>${m.sampleCount}</strong>Responses Reviewed</div>
+      <div><strong>${date}</strong>Report Date</div>
+      <div><strong>${m.corrected}</strong>Corrections Provided</div>
+      <div><strong><span class="badge" style="background:${overall.bg};color:${overall.col}">${overallLabel}</span></strong>Overall Status</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Executive Summary</div>
+    <div class="summary-box" style="background:${overall.bg};border-color:${overall.col}30">
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="font-size:48px;flex-shrink:0">${overall.icon}</div>
+        <div>
+          <div style="font-size:22px;font-weight:800;color:${overall.col}">${overallActual}% Overall Score</div>
+          <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.7">
+            <strong>${name}</strong> was evaluated by a human review team across <strong>${m.sampleCount} responses</strong>.
+            Accuracy is <strong>${m.accuracy}%</strong>, completeness is <strong>${m.completenessRate}%</strong>,
+            and the hallucination rate is <strong>${m.hallucinationRate}%</strong>
+            ${m.hallucinationRate<=25?' — within the acceptable limit.':' — above the recommended 25% threshold.'}.
+            ${m.corrected > 0 ? `Human reviewers provided corrected answers for <strong>${m.corrected} responses</strong>.` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💼 What This Means for Your Organisation</div>
+    <div class="narrative">
+      <p>This report is based on a <strong>Human-in-the-Loop (HITL) review</strong> — meaning real people, not just automated software, evaluated each AI response to judge whether it was accurate, complete, and trustworthy. This is the gold standard for AI quality assurance.</p>
+      <p>${m.accuracy>=70?`<strong>Accuracy is strong at ${m.accuracy}%</strong>, based on a combination of human and automated evaluation. The assistant is providing correct, useful answers in the large majority of interactions.`:`<strong>Accuracy is ${m.accuracy}%</strong> — roughly ${100-m.accuracy}% of responses may be inaccurate or only partially correct. This should be addressed before broader deployment.`}</p>
+      <p>${m.completenessRate>=70?`<strong>Completeness is at ${m.completenessRate}%</strong> — human reviewers judged that the assistant fully answered the question in ${m.complete} out of ${m.sampleCount} cases. Users are likely to feel their questions are properly addressed.`:`<strong>Completeness is ${m.completenessRate}%</strong> — reviewers found that ${m.sampleCount-m.complete} responses were missing important information. Users may need to ask follow-up questions or seek help elsewhere.`}</p>
+      <p>${m.hallucinationRate<=25?`<strong>Hallucination is low at ${m.hallucinationRate}%</strong> — reviewers identified invented or unsupported information in only ${m.hallucinated} of ${m.sampleCount} responses. This is within the acceptable threshold and indicates a trustworthy assistant.`:`<strong>Hallucination was detected in ${m.hallucinationRate}% of responses</strong> (${m.hallucinated} of ${m.sampleCount}). Human reviewers identified AI-generated facts not supported by the Knowledge Base — a compliance and trust concern that needs to be addressed.`}</p>
+      ${m.corrected>0?`<p>Human reviewers provided <strong>${m.corrected} corrected answers</strong> where the AI response was wrong or incomplete. These corrections can be fed back into the Knowledge Base to improve future performance.</p>`:''}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 Detailed Metric Breakdown</div>
+    <div class="metric-grid">
+      <div class="mc" style="background:${acc.bg};border-color:${acc.col}30">
+        <div class="ml" style="color:${acc.col}">Accuracy (Blended)</div>
+        <div class="ms" style="color:${acc.col}">${m.accuracy}%</div>
+        <div class="mst">${acc.icon} ${acc.label}</div>
+        <div class="mp">Combined score from human completeness judgements and automated NLP metrics. Measures how correct and useful the AI responses are overall. Above 70% is considered good for enterprise deployment.</div>
+        <div class="mr"><strong>💡 Recommendation</strong>${rec('accuracy', acc.label)}</div>
+      </div>
+      <div class="mc" style="background:${hall.bg};border-color:${hall.col}30">
+        <div class="ml" style="color:${hall.col}">Hallucination Rate ↓ (lower is better)</div>
+        <div class="ms" style="color:${hall.col}">${m.hallucinationRate}%</div>
+        <div class="mst">${hall.icon} ${hall.label} · target ≤25%</div>
+        <div class="mp">Percentage of responses where human reviewers identified information the AI invented or could not have found in the Knowledge Base. A high rate is a compliance and trust risk.</div>
+        <div class="mr"><strong>💡 Recommendation</strong>${rec('hallucination', hall.label)}</div>
+      </div>
+      <div class="mc" style="background:${comp.bg};border-color:${comp.col}30">
+        <div class="ml" style="color:${comp.col}">Completeness</div>
+        <div class="ms" style="color:${comp.col}">${m.completenessRate}%</div>
+        <div class="mst">${comp.icon} ${comp.label}</div>
+        <div class="mp">Percentage of responses human reviewers judged as fully answering the question — nothing important left out. Low completeness means users are getting partial guidance and may lose confidence in the assistant.</div>
+        <div class="mr"><strong>💡 Recommendation</strong>${rec('completeness', comp.label)}</div>
+      </div>
+      <div class="mc" style="background:${faith.bg};border-color:${faith.col}30">
+        <div class="ml" style="color:${faith.col}">Faithfulness (Auto-NLP)</div>
+        <div class="ms" style="color:${faith.col}">${m.faithfulness}%</div>
+        <div class="mst">${faith.icon} ${faith.label}</div>
+        <div class="mp">Automated measure of how closely the AI's responses are grounded in the reference content. Complements the human hallucination flag with a continuous score. Above 70% is considered strong.</div>
+        <div class="mr"><strong>💡 Recommendation</strong>${rec('faithfulness', faith.label)}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📈 At a Glance — All Metrics</div>
+    <div class="at-glance">
+      ${[
+        {l:'Accuracy',         v:m.accuracy,          c:acc.col,  bg:acc.bg,  src:'Human+Auto'},
+        {l:'Completeness',     v:m.completenessRate,  c:comp.col, bg:comp.bg, src:'Human'},
+        {l:'Hallucination ↓',  v:m.hallucinationRate, c:hall.col, bg:hall.bg, src:'Human'},
+        {l:'Faithfulness',     v:m.faithfulness,      c:faith.col,bg:faith.bg,src:'Auto-NLP'},
+        {l:'ROUGE-L',          v:m.rougeL,            c:'#1B4FD8',bg:'#EFF6FF',src:'Auto-NLP'},
+        {l:'F1 Score',         v:m.f1,                c:'#7C3AED',bg:'#F5F3FF',src:'Auto-NLP'},
+        {l:'Overall Score',    v:overallActual,        c:overall.col,bg:overall.bg,src:'Composite'},
+      ].map(s=>`<div class="ag" style="background:${s.bg};border-color:${s.c}30">
+        <div class="ag-val" style="color:${s.c}">${s.v}%</div>
+        <div class="ag-lbl" style="color:${s.c}">${s.l}</div>
+        <div class="ag-src">${s.src}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🚀 Recommended Next Steps</div>
+    <table>
+      <thead><tr><th>Priority</th><th>Action</th><th>Who</th></tr></thead>
+      <tbody>
+        ${m.hallucinationRate>45?'<tr style="background:#FEF2F2"><td style="font-weight:700;color:#B91C1C">🔴 Urgent</td><td>Enable Strict Mode in SLM Studio to prevent out-of-Knowledge-Base responses immediately</td><td>SLM Developer</td></tr>':''}
+        ${m.corrected>0?'<tr style="background:#F5F3FF"><td style="font-weight:700;color:#7C3AED">🟣 High</td><td>Import human-corrected answers back into the Knowledge Base using "Save to Gold Standard"</td><td>HR / Admin</td></tr>':''}
+        ${m.accuracy<60?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Expand the Knowledge Base with documents covering the most common user questions</td><td>HR / SLM Developer</td></tr>':''}
+        ${m.completenessRate<60?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Rewrite Knowledge Base content in full paragraph form — avoid bullet points that produce partial answers</td><td>HR Team</td></tr>':''}
+        ${m.hallucinationRate>25&&m.hallucinationRate<=45?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Enable Strict Mode and audit Knowledge Base for topics where the assistant is likely to speculate</td><td>SLM Developer</td></tr>':''}
+        ${m.faithfulness<60?'<tr style="background:#F0F7FF"><td style="font-weight:700;color:#1B4FD8">🔵 Medium</td><td>Review and consolidate Knowledge Base; remove conflicting or ambiguous content</td><td>HR / Admin</td></tr>':''}
+        <tr style="background:#F0FDF4"><td style="font-weight:700;color:#15803D">🟢 Ongoing</td><td>Run monthly batch tests and human review cycles to track performance improvement over time</td><td>HR / Admin</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    SLM Forge — Human Review (HITL) Performance Report &nbsp;·&nbsp; Generated ${date} &nbsp;·&nbsp; For internal use only
+  </div>
+</div>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { alert('Pop-up blocked. Please allow pop-ups for this site and try again.'); return; }
+  w.document.write(html);
+  w.document.close();
+}
+window.generateHITLLeadershipReport = generateHITLLeadershipReport;
 
 function filterReview(filter, btn) {
   reviewFilter = filter;

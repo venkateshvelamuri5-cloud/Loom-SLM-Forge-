@@ -713,6 +713,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px;flex-shrink:0">
         <span id="batchResultsSummary" style="font-size:12px;font-weight:700;color:var(--text2);flex:1"></span>
         <button class="batch-dl-btn" id="batchDlBtn" onclick="batchExportResults()" style="display:none">⬇ Download Results</button>
+        <button class="batch-dl-btn" id="dlMetricsBtn" onclick="downloadMetricsReport()" style="display:none;background:rgba(21,128,61,.1);border:1px solid rgba(21,128,61,.3);color:#15803D">📊 Leadership Report</button>
         <button class="batch-dl-btn" onclick="batchSendToReview()" style="background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.3);color:var(--accent)">👥 Send to Human Review</button>
       </div>
       <div id="batchResultsTable" style="flex:1;overflow:auto;padding:16px"></div>
@@ -2311,7 +2312,8 @@ function updateSubmitGate() {
 }
 
 function unlockBatchDownloads() {
-  const dl = document.getElementById('dlBtn');
+  // Support both button ID variants
+  const dl = document.getElementById('batchDlBtn') || document.getElementById('dlBtn');
   const rp = document.getElementById('dlMetricsBtn');
   if (dl) dl.style.display = 'block';
   if (rp && bAggMetrics) rp.style.display = 'block';
@@ -2974,13 +2976,53 @@ async function batchRun() {
   }
   const totalMs=Date.now()-startTime;
   const ok=BATCH.results.filter(r=>r._status==='ok').length;
-  batchProgress(rows.length,rows.length,'Complete');
+  batchProgress(rows.length,rows.length,'Computing metrics…');
   batchLog('step','Done — '+ok+'/'+rows.length+' successful · '+(totalMs/1000).toFixed(1)+'s total');
+
+  // ── Compute aggregate metrics from all successful batch rows ──────────────
+  const metricRows = BATCH.results.filter(r => r._status === 'ok' && r._response && r._response.trim());
+  if (metricRows.length > 0) {
+    const kbChunksForMetrics = activeSlm?.kbChunks || [];
+    const hasKbForMetrics = kbChunksForMetrics.length > 0;
+    let metricSums = { overall:0,accuracy:0,faithfulness:0,relevance:0,rouge_l:0,rouge_1:0,rouge_2:0,
+      precision:0,recall:0,f1:0,completeness:0,grounding:0,hallucination:0,context_util:0,
+      coherence:0,specificity:0,diversity:0,conciseness:0,bias:0,query_complexity:0,resp_length:0 };
+    let passCount = 0;
+    metricRows.forEach(row => {
+      const m = compute23Metrics(row._prompt||'', row._response||'', kbChunksForMetrics, hasKbForMetrics);
+      Object.keys(metricSums).forEach(k => { metricSums[k] += (m[k]||0); });
+      if (m.asr === 'Pass') passCount++;
+      // Tag per-row metrics onto result for export
+      row._metrics = m;
+    });
+    const n = metricRows.length;
+    bAggMetrics = {};
+    Object.keys(metricSums).forEach(k => { bAggMetrics[k] = parseFloat((metricSums[k]/n).toFixed(1)); });
+    bAggMetrics.sampleCount   = n;
+    bAggMetrics.passRate      = Math.round(passCount/n*100);
+    bAggMetrics.turns         = n;
+    bAggMetrics.generatedAt   = new Date().toISOString();
+    bAggMetrics.slmName       = activeSlm?.name || 'SLM Assistant';
+    bAggMetrics.tps           = 0;
+    bAggMetrics.latency_s     = parseFloat((totalMs/1000/n).toFixed(2));
+    const kbCovRows = metricRows.filter(r=>r._metrics?.kb_coverage!=null);
+    bAggMetrics.kb_coverage = kbCovRows.length ? parseFloat((kbCovRows.reduce((s,r)=>s+(r._metrics.kb_coverage||0),0)/kbCovRows.length).toFixed(1)) : null;
+    try { localStorage.setItem('slmforge_metrics_'+(activeSlm?.id||'batch'), JSON.stringify(bAggMetrics)); } catch(e){}
+    batchLog('ok','📊 Metrics computed — Overall: '+bAggMetrics.overall+'% · Accuracy: '+bAggMetrics.accuracy+'% · Hallucination: '+bAggMetrics.hallucination+'% · Completeness: '+bAggMetrics.completeness+'%');
+  }
+
   BATCH.isRunning=false;
   document.getElementById('batchRunBtn').disabled=false;
   document.getElementById('batchRunBtn').textContent='▶ Run Batch';
   batchRenderResults();
   batchTabSwitch('results',document.getElementById('btab-results'));
+
+  // Reveal download and leadership report buttons
+  const dlBtn = document.getElementById('batchDlBtn');
+  const rpBtn = document.getElementById('dlMetricsBtn');
+  if (dlBtn) dlBtn.style.display = 'block';
+  if (rpBtn && bAggMetrics) rpBtn.style.display = 'block';
+
   if(BATCH.toggleStates.batchToggleHitl&&BATCH.results.length) batchSendToReview();
 }
 window.batchRun = batchRun;
@@ -3037,8 +3079,9 @@ function batchSendToReview() {
   const mapped=reviewable.map(r=>({[BATCH.promptCol]:r._prompt,'_ai_response':r._response}));
   try {
     populateReview(mapped, BATCH.promptCol, '_ai_response');
-    addSysMsg('📤 '+reviewable.length+' batch results sent to Human Review. Click "👥 Human Review ↗" in the top nav.');
-    goTab('chat',document.querySelector('.tb-tab'));
+    addSysMsg('📤 '+reviewable.length+' batch results sent to Human Review — switching to Review tab now.');
+    const hitlTabBtn=Array.from(document.querySelectorAll('.tb-tab')).find(t=>t.textContent.includes('Review')||t.getAttribute('onclick')?.includes('hitl'));
+    if(hitlTabBtn) hitlTabBtn.click(); else goTab('chat',document.querySelector('.tb-tab'));
     batchLog('ok',reviewable.length+' results queued for Human Review');
   } catch(e) {
     batchLog('warn','Could not send to review: '+e.message);
@@ -3046,6 +3089,259 @@ function batchSendToReview() {
   }
 }
 window.batchSendToReview = batchSendToReview;
+
+// ═══════════════════════════════════════════════════════════════
+//  LEADERSHIP REPORT — Plain-English AI Performance Report
+// ═══════════════════════════════════════════════════════════════
+
+function downloadMetricsReport() {
+  if (!bAggMetrics) { alert('No metrics available. Run a batch job first.'); return; }
+  generateLeadershipReport(bAggMetrics, activeSlm);
+}
+window.downloadMetricsReport = downloadMetricsReport;
+
+function generateLeadershipReport(metrics, slm) {
+  if (!metrics) return;
+  const name  = slm?.name || 'SLM Assistant';
+  const date  = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  const genAt = metrics.generatedAt ? new Date(metrics.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : date;
+
+  // RAG = Red / Amber / Green helper (higher = better)
+  function rag(v, good=75, warn=50) {
+    if (v >= good) return { label:'Good',            col:'#15803D', bg:'#DCFCE7', icon:'✅' };
+    if (v >= warn) return { label:'Needs Attention', col:'#B45309', bg:'#FEF3C7', icon:'⚠️' };
+    return             { label:'Needs Improvement', col:'#B91C1C', bg:'#FEE2E2', icon:'❌' };
+  }
+  // RAG where lower is better (Hallucination)
+  function ragLow(v, bad=25) {
+    if (v <= bad)      return { label:'Good',            col:'#15803D', bg:'#DCFCE7', icon:'✅' };
+    if (v <= bad+20)   return { label:'Needs Attention', col:'#B45309', bg:'#FEF3C7', icon:'⚠️' };
+    return                    { label:'Needs Improvement', col:'#B91C1C', bg:'#FEE2E2', icon:'❌' };
+  }
+
+  // Derive key scores — handle both metric schema variants
+  const accVal   = metrics.accuracy     ?? metrics.overall ?? 0;
+  const hallVal  = metrics.hallucination ?? 0;
+  const compVal  = metrics.completeness  ?? metrics.recall   ?? 0;
+  const faithVal = metrics.faithfulness  ?? metrics.grounding ?? 0;
+  const overallVal = metrics.overall ?? Math.round((accVal*0.4 + (100-hallVal)*0.3 + compVal*0.3));
+  const sampleN  = metrics.sampleCount  ?? metrics.turns ?? '—';
+
+  const overall  = rag(overallVal, 75, 50);
+  const acc      = rag(accVal, 70, 50);
+  const hall     = ragLow(hallVal, 25);
+  const comp     = rag(compVal, 65, 40);
+  const faith    = rag(faithVal, 70, 50);
+  const passRate = metrics.passRate ?? null;
+
+  const overallLabel = overallVal >= 75 ? 'Performing Well' : overallVal >= 50 ? 'Needs Attention' : 'Needs Improvement';
+
+  // Plain-English recommendation per metric
+  function rec(key, status) {
+    const map = {
+      accuracy: {
+        'Good':             'The assistant is providing accurate, on-point answers. Continue monitoring as new questions are added.',
+        'Needs Attention':  'Review the Knowledge Base for gaps. Ensure key topics are covered with clear, unambiguous text. Add more example Q&A pairs in the Studio.',
+        'Needs Improvement':'The Knowledge Base likely needs significant expansion. Upload additional documents covering the topics users ask about. Review the system prompt to ensure the assistant understands its role.',
+      },
+      hallucination: {
+        'Good':             'Low hallucination — the assistant is reliably grounded in verified company information. No immediate action required.',
+        'Needs Attention':  'Some hallucination detected. Consider enabling Strict Mode in the SLM profile to force Knowledge-Base-only responses.',
+        'Needs Improvement':'High hallucination rate — the assistant is frequently generating answers not found in the Knowledge Base. Enable Strict Mode immediately and conduct a full content review.',
+      },
+      completeness: {
+        'Good':             'The assistant is providing full answers that address the entire question. This is a sign of a well-structured Knowledge Base.',
+        'Needs Attention':  'Some answers are partial. Ensure Knowledge Base documents contain complete explanations, not just keywords or bullet points.',
+        'Needs Improvement':'Many answers are incomplete. Expand the Knowledge Base with detailed, paragraph-level content for the most common topics.',
+      },
+      faithfulness: {
+        'Good':             'The assistant is staying within its approved Knowledge Base, meaning employees receive verified company information.',
+        'Needs Attention':  'The assistant occasionally draws on information outside the Knowledge Base. Enable Strict Mode and clarify ambiguous KB content.',
+        'Needs Improvement':'The assistant is frequently going outside the Knowledge Base. This is a compliance risk. Enable Strict Mode and expand KB coverage.',
+      },
+    };
+    return (map[key]||{})[status] || 'Continue monitoring this metric.';
+  }
+
+  const reportHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Assistant Performance Report — ${name}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#F8FAFC;color:#0F172A}
+  .page{max-width:920px;margin:0 auto;background:#fff;padding:48px;min-height:100vh}
+  .header{background:linear-gradient(135deg,#0D1B2A,#1B4FD8);color:#fff;padding:36px;border-radius:12px;margin-bottom:36px}
+  .header h1{font-size:26px;font-weight:700;margin-bottom:8px}
+  .header .sub{font-size:13px;opacity:.75;margin-bottom:4px}
+  .header .meta{display:flex;gap:32px;margin-top:20px;font-size:13px;flex-wrap:wrap}
+  .header .meta div{opacity:.85}
+  .header .meta strong{display:block;font-size:20px;font-weight:700;opacity:1}
+  .section{margin-bottom:36px}
+  .section-title{font-size:17px;font-weight:700;color:#0D1B2A;border-bottom:3px solid #1B4FD8;padding-bottom:8px;margin-bottom:18px}
+  .summary-box{border-radius:10px;padding:24px 28px;margin-bottom:20px;border:1px solid}
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .metric-card{border-radius:8px;padding:18px 20px;border:1px solid}
+  .metric-card .m-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+  .metric-card .m-score{font-size:34px;font-weight:800;margin-bottom:4px;font-variant-numeric:tabular-nums}
+  .metric-card .m-status{font-size:12px;font-weight:600;margin-bottom:10px}
+  .metric-card .m-plain{font-size:12px;line-height:1.65;color:#475569;margin-bottom:10px}
+  .metric-card .m-rec{font-size:12px;line-height:1.6;padding:10px;border-radius:6px;background:rgba(0,0,0,.04)}
+  .metric-card .m-rec strong{display:block;margin-bottom:3px;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+  .narrative{background:#F0F7FF;border:1px solid #BFDBFE;border-radius:10px;padding:22px 26px;line-height:1.85;font-size:13px;color:#1E3A5F}
+  .narrative p{margin-bottom:12px}
+  .narrative p:last-child{margin-bottom:0}
+  .next-steps table{width:100%;border-collapse:collapse;font-size:13px}
+  .next-steps th{background:#0D1B2A;color:#fff;padding:10px 14px;text-align:left}
+  .next-steps th:first-child{border-radius:6px 0 0 6px}
+  .next-steps th:last-child{border-radius:0 6px 6px 0}
+  .next-steps td{padding:10px 14px;vertical-align:top}
+  .footer{margin-top:48px;text-align:center;font-size:11px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:20px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+  @media print{body{background:#fff}.page{padding:20px}button{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div style="text-align:right;margin-bottom:16px">
+    <button onclick="window.print()" style="padding:10px 20px;background:#1B4FD8;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">🖨 Print / Save as PDF</button>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="sub">AI Assistant Performance Report</div>
+    <h1>${name}</h1>
+    <div class="meta">
+      <div><strong>${sampleN}</strong>Responses Evaluated</div>
+      <div><strong>${genAt}</strong>Report Date</div>
+      ${passRate !== null ? `<div><strong>${passRate}%</strong>Pass Rate</div>` : ''}
+      <div><strong><span class="badge" style="background:${overall.bg};color:${overall.col}">${overallLabel}</span></strong>Overall Status</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section">
+    <div class="section-title">📋 Executive Summary</div>
+    <div class="summary-box" style="background:${overall.bg};border-color:${overall.col}30">
+      <div style="display:flex;align-items:flex-start;gap:16px">
+        <div style="font-size:48px;flex-shrink:0">${overall.icon}</div>
+        <div>
+          <div style="font-size:22px;font-weight:800;color:${overall.col}">${overallVal}% Overall Score</div>
+          <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.7">
+            <strong>${name}</strong> was evaluated on <strong>${sampleN} responses</strong>.
+            The assistant scored <strong>${accVal}%</strong> for accuracy and <strong>${compVal}%</strong> for completeness.
+            ${hallVal <= 25 ? `Hallucination (making up information) is within the acceptable limit at <strong>${hallVal}%</strong>.` :
+              hallVal <= 45 ? `Hallucination was detected in <strong>${hallVal}%</strong> of responses — some answers may include information not in the Knowledge Base.` :
+              `<strong>Hallucination rate is high at ${hallVal}%</strong> — the assistant is frequently generating unverified information and requires immediate attention.`}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS NARRATIVE -->
+  <div class="section">
+    <div class="section-title">💼 What This Means for Your Organisation</div>
+    <div class="narrative">
+      <p>This report summarises how well the <strong>${name}</strong> AI assistant is performing when answering employee or user questions. The assistant was evaluated on <strong>${sampleN} responses</strong> using automated quality metrics that measure accuracy, completeness, and trustworthiness.</p>
+      <p>${accVal >= 70 ? `<strong>Accuracy is strong at ${accVal}%.</strong> Employees using this assistant will receive correct information in the large majority of interactions — a solid foundation for wider deployment.` : `<strong>Accuracy is ${accVal}%</strong>, meaning roughly ${100-accVal}% of responses may not fully match the expected answer. Before scaling usage, the Knowledge Base should be reviewed and expanded to cover common topics more thoroughly.`}</p>
+      <p>${compVal >= 65 ? `<strong>Completeness is at ${compVal}%</strong>, indicating that the assistant is answering the full question rather than giving partial or vague responses. Users are likely to feel their questions are properly addressed.` : `<strong>Completeness is ${compVal}%</strong> — a notable proportion of responses are partial or leave parts of the question unanswered. This can erode user trust and may prompt employees to seek information elsewhere.`}</p>
+      <p>${hallVal <= 25 ? `<strong>Hallucination (the risk of the AI inventing information) is low at ${hallVal}%</strong>, below the recommended 25% threshold. The assistant is reliably using only its approved Knowledge Base, which is essential for compliance and trust.` : `<strong>The hallucination rate of ${hallVal}%</strong> exceeds the recommended 25% threshold. This means the assistant is generating responses that are not fully grounded in approved company information — a risk to accuracy and regulatory compliance that should be addressed before wider rollout.`}</p>
+      <p>${faithVal >= 70 ? `<strong>Knowledge Base faithfulness is ${faithVal}%</strong> — the assistant is predominantly drawing on verified, approved content when forming its answers.` : `<strong>Knowledge Base faithfulness is ${faithVal}%</strong>. The assistant is drawing on information outside its approved Knowledge Base more often than is ideal. Enabling Strict Mode and expanding Knowledge Base coverage are recommended steps.`}</p>
+    </div>
+  </div>
+
+  <!-- METRIC BREAKDOWN -->
+  <div class="section">
+    <div class="section-title">📊 Detailed Metric Breakdown</div>
+    <div class="metric-grid">
+
+      <div class="metric-card" style="background:${acc.bg};border-color:${acc.col}30">
+        <div class="m-label" style="color:${acc.col}">Accuracy</div>
+        <div class="m-score" style="color:${acc.col}">${accVal}%</div>
+        <div class="m-status">${acc.icon} ${acc.label}</div>
+        <div class="m-plain">How closely the assistant's answers matched what was expected. Think of this as the "correctness" score — higher is better. A score above 70% is considered strong for enterprise use.</div>
+        <div class="m-rec"><strong>💡 Recommendation</strong>${rec('accuracy', acc.label)}</div>
+      </div>
+
+      <div class="metric-card" style="background:${hall.bg};border-color:${hall.col}30">
+        <div class="m-label" style="color:${hall.col}">Hallucination Rate ↓ (lower is better)</div>
+        <div class="m-score" style="color:${hall.col}">${hallVal}%</div>
+        <div class="m-status">${hall.icon} ${hall.label} · target ≤25%</div>
+        <div class="m-plain">How often the assistant generated information that was <em>not</em> in the Knowledge Base. A high hallucination rate means employees may receive unverified or invented guidance — a compliance and trust risk.</div>
+        <div class="m-rec"><strong>💡 Recommendation</strong>${rec('hallucination', hall.label)}</div>
+      </div>
+
+      <div class="metric-card" style="background:${comp.bg};border-color:${comp.col}30">
+        <div class="m-label" style="color:${comp.col}">Completeness</div>
+        <div class="m-score" style="color:${comp.col}">${compVal}%</div>
+        <div class="m-status">${comp.icon} ${comp.label}</div>
+        <div class="m-plain">Did the assistant answer the <em>full</em> question, or only part of it? Low completeness means users are getting incomplete guidance and may need to ask follow-up questions or look elsewhere.</div>
+        <div class="m-rec"><strong>💡 Recommendation</strong>${rec('completeness', comp.label)}</div>
+      </div>
+
+      <div class="metric-card" style="background:${faith.bg};border-color:${faith.col}30">
+        <div class="m-label" style="color:${faith.col}">Knowledge Base Faithfulness</div>
+        <div class="m-score" style="color:${faith.col}">${faithVal}%</div>
+        <div class="m-status">${faith.icon} ${faith.label}</div>
+        <div class="m-plain">How often the assistant used only its approved Knowledge Base to form answers, rather than drawing on external or invented information. This is a key compliance and trust indicator for enterprise AI.</div>
+        <div class="m-rec"><strong>💡 Recommendation</strong>${rec('faithfulness', faith.label)}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NEXT STEPS -->
+  <div class="section next-steps">
+    <div class="section-title">🚀 Recommended Next Steps</div>
+    <table>
+      <thead><tr><th>Priority</th><th>Action</th><th>Who</th></tr></thead>
+      <tbody>
+        ${hallVal > 45 ? '<tr style="background:#FEF2F2"><td style="font-weight:700;color:#B91C1C">🔴 Urgent</td><td>Enable Strict Mode in SLM Studio to prevent responses generated outside the Knowledge Base</td><td>SLM Developer</td></tr>' : ''}
+        ${accVal < 60 ? '<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Expand the Knowledge Base with documents covering the most common user questions</td><td>HR / SLM Developer</td></tr>' : ''}
+        ${compVal < 50 ? '<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Rewrite Knowledge Base content in full paragraph form — avoid bullet points that produce partial answers</td><td>HR Team</td></tr>' : ''}
+        ${faithVal < 60 ? '<tr style="background:#F0F7FF"><td style="font-weight:700;color:#1B4FD8">🔵 Medium</td><td>Review and de-duplicate Knowledge Base entries; remove conflicting or ambiguous content</td><td>HR / Admin</td></tr>' : ''}
+        ${hallVal > 25 && hallVal <= 45 ? '<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Enable Strict Mode and audit Knowledge Base for topics where the assistant is likely to speculate</td><td>SLM Developer</td></tr>' : ''}
+        <tr style="background:#F0FDF4"><td style="font-weight:700;color:#15803D">🟢 Ongoing</td><td>Run batch tests monthly with updated Q&A pairs and use the Human Review (HITL) tab to validate answers</td><td>HR / Admin</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  ${metrics.passRate !== undefined && metrics.passRate !== null ? `
+  <div class="section">
+    <div class="section-title">📈 At a Glance</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${[
+        {lbl:'Overall Score',  val:overallVal+'%', col:overall.col, bg:overall.bg},
+        {lbl:'Accuracy',       val:accVal+'%',     col:acc.col,     bg:acc.bg},
+        {lbl:'Completeness',   val:compVal+'%',    col:comp.col,    bg:comp.bg},
+        {lbl:'Hallucination ↓',val:hallVal+'%',    col:hall.col,    bg:hall.bg},
+        {lbl:'Faithfulness',   val:faithVal+'%',   col:faith.col,   bg:faith.bg},
+        {lbl:'Pass Rate',      val:(metrics.passRate||0)+'%', col:'#1B4FD8', bg:'#EFF6FF'},
+      ].map(s=>`<div style="flex:1;min-width:130px;background:${s.bg};border:1px solid ${s.col}30;border-radius:8px;padding:14px 16px;text-align:center">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${s.col};margin-bottom:6px">${s.lbl}</div>
+        <div style="font-size:28px;font-weight:800;color:${s.col}">${s.val}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  ` : ''}
+
+  <div class="footer">
+    SLM Forge — AI Performance Report &nbsp;·&nbsp; Generated ${date} &nbsp;·&nbsp; For internal use only
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { alert('Pop-up was blocked. Please allow pop-ups for this site and try again.'); return; }
+  w.document.write(reportHtml);
+  w.document.close();
+}
+window.generateLeadershipReport = generateLeadershipReport;
 
 function batchLog(type, msg) {
   const log=document.getElementById('batchLog'); if(!log) return;
