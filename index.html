@@ -620,6 +620,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 
 <!-- LEFT PANEL -->
 <div class="batch-left">
+  <div class="notice warn" id="batchNotice" style="margin-bottom:12px;font-size:11px">Select an AI assistant from the sidebar first.</div>
   <div class="batch-section-label">Input File</div>
   <label class="batch-upload-zone" id="batchUploadZone"
     ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
@@ -1475,8 +1476,8 @@ async function pickSlm(id){
   document.getElementById('chatName').textContent=p.name;
   document.getElementById('chatDesc').textContent=p.desc||'';
   document.getElementById('welcomeState').style.display='none';
-  document.getElementById('batchNotice').textContent='✓ Active: '+p.name+' — upload a file to process.';
-  document.getElementById('batchNotice').className='notice ok';
+  const _bn=document.getElementById('batchNotice');
+  if(_bn){_bn.textContent='✓ Active: '+p.name+' — upload a file to process.';_bn.className='notice ok';}
   // KB info
   const kbCount=p.kbChunks?.length||0;
   if(kbCount){
