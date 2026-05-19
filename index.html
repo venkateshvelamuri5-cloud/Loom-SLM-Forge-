@@ -291,6 +291,69 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .de-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#8B5CF6);border-radius:2px;transition:width .3s;}
 .de-prog-label{font-size:10px;color:var(--text3);}
 
+
+/* ══ BATCH PROCESSING ═══════════════════════════════════ */
+.batch-wrap{display:grid;grid-template-columns:300px 1fr;height:100%;overflow:hidden;}
+.batch-left{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.batch-right{display:flex;flex-direction:column;overflow:hidden;}
+.batch-section-label{padding:14px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);}
+.batch-upload-zone{display:block;margin:6px 12px;border:2px dashed var(--border2);border-radius:10px;padding:20px 12px;text-align:center;cursor:pointer;transition:.2s;}
+.batch-upload-zone:hover{border-color:var(--accent);background:rgba(79,142,247,.05);}
+.batch-upload-icon{font-size:28px;display:block;margin-bottom:6px;}
+.batch-upload-label{font-size:12px;color:var(--text2);display:block;}
+.batch-upload-sub{font-size:10px;color:var(--text3);margin-top:3px;display:block;}
+.batch-file-card{margin:4px 12px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:8px;}
+.batch-divider{height:1px;background:var(--border);margin:10px 12px;}
+.batch-field{padding:4px 14px 8px;}
+.batch-run-btn{margin:10px 12px 14px;padding:11px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.batch-run-btn:hover{opacity:.9;transform:translateY(-1px);}
+.batch-run-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.batch-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+.batch-tab{padding:11px 18px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;}
+.batch-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.batch-tab:hover:not(.active){color:var(--text2);}
+.batch-panel{display:none;flex:1;overflow:auto;flex-direction:column;}
+.batch-panel.active{display:flex;}
+.batch-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text3);text-align:center;padding:60px 30px;}
+.batch-empty h3{font-size:15px;color:var(--text2);font-weight:600;}
+.batch-empty p{font-size:12px;line-height:1.7;max-width:360px;}
+.batch-log{flex:1;overflow-y:auto;padding:14px 20px;font-family:'Consolas','Courier New',monospace;font-size:11px;line-height:1.9;}
+.batch-log-line{display:flex;gap:8px;}
+.batch-log-line .blt{color:var(--text3);flex-shrink:0;}
+.batch-log-line.ok .blm{color:#10B981;}
+.batch-log-line.warn .blm{color:#F59E0B;}
+.batch-log-line.err .blm{color:var(--red);}
+.batch-log-line.info .blm{color:var(--text2);}
+.batch-log-line.step .blm{color:#8B5CF6;font-weight:700;}
+.batch-dl-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#34D399;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
+.batch-dl-btn:hover{background:rgba(16,185,129,.15);}
+.batch-result-table{width:100%;border-collapse:collapse;font-size:11px;}
+.batch-result-table th{padding:8px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;text-align:left;letter-spacing:.5px;text-transform:uppercase;position:sticky;top:0;z-index:1;}
+.batch-result-table td{padding:8px 12px;border:1px solid var(--border);color:var(--text2);vertical-align:top;line-height:1.5;}
+.batch-result-table tr:hover td{background:var(--surface2);}
+.batch-result-table td.response-cell{max-width:420px;white-space:pre-wrap;word-break:break-word;}
+.batch-result-table td.status-ok{color:#34D399;}
+.batch-result-table td.status-err{color:var(--red);}
+.batch-preview-table{width:100%;border-collapse:collapse;font-size:11px;}
+.batch-preview-table th{padding:7px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;text-align:left;position:sticky;top:0;}
+.batch-preview-table td{padding:7px 12px;border:1px solid var(--border);color:var(--text2);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ══ ATTACHMENT BUTTON ══════════════════════════════════ */
+.attach-btn{padding:6px 8px;border-radius:6px;background:none;border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:.15s;font-size:14px;line-height:1;flex-shrink:0;}
+.attach-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
+.attach-chips{display:flex;flex-wrap:wrap;gap:5px;padding:4px 14px 0;max-height:72px;overflow-y:auto;}
+.attach-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;font-size:10px;color:var(--text2);}
+.attach-chip-name{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.attach-chip-rm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 2px;line-height:1;}
+.attach-chip-rm:hover{color:var(--red);}
+.attach-img-thumb{width:18px;height:18px;border-radius:2px;object-fit:cover;flex-shrink:0;}
+
+/* ══ EXPORT BUTTON ON BOT MESSAGES ════════════════════ */
+.msg-export-bar{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;}
+.msg-export-btn{padding:3px 9px;border-radius:5px;border:1px solid var(--border2);background:var(--surface2);color:var(--text3);font-size:10px;font-weight:600;cursor:pointer;transition:.15s;}
+.msg-export-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
+
+/* ══ NOTICE / PAGE-WRAP ═══════════════════════════════ */
 /* ── HITL Review Page ── */
 .review-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;transition:.15s;}
 .review-card.submitted{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.04);}
@@ -360,9 +423,8 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
   <div class="tb-divider"></div>
   <div class="tb-tabs">
     <button class="tb-tab active" onclick="goTab('chat',this)">Chat</button>
-    
+    <button class="tb-tab" onclick="goTab('batch',this)">⚡ Batch</button>
     <a class="tb-tab" href="hitl.html" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px">👥 Human Review ↗</a>
-    <button class="tb-tab" onclick="goTab('docengine',this)">📄 Document Engine</button>
   </div>
   <div class="tb-right">
     <div class="tb-status">
@@ -468,14 +530,21 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <div class="lm-info" id="lmInfo">Live session metrics</div>
     </div>
 
+    <!-- Attachment chips appear here when files are attached -->
+    <div id="attachChips" class="attach-chips" style="display:none"></div>
     <div class="input-box">
+      <!-- Hidden file input for attachments -->
+      <input type="file" id="attachFileInput" multiple
+        accept=".txt,.md,.csv,.json,.pdf,.docx,.xlsx,.xls,.png,.jpg,.jpeg,.webp,.gif"
+        style="display:none" onchange="attachFiles(this.files)">
+      <button class="attach-btn" title="Attach file (image, Word, Excel, CSV, PDF, text)" onclick="document.getElementById('attachFileInput').click()">📎</button>
       <textarea class="chat-ta" id="chatInput" rows="1" placeholder="Type your question…"
         onkeydown="handleKey(event)"
         oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
       <button class="send-btn" id="sendBtn" onclick="sendMsg()" disabled>Send</button>
       <button class="stop-btn" id="stopBtn" onclick="stopGen()">■ Stop</button>
     </div>
-    <div class="input-hint">Press Enter to send · Shift+Enter for new line</div>
+    <div class="input-hint">Press Enter to send · Shift+Enter for new line · 📎 to attach files</div>
   </div>
 </div>
 
@@ -545,124 +614,121 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
   </div>
 </div>
 
-<!-- DOCUMENT ENGINE PAGE -->
-<div class="page" id="tab-docengine">
-<div class="de-wrap">
+<!-- BATCH PROCESSING PAGE -->
+<div class="page" id="tab-batch">
+<div class="batch-wrap">
 
-<!-- LEFT: Upload Panel -->
-<div class="de-left">
-  <div class="de-section">Template Document</div>
-  <label class="de-upload" id="deTemplateZone"
+<!-- LEFT PANEL -->
+<div class="batch-left">
+  <div class="batch-section-label">Input File</div>
+  <label class="batch-upload-zone" id="batchUploadZone"
     ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
     ondragleave="this.style.borderColor=''"
-    ondrop="event.preventDefault();this.style.borderColor='';deLoadTemplate(event.dataTransfer.files[0]);event.stopPropagation()">
-    <input type="file" id="deTemplateInput" accept=".docx,.txt,.md,.pdf"
-      style="display:none" onchange="deLoadTemplate(this.files[0])">
-    <span class="de-icon">📄</span>
-    <span class="de-label">Click to upload template</span>
-    <span class="de-sub">.docx · .txt · .md — or drag & drop here</span>
+    ondrop="event.preventDefault();this.style.borderColor='';batchLoadFile(event.dataTransfer.files[0])">
+    <input type="file" id="batchFileInput" accept=".csv,.xlsx,.xls,.txt"
+      style="display:none" onchange="batchLoadFile(this.files[0])" onclick="this.value=null">
+    <span class="batch-upload-icon">📂</span>
+    <span class="batch-upload-label">Click or drag a file here</span>
+    <span class="batch-upload-sub">.csv · .xlsx · .txt — one prompt per row</span>
   </label>
-  <div id="deTemplateCard" style="display:none"></div>
+  <div id="batchFileCard" style="display:none" class="batch-file-card"></div>
 
-  <div class="de-divider"></div>
+  <div class="batch-divider"></div>
 
-  <div class="de-section">Employee Data Sheet</div>
-  <label class="de-upload" id="deSheetZone"
-    ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
-    ondragleave="this.style.borderColor=''"
-    ondrop="event.preventDefault();this.style.borderColor='';deLoadSheet(event.dataTransfer.files[0]);event.stopPropagation()">
-    <input type="file" id="deSheetInput" accept=".xlsx,.xls,.csv"
-      style="display:none" onchange="deLoadSheet(this.files[0])">
-    <span class="de-icon">📊</span>
-    <span class="de-label">Click to upload employee sheet</span>
-    <span class="de-sub">.xlsx · .csv — one row per employee — or drag & drop</span>
-  </label>
-  <div id="deSheetCard" style="display:none"></div>
+  <div class="batch-section-label">Column Mapping</div>
+  <div class="batch-field" id="batchColGroup" style="display:none">
+    <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Prompt column</div>
+    <select id="batchColSelect" style="width:100%;padding:7px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;outline:none;cursor:pointer">
+    </select>
+    <div style="font-size:10px;color:var(--text3);margin-top:4px">Column whose values will be sent as prompts to the AI</div>
+  </div>
+  <div class="batch-field" id="batchColGroupEmpty" style="font-size:11px;color:var(--text3);padding:8px 14px">
+    Load a file to map columns
+  </div>
 
-  <div class="de-divider"></div>
+  <div class="batch-divider"></div>
 
-  <div class="de-section">Settings</div>
-  <div style="padding:4px 14px 8px;font-size:11px;color:var(--text3);">
-    <div style="margin-bottom:8px;">
-      <div style="margin-bottom:4px;color:var(--text2);">Comment column name</div>
-      <input type="text" id="deCommentCol" value="Comments" style="width:100%;padding:6px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;outline:none;">
+  <div class="batch-section-label">Settings</div>
+  <div style="padding:4px 14px;font-size:11px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="color:var(--text2)">Rows to process</span>
+      <input type="number" id="batchMaxRows" value="50" min="1" max="500"
+        style="width:70px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;text-align:right;outline:none">
     </div>
-    <div style="margin-bottom:8px;">
-      <div style="margin-bottom:4px;color:var(--text2);">Name column</div>
-      <input type="text" id="deNameCol" value="Employee Name" style="width:100%;padding:6px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;outline:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="color:var(--text2)">Send to Human Review</span>
+      <div class="toggle on" id="batchToggleHitl" onclick="batchToggle('batchToggleHitl')" style="cursor:pointer;width:36px;height:20px;border-radius:10px;background:rgba(79,142,247,.25);border:1px solid var(--accent);position:relative;transition:.2s">
+        <div id="batchToggleHitlThumb" style="width:14px;height:14px;border-radius:50%;background:var(--accent);position:absolute;top:2px;left:18px;transition:.2s"></div>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-      <span style="color:var(--text2);">Generate DOCX</span>
-      <div class="toggle on" id="deToggleDocx" onclick="deToggle('deToggleDocx')"></div>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="color:var(--text2);">Generate PDF</span>
-      <div class="toggle on" id="deTogglePdf" onclick="deToggle('deTogglePdf')"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="color:var(--text2)">Export output as</span>
+      <select id="batchExportFmt" style="padding:5px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;outline:none;cursor:pointer">
+        <option value="xlsx">Excel (.xlsx)</option>
+        <option value="csv">CSV (.csv)</option>
+      </select>
     </div>
   </div>
 
   <div style="flex:1"></div>
 
-  <div id="dePlaceholderMap" style="display:none;margin:4px 12px 8px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">Detected Placeholders</div>
-    <div id="dePlaceholderList"></div>
-  </div>
-
-  <button class="de-gen-btn" id="deGenBtn" onclick="deGenerate()" disabled>
-    ⚡ Generate Documents
+  <button class="batch-run-btn" id="batchRunBtn" onclick="batchRun()" disabled>
+    ▶ Run Batch
   </button>
 </div>
 
-<!-- RIGHT: Tabs + Content -->
-<div class="de-right">
-  <div class="de-tabs">
-    <div class="de-tab active" onclick="deTab('clauses',this)">Clause Editor</div>
-    <div class="de-tab" onclick="deTab('log',this)">Processing Log</div>
-    <div class="de-tab" onclick="deTab('results',this)">Results <span id="deResultBadge" style="display:none;margin-left:4px;padding:1px 6px;border-radius:10px;background:rgba(16,185,129,.2);color:#34D399;font-size:10px;font-weight:700;"></span></div>
+<!-- RIGHT PANEL -->
+<div class="batch-right">
+  <div class="batch-tabs">
+    <div class="batch-tab active" id="btab-preview" onclick="batchTabSwitch('preview',this)">Preview</div>
+    <div class="batch-tab" id="btab-log" onclick="batchTabSwitch('log',this)">Log</div>
+    <div class="batch-tab" id="btab-results" onclick="batchTabSwitch('results',this)">Results <span id="batchResultBadge" style="display:none;margin-left:4px;padding:1px 6px;border-radius:10px;background:rgba(16,185,129,.2);color:#34D399;font-size:10px;font-weight:700"></span></div>
   </div>
 
-  <!-- CLAUSE EDITOR -->
-  <div class="de-panel active" id="depanel-clauses">
-    <div id="deClauseEmpty" class="de-empty">
-      <div class="de-big">📋</div>
-      <h3>No template loaded</h3>
-      <p>Upload a template document to see its clauses. You can then manually include or exclude clauses, or let the AI decide based on each employee's comment column.</p>
+  <!-- PREVIEW PANEL -->
+  <div class="batch-panel active" id="bpanel-preview">
+    <div class="batch-empty" id="batchPreviewEmpty">
+      <div style="font-size:48px;opacity:.2">📋</div>
+      <h3>No file loaded</h3>
+      <p>Upload a CSV or Excel file. Each row should contain a prompt that will be sent to the active AI assistant.</p>
     </div>
-    <div id="deClauseEditor" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
-      <div class="cl-toolbar">
-        <button class="de-tbtn" onclick="deSelectAll(true)">✓ Include All</button>
-        <button class="de-tbtn" onclick="deSelectAll(false)">✕ Exclude All</button>
-        <button class="de-tbtn" onclick="deAiAnalyse()">🤖 AI Auto-Exclude</button>
-        <div class="cl-info" id="deClauseInfo">0 clauses · 0 excluded</div>
+    <div id="batchPreviewTable" style="display:none;flex:1;overflow:auto;padding:16px"></div>
+  </div>
+
+  <!-- LOG PANEL -->
+  <div class="batch-panel" id="bpanel-log">
+    <div class="batch-log" id="batchLog">
+      <div class="batch-log-line info"><span class="blt">—</span><span class="blm">Batch log will appear here when you run a job.</span></div>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div class="batch-panel" id="bpanel-results">
+    <div class="batch-empty" id="batchResultsEmpty">
+      <div style="font-size:48px;opacity:.2">📊</div>
+      <h3>No results yet</h3>
+      <p>Run a batch job to see AI responses here. Results can be exported as Excel or CSV.</p>
+    </div>
+    <div id="batchResultsContent" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <span id="batchResultsSummary" style="font-size:12px;font-weight:700;color:var(--text2);flex:1"></span>
+        <button class="batch-dl-btn" id="batchDlBtn" onclick="batchExportResults()" style="display:none">⬇ Download Results</button>
+        <button class="batch-dl-btn" onclick="batchSendToReview()" style="background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.3);color:var(--accent)">👥 Send to Human Review</button>
       </div>
-      <div class="clause-list-wrap" id="deClauseList"></div>
+      <div id="batchResultsTable" style="flex:1;overflow:auto;padding:16px"></div>
+    </div>
+    <!-- Progress bar while running -->
+    <div id="batchProgressWrap" style="display:none;padding:16px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0">
+      <div style="height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:6px">
+        <div id="batchProgFill" style="height:100%;background:linear-gradient(90deg,var(--accent),#8B5CF6);border-radius:2px;transition:width .3s;width:0%"></div>
+      </div>
+      <div id="batchProgLabel" style="font-size:10px;color:var(--text3)">Processing…</div>
     </div>
   </div>
 
-  <!-- LOG -->
-  <div class="de-panel" id="depanel-log">
-    <div class="de-log" id="deLog">
-      <div class="de-log-line info"><span class="lt">—</span><span class="lm">Processing log will appear here when you generate documents.</span></div>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="de-panel" id="depanel-results">
-    <div id="deResultsEmpty" class="de-empty">
-      <div class="de-big">📦</div>
-      <h3>No documents generated yet</h3>
-      <p>Upload a template and employee sheet, then click Generate to create personalised documents for each employee.</p>
-    </div>
-    <div id="deResultsList" style="display:none;" class="de-results"></div>
-    <div id="deProgressWrap" style="display:none;" class="de-progress">
-      <div class="de-prog-bar"><div class="de-prog-fill" id="deProgFill" style="width:0%"></div></div>
-      <div class="de-prog-label" id="deProgLabel">Processing…</div>
-    </div>
-  </div>
-
-</div><!-- /de-right -->
-</div><!-- /de-wrap -->
-</div><!-- /tab-docengine -->
+</div><!-- /batch-right -->
+</div><!-- /batch-wrap -->
+</div><!-- /tab-batch -->
 
 </main>
 </div>
@@ -872,6 +938,11 @@ class GASAdapter {
   async getProfiles(email,role)         { return this._get({action:'getProfiles',email,role}); }
   async publishProfile(p)               { return this._post({action:'publishProfile',...p}); }
   async write(sheet,row)                { return this._post({action:'write',sheet,row}); }
+  async getChunks(profileId)            { return this._get({action:'getChunks',profileId}); }
+  async getUsers()                      { return this._get({action:'getUsers'}); }
+  async assignProfile(id,emails,by)     { return this._post({action:'assignProfile',profileId:id,userEmails:emails,assignedBy:by}); }
+  async deassignProfile(pid,email,by)   { return this._post({action:'deassignProfile',profileId:pid,userEmail:email,removedBy:by}); }
+  async saveChunks(pid,chunks,ver)      { return this._post({action:'saveChunks',profileId:pid,chunks,version:ver}); }
   async getLicenses(req)                { return this._get({action:'getLicenses',requester:req||''}); }
   async grantLicense(d)                 { return this._post({action:'grantLicense',...d}); }
   async revokeLicense(email,by)         { return this._post({action:'revokeLicense',email,revokedBy:by}); }
@@ -1141,6 +1212,52 @@ async function showSuccess(u){
 // ═══════════════════════════════════════════
 //  SLM PROFILES — with KB chunks
 // ═══════════════════════════════════════════
+
+// ═══════════════════════════════════════════
+//  GAS HELPERS — direct fetch to GAS (no proxy needed)
+// ═══════════════════════════════════════════
+const _GAS = 'https://script.google.com/macros/s/AKfycbyGqUE3c7AV8c3sGB6t8LkzAjvv11dVtptV4KO3I756giB3g4Gqx6VX7-Mn0pq7AzKTpw/exec';
+async function gasGet(params) {
+  try {
+    const r = await fetch(_GAS + '?' + new URLSearchParams(params));
+    if (r.ok) return r.json();
+    console.warn('[gasGet] HTTP', r.status);
+  } catch(e) { console.warn('[gasGet]', e.message); }
+  return null;
+}
+async function gasPost(payload) {
+  try {
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    const r = await fetch(_GAS + '?payload=' + encoded);
+    if (r.ok) return r.json();
+    console.warn('[gasPost] HTTP', r.status);
+  } catch(e) { console.warn('[gasPost]', e.message); }
+  return null;
+}
+
+// ═══════════════════════════════════════════
+//  REMOVE SLM ASSIGNMENT
+// ═══════════════════════════════════════════
+async function removeSlm(profileId, ev) {
+  ev.stopPropagation();
+  const p = slms.find(x => x.id === profileId);
+  if (!p) return;
+  if (!confirm('Remove "' + p.name + '" from your list?\n\nYou can ask your administrator to re-assign it.')) return;
+  slms = slms.filter(x => x.id !== profileId);
+  if (activeSlm && activeSlm.id === profileId) {
+    activeSlm = null; engine = null;
+    const ws = document.getElementById('welcomeState');
+    if (ws) ws.style.display = '';
+    const sb = document.getElementById('sendBtn');
+    if (sb) sb.disabled = true;
+  }
+  renderSidebar();
+  try {
+    await gasPost({ action: 'deassignProfile', profileId, userEmail: user.email.toLowerCase().trim(), removedBy: user.email });
+  } catch(e2) { console.warn('[removeSlm] GAS unreachable'); }
+}
+window.removeSlm = removeSlm;
+
 async function fetchSlms(u){
   // Try GAS first
   try{
@@ -1230,6 +1347,7 @@ function renderSidebar(){
         <button class="slm-load-btn ${activeSlm?.id===p.id?'active':''}" onclick="event.stopPropagation();pickSlm('${p.id}')">
           ${activeSlm?.id===p.id?'✓ Active':'Use this assistant'}
         </button>
+        <button onclick="removeSlm('${p.id}',event)" title="Remove this assistant" style="width:100%;margin-top:4px;padding:3px;border-radius:4px;border:1px solid rgba(239,68,68,.25);background:transparent;color:rgba(239,68,68,.7);font-size:10px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s" onmouseover="this.style.background='rgba(239,68,68,.1)'" onmouseout="this.style.background='transparent'">✕ Remove</button>
       </div>`).join('')}
   `).join('');
 }
@@ -1697,11 +1815,11 @@ function stopGen(){
 window.stopGen=stopGen;
 
 // ════════════════════════════════════════════════════════════
-//  23-METRIC ENGINE — End-User Realtime (index.html)
+//  23-METRIC ENGINE — End-User Realtime
 // ════════════════════════════════════════════════════════════
-let _sessionMetrics = [];  // one entry per AI response
+let _sessionMetrics = [];
 let _sessionTurns   = 0;
-let bAggMetrics     = null; // aggregated — used by batch download
+let bAggMetrics     = null;
 
 function _lcs(a, b) {
   const L = Array.from({length:a.length+1}, () => new Array(b.length+1).fill(0));
@@ -1709,54 +1827,45 @@ function _lcs(a, b) {
     L[i][j] = a[i-1]===b[j-1] ? L[i-1][j-1]+1 : Math.max(L[i-1][j],L[i][j-1]);
   return L[a.length][b.length];
 }
-function _bigrams(arr) {
-  const bg=[]; for(let i=0;i<arr.length-1;i++) bg.push(arr[i]+'_'+arr[i+1]); return bg;
-}
+function _bigrams(arr) { const bg=[]; for(let i=0;i<arr.length-1;i++) bg.push(arr[i]+'_'+arr[i+1]); return bg; }
 function _pct(v) { return Math.round(Math.max(0,Math.min(1,v||0))*1000)/10; }
 
 function compute23Metrics(query, response, contextChunks, hasKb) {
-  const qToks = tokenize(query);
-  const rToks = tokenize(response);
+  const qToks = tokenize(query); const rToks = tokenize(response);
   const cText = (contextChunks||[]).map(c=>c.text||'').join(' ');
   const cToks = tokenize(cText);
   const rWords = response.split(/\s+/).filter(Boolean);
   const sentences = response.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>10);
   const rSet=new Set(rToks), cSet=new Set(cToks);
-
-  const ROUGE_L   = qToks.length ? _lcs(qToks.slice(0,30),rToks.slice(0,60))/qToks.length : 0;
-  const ROUGE_1   = qToks.length ? qToks.filter(t=>rSet.has(t)).length/qToks.length : 0;
+  const ROUGE_L = qToks.length ? _lcs(qToks.slice(0,30),rToks.slice(0,60))/qToks.length : 0;
+  const ROUGE_1 = qToks.length ? qToks.filter(t=>rSet.has(t)).length/qToks.length : 0;
   const qBg=new Set(_bigrams(qToks)), rBg=new Set(_bigrams(rToks));
-  const ROUGE_2   = qBg.size ? [...qBg].filter(b=>rBg.has(b)).length/qBg.size : 0;
+  const ROUGE_2 = qBg.size ? [...qBg].filter(b=>rBg.has(b)).length/qBg.size : 0;
   const COMPLETENESS = ROUGE_1;
-
   const groundedTerms = rToks.filter(t=>cSet.has(t)).length;
   const GROUNDING = rToks.length && hasKb ? groundedTerms/rToks.length : (hasKb?0:1);
-  const halluSents = sentences.filter(s=>{
-    if(!hasKb) return false;
-    const st=tokenize(s); return st.filter(t=>cSet.has(t)).length/Math.max(st.length,1)<0.15;
-  });
+  const halluSents = sentences.filter(s=>{ if(!hasKb) return false; const st=tokenize(s); return st.filter(t=>cSet.has(t)).length/Math.max(st.length,1)<0.15; });
   const HALLUCINATION = sentences.length ? halluSents.length/sentences.length : 0;
-  const FAITHFULNESS  = hasKb ? (1-HALLUCINATION)*GROUNDING : 1;
+  const FAITHFULNESS = hasKb ? (1-HALLUCINATION)*GROUNDING : 1;
   const precTerms = rToks.filter(t=>qToks.includes(t)||cSet.has(t)).length;
   const PRECISION = rToks.length ? precTerms/rToks.length : 0;
-  const RECALL    = COMPLETENESS;
-  const F1        = (PRECISION+RECALL)>0 ? 2*PRECISION*RECALL/(PRECISION+RECALL) : 0;
+  const RECALL = COMPLETENESS;
+  const F1 = (PRECISION+RECALL)>0 ? 2*PRECISION*RECALL/(PRECISION+RECALL) : 0;
   const RELEVANCE = ROUGE_1*0.4+COMPLETENESS*0.4+ROUGE_L*0.2;
-  const ACCURACY  = ROUGE_L*0.25+COMPLETENESS*0.25+FAITHFULNESS*0.25+RELEVANCE*0.25;
+  const ACCURACY = ROUGE_L*0.25+COMPLETENESS*0.25+FAITHFULNESS*0.25+RELEVANCE*0.25;
   const DIVERSITY = rToks.length ? new Set(rToks).size/rToks.length : 0;
-  const biasTrms  = ['always','never','definitely','certainly','absolutely','guaranteed','impossible'];
-  const BIAS      = Math.min(biasTrms.filter(t=>response.toLowerCase().includes(t)).length/Math.max(sentences.length,1),1);
-  const idealLen  = Math.max(qToks.length*3,20);
+  const biasTrms = ['always','never','definitely','certainly','absolutely','guaranteed','impossible'];
+  const BIAS = Math.min(biasTrms.filter(t=>response.toLowerCase().includes(t)).length/Math.max(sentences.length,1),1);
+  const idealLen = Math.max(qToks.length*3,20);
   const CONCISENESS = Math.max(0,1-Math.max(0,rWords.length-idealLen*2)/(idealLen*4));
   const CONTEXT_UTIL = hasKb&&cToks.length ? Math.min(groundedTerms/Math.max(cToks.length*0.1,1),1) : (hasKb?0:1);
-  const kbCovNum  = cToks.length ? new Set([...cToks].filter(t=>rSet.has(t))).size/Math.max(new Set(cToks).size,1) : null;
+  const kbCovNum = cToks.length ? new Set([...cToks].filter(t=>rSet.has(t))).size/Math.max(new Set(cToks).size,1) : null;
   const QUERY_COMPLEXITY = Math.min((qToks.length/10)*0.5+(new Set(qToks).size/Math.max(qToks.length,1))*0.5,1);
-  let coh=0; for(let i=1;i<sentences.length;i++){const p=new Set(tokenize(sentences[i-1])),c=tokenize(sentences[i]);coh+=c.filter(t=>p.has(t)).length/Math.max(c.length,1);}
+  let coh=0; for(let i=1;i<sentences.length;i++){const prev=new Set(tokenize(sentences[i-1])),cur=tokenize(sentences[i]);coh+=cur.filter(t=>prev.has(t)).length/Math.max(cur.length,1);}
   const COHERENCE = sentences.length>1 ? coh/(sentences.length-1) : 1;
   const specTerms = (response.match(/\b\d+[\.,\d]*\b|[A-Z][a-z]+\s[A-Z][a-z]+|\d{1,2}\/\d{1,2}\/\d{2,4}/g)||[]);
   const SPECIFICITY = Math.min(specTerms.length/Math.max(sentences.length,1),1);
   const OVERALL = ACCURACY*0.20+FAITHFULNESS*0.15+RELEVANCE*0.15+F1*0.10+GROUNDING*0.10+(1-HALLUCINATION)*0.10+COHERENCE*0.05+CONCISENESS*0.05+SPECIFICITY*0.05+(rWords.length>=5&&RELEVANCE>0.05?1:0)*0.05;
-
   return {
     overall:_pct(OVERALL), accuracy:_pct(ACCURACY), faithfulness:_pct(FAITHFULNESS),
     relevance:_pct(RELEVANCE), rouge_l:_pct(ROUGE_L), rouge_1:_pct(ROUGE_1),
@@ -1777,14 +1886,12 @@ function _scoreColor(v, inv=false) {
 }
 
 function resetLiveMetrics() {
-  _sessionMetrics = [];
-  _sessionTurns   = 0;
-  bAggMetrics     = null;
+  _sessionMetrics = []; _sessionTurns = 0; bAggMetrics = null;
   const bar = document.getElementById('liveMetricsBar');
   if (bar) bar.classList.remove('visible');
   ['lmTurns','lmGrounding','lmRelevance','lmHalluc','lmWords'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = id==='lmTurns' ? '0' : '—';
+    if (el) el.textContent = id==='lmTurns' ? '0' : '\u2014';
   });
   const info = document.getElementById('lmInfo');
   if (info) info.textContent = 'Live session metrics';
@@ -1794,47 +1901,24 @@ function updateLiveMetrics(query, response, contextChunks, hasKb) {
   _sessionTurns++;
   const m = compute23Metrics(query||'', response||'', contextChunks||[], !!hasKb);
   _sessionMetrics.push(m);
-
-  // Compute rolling averages
-  const n   = _sessionMetrics.length;
+  const n = _sessionMetrics.length;
   const avg = (key) => _sessionMetrics.reduce((s,x)=>s+(x[key]||0),0)/n;
+  const avgGrounding = avg('grounding'), avgRelevance = avg('relevance');
+  const avgHalluc = avg('hallucination'), avgOverall = avg('overall');
+  const avgWords = Math.round(avg('resp_length'));
 
-  const avgGrounding   = avg('grounding');
-  const avgRelevance   = avg('relevance');
-  const avgHalluc      = avg('hallucination');
-  const avgWords       = Math.round(avg('resp_length'));
-  const avgOverall     = avg('overall');
-
-  // Update bar tiles
-  const turns = document.getElementById('lmTurns');
-  if (turns) { turns.textContent = _sessionTurns; }
-
+  const turns = document.getElementById('lmTurns'); if (turns) turns.textContent = _sessionTurns;
   const ground = document.getElementById('lmGrounding');
-  if (ground) {
-    ground.textContent = avgGrounding.toFixed(0)+'%';
-    ground.style.color = _scoreColor(avgGrounding);
-  }
+  if (ground) { ground.textContent = avgGrounding.toFixed(0)+'%'; ground.style.color = _scoreColor(avgGrounding); }
   const rel = document.getElementById('lmRelevance');
-  if (rel) {
-    rel.textContent = avgRelevance.toFixed(0)+'%';
-    rel.style.color = _scoreColor(avgRelevance);
-  }
+  if (rel) { rel.textContent = avgRelevance.toFixed(0)+'%'; rel.style.color = _scoreColor(avgRelevance); }
   const halluc = document.getElementById('lmHalluc');
-  if (halluc) {
-    halluc.textContent = avgHalluc.toFixed(0)+'%';
-    halluc.style.color = _scoreColor(avgHalluc, true); // inverse — lower is better
-  }
-  const words = document.getElementById('lmWords');
-  if (words) { words.textContent = avgWords; words.style.color=''; }
-
+  if (halluc) { halluc.textContent = avgHalluc.toFixed(0)+'%'; halluc.style.color = _scoreColor(avgHalluc, true); }
+  const words = document.getElementById('lmWords'); if (words) { words.textContent = avgWords; words.style.color=''; }
   const info = document.getElementById('lmInfo');
-  if (info) info.textContent = `Session avg: ${avgOverall.toFixed(0)}% overall · ${n} response${n===1?'':'s'}`;
+  if (info) info.textContent = 'Session avg: '+avgOverall.toFixed(0)+'% overall \u00b7 '+n+' response'+(n===1?'':'s');
+  const bar = document.getElementById('liveMetricsBar'); if (bar) bar.classList.add('visible');
 
-  // Show the bar
-  const bar = document.getElementById('liveMetricsBar');
-  if (bar) bar.classList.add('visible');
-
-  // Build aggregated metrics object for batch downloads
   const aggKeys = ['overall','accuracy','faithfulness','relevance','rouge_l','rouge_1','rouge_2',
     'precision','recall','f1','completeness','grounding','hallucination','context_util',
     'coherence','specificity','diversity','conciseness','bias','query_complexity'];
@@ -1847,42 +1931,25 @@ function updateLiveMetrics(query, response, contextChunks, hasKb) {
   bAggMetrics.passRate = Math.round(_sessionMetrics.filter(x=>x.asr==='Pass').length/n*100);
   bAggMetrics.turns = _sessionTurns;
 
-  // Also show expanded metrics panel if it exists
   const panel = document.getElementById('metricsPanel');
   if (panel) {
     panel.style.display = 'block';
-    const latest = m;
     const groups = [
-      { label:'🎯 Core', keys:['overall','accuracy','faithfulness','relevance'] },
-      { label:'📊 ROUGE', keys:['rouge_l','rouge_1','rouge_2'] },
-      { label:'⚖️ P/R/F1', keys:['precision','recall','f1','completeness'] },
-      { label:'📚 KB', keys:['grounding','hallucination','context_util','kb_coverage'] },
-      { label:'✍️ Quality', keys:['coherence','specificity','diversity','conciseness','bias'] },
+      { label:'\ud83c\udfaf Core', keys:['overall','accuracy','faithfulness','relevance'] },
+      { label:'\ud83d\udcca ROUGE', keys:['rouge_l','rouge_1','rouge_2'] },
+      { label:'\u2696\ufe0f P/R/F1', keys:['precision','recall','f1','completeness'] },
+      { label:'\ud83d\udcda KB', keys:['grounding','hallucination','context_util','kb_coverage'] },
+      { label:'\u270d\ufe0f Quality', keys:['coherence','specificity','diversity','conciseness','bias'] },
     ];
     const inv = new Set(['hallucination','bias']);
-    const html = groups.map(g => `
-      <div style="margin-bottom:10px">
-        <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">${g.label}</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px">
-          ${g.keys.map(k => {
-            const v = latest[k];
-            const isNA = v===null||v===undefined;
-            const num = parseFloat(v)||0;
-            const col = isNA ? 'var(--text3)' : _scoreColor(num, inv.has(k));
-            return `<div style="background:var(--surface2);border-radius:6px;padding:6px 8px;text-align:center">
-              <div style="font-size:13px;font-weight:800;font-family:monospace;color:${col}">${isNA?'N/A':v+'%'}</div>
-              <div style="font-size:9px;color:var(--text3);margin-top:2px">${k.replace(/_/g,' ')}</div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`).join('');
-    panel.innerHTML = `<div style="padding:12px 14px"><div style="font-size:11px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between"><span>📊 Response Metrics — Turn ${_sessionTurns}</span><span style="font-size:10px;color:var(--text3)">Session avg: ${bAggMetrics.overall}% overall</span></div>${html}</div>`;
+    const html = groups.map(g => '<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">'+g.label+'</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px">'+g.keys.map(k=>{const v=m[k];const isNA=v===null||v===undefined;const num=parseFloat(v)||0;const col=isNA?'var(--text3)':_scoreColor(num,inv.has(k));return '<div style="background:var(--surface2);border-radius:6px;padding:6px 8px;text-align:center"><div style="font-size:13px;font-weight:800;font-family:monospace;color:'+col+'">'+(isNA?'N/A':v+'%')+'</div><div style="font-size:9px;color:var(--text3);margin-top:2px">'+k.replace(/_/g,' ')+'</div></div>';}).join('')+'</div></div>').join('');
+    panel.innerHTML = '<div style="padding:12px 14px"><div style="font-size:11px;font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between"><span>\ud83d\udcca Response Metrics \u2014 Turn '+_sessionTurns+'</span><span style="font-size:10px;color:var(--text3)">Session avg: '+bAggMetrics.overall+'% overall</span></div>'+html+'</div>';
   }
 }
 window.resetLiveMetrics  = resetLiveMetrics;
 window.updateLiveMetrics = updateLiveMetrics;
 window.compute23Metrics  = compute23Metrics;
-window.bAggMetrics       = bAggMetrics;
+
 
 
 // ── SLM Version Update System ─────────────────────────────
@@ -2437,766 +2504,564 @@ if(loadSess()){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  DOCUMENT ENGINE — Intelligent Clause-Aware Document Generator
+//  FILE ATTACHMENT SYSTEM
 // ═══════════════════════════════════════════════════════════════
+let attachedFiles = [];
 
-const DE = {
-  templateText: null,   // raw template text
-  templateName: '',
-  sheetData: [],        // [{col1:val, col2:val, ...}]
-  sheetHeaders: [],
-  clauses: [],          // parsed clause objects
-  toggleState: { deToggleDocx:true, deTogglePdf:true },
-  zipBlob: null,
-  results: [],
-};
-
-// ── Drag and Drop — handled inline on upload zones ─────────────
-function deDrag(e, id) { e.preventDefault(); }
-function deUnDrag(id)   { }
-function deDrop(e, type) { e.preventDefault(); }
-
-// ── Toggle ─────────────────────────────────────────────────────
-function deToggle(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  DE.toggleState[id] = !DE.toggleState[id];
-  el.classList.toggle('on', DE.toggleState[id]);
-}
-
-// ── Tab Switch ─────────────────────────────────────────────────
-function deTab(name, btn) {
-  document.querySelectorAll('.de-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.de-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('depanel-' + name)?.classList.add('active');
-  if (btn) btn.classList.add('active');
-}
-
-// ── Template Loading ───────────────────────────────────────────
-async function deLoadTemplate(file) {
-  if (!file) return;
-  DE.templateName = file.name;
-  deLog('info', `Loading template: ${file.name}`);
-  try {
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext === 'txt' || ext === 'md') {
-      DE.templateText = await file.text();
-    } else if (ext === 'docx') {
-      // Use mammoth if available, else read as text
-      try {
-        if (typeof mammoth !== 'undefined') {
-          const buf = await file.arrayBuffer();
-          const result = await mammoth.extractRawText({ arrayBuffer: buf });
-          DE.templateText = result.value;
-        } else {
-          DE.templateText = await file.text();
-        }
-      } catch(mammothErr) {
-        // mammoth failed — try plain text read
-        console.warn('[DocEngine] mammoth failed, reading as text:', mammothErr.message);
-        DE.templateText = await file.text();
-      }
-    } else {
-      DE.templateText = await file.text();
-    }
-
-    // Show file card
-    const card = document.getElementById('deTemplateCard');
-    card.style.display = 'flex';
-    card.className = 'de-file-card';
-    card.innerHTML = `<span class="df-icon">📄</span><div style="flex:1;min-width:0"><div class="df-name">${file.name}</div><div class="df-meta">${Math.ceil(DE.templateText.length/1000)}KB text extracted</div></div><button class="df-rm" onclick="deClearTemplate()">✕</button>`;
-    document.getElementById('deTemplateZone').style.display = 'none';
-
-    // Parse clauses
-    DE.clauses = deParseClausesFull(DE.templateText);
-    deLog('ok', `Parsed ${DE.clauses.length} clauses from template`);
-    deRenderClauses();
-    deDetectPlaceholders();
-    deCheckReady();
-  } catch(e) {
-    deLog('err', 'Failed to load template: ' + e.message);
+async function attachFiles(fileList) {
+  const MAX = 5;
+  if (attachedFiles.length + fileList.length > MAX) {
+    alert('Maximum ' + MAX + ' attachments at a time.'); return;
   }
+  for (const file of Array.from(fileList)) { await processAttachment(file); }
+  renderAttachChips();
+  document.getElementById('attachFileInput').value = '';
+}
+window.attachFiles = attachFiles;
+
+async function processAttachment(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const imageExts = ['png','jpg','jpeg','webp','gif'];
+  const isImage = imageExts.includes(ext);
+  try {
+    if (isImage) {
+      const dataUrl = await readFileAsDataURL(file);
+      const base64 = dataUrl.split(',')[1];
+      attachedFiles.push({ name:file.name, type:'image', ext, base64, dataUrl, mimeType:file.type||('image/'+(ext==='jpg'?'jpeg':ext)), isImage:true });
+    } else if (ext === 'pdf') {
+      const text = await extractPdfText(file);
+      attachedFiles.push({ name:file.name, type:'pdf', ext, content:text, isImage:false });
+    } else if (ext === 'docx') {
+      const buf = await file.arrayBuffer();
+      let text = '';
+      try {
+        if (typeof mammoth !== 'undefined') { const r = await mammoth.extractRawText({arrayBuffer:buf}); text = r.value; }
+        else text = '[DOCX content — mammoth library unavailable]';
+      } catch(e) { text = '[DOCX extraction failed: '+e.message+']'; }
+      attachedFiles.push({ name:file.name, type:'docx', ext, content:text, isImage:false });
+    } else if (ext === 'xlsx' || ext === 'xls') {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const csv = XLSX.utils.sheet_to_csv(ws);
+      const rows = csv.split('\n').slice(0,200).join('\n');
+      attachedFiles.push({ name:file.name, type:'xlsx', ext, content:rows, sheetName:wb.SheetNames[0], isImage:false });
+    } else if (ext === 'csv') {
+      const text = await file.text();
+      attachedFiles.push({ name:file.name, type:'csv', ext, content:text.split('\n').slice(0,300).join('\n'), isImage:false });
+    } else {
+      const text = await file.text();
+      attachedFiles.push({ name:file.name, type:'text', ext, content:text.slice(0,20000), isImage:false });
+    }
+  } catch(e) { addErr('Failed to attach '+file.name+': '+e.message); }
 }
 
-function deClearTemplate() {
-  DE.templateText = null; DE.clauses = [];
-  document.getElementById('deTemplateCard').style.display = 'none';
-  document.getElementById('deTemplateZone').style.display = 'block';
-  try { document.getElementById('deTemplateInput').value = ''; } catch(e) {}
-  document.getElementById('deClauseEmpty').style.display = '';
-  document.getElementById('deClauseEditor').style.display = 'none';
-  deCheckReady();
+function readFileAsDataURL(file) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(file);
+  });
 }
 
-// ── Sheet Loading ──────────────────────────────────────────────
-async function deLoadSheet(file) {
-  if (!file) return;
-  deLog('info', `Loading sheet: ${file.name}`);
+async function extractPdfText(file) {
   try {
     const buf = await file.arrayBuffer();
-    const wb  = XLSX.read(buf, { type:'array' });
-    const ws  = wb.Sheets[wb.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(ws, { defval:'' });
-    DE.sheetData    = data;
-    DE.sheetHeaders = data.length ? Object.keys(data[0]) : [];
-
-    const card = document.getElementById('deSheetCard');
-    card.style.display = 'flex';
-    card.className = 'de-file-card';
-    card.innerHTML = `<span class="df-icon">📊</span><div style="flex:1;min-width:0"><div class="df-name">${file.name}</div><div class="df-meta">${data.length} rows · ${DE.sheetHeaders.length} columns</div></div><button class="df-rm" onclick="deClearSheet()">✕</button>`;
-    document.getElementById('deSheetZone').style.display = 'none';
-
-    deLog('ok', `Loaded ${data.length} employees · columns: ${DE.sheetHeaders.slice(0,6).join(', ')}${DE.sheetHeaders.length>6?'…':''}`);
-    deDetectPlaceholders();
-    deCheckReady();
-  } catch(e) {
-    deLog('err', 'Failed to load sheet: ' + e.message);
-  }
+    const decoder = new TextDecoder('utf-8', {fatal:false});
+    const raw = decoder.decode(new Uint8Array(buf));
+    let text = '';
+    const matches = [...raw.matchAll(/BT[\s\S]*?ET/g)];
+    for (const m of matches) {
+      const tj = [...m[0].matchAll(/\(([^)]+)\)\s*Tj/g)];
+      for (const t of tj) text += t[1] + ' ';
+    }
+    if (!text.trim()) {
+      const lines = raw.split('\n').filter(l => l.trim() && !l.startsWith('%') && !/^[\d\s.]+$/.test(l.trim()));
+      text = lines.slice(0,100).join('\n');
+    }
+    return text.replace(/  +/g,' ').trim().slice(0,15000) || '[PDF: no extractable text — may be a scanned image]';
+  } catch(e) { return '[PDF extraction error: '+e.message+']'; }
 }
 
-function deClearSheet() {
-  DE.sheetData = []; DE.sheetHeaders = [];
-  document.getElementById('deSheetCard').style.display = 'none';
-  document.getElementById('deSheetZone').style.display = 'block';
-  try { document.getElementById('deSheetInput').value = ''; } catch(e) {}
-  deCheckReady();
+function removeAttachment(idx) { attachedFiles.splice(idx,1); renderAttachChips(); }
+window.removeAttachment = removeAttachment;
+
+function getAttachIcon(ext) {
+  return ({pdf:'📄',docx:'📝',xlsx:'📊',xls:'📊',csv:'📋',txt:'📃',md:'📃',json:'🔷',png:'🖼',jpg:'🖼',jpeg:'🖼',webp:'🖼',gif:'🖼'})[ext]||'📎';
 }
 
-// ── Placeholder Detection ──────────────────────────────────────
-function deDetectPlaceholders() {
-  if (!DE.templateText) return;
-  const matches = [...DE.templateText.matchAll(/\{\{([A-Z_0-9]+)\}\}/g)];
-  const unique  = [...new Set(matches.map(m => m[1]))];
-  if (!unique.length) { document.getElementById('dePlaceholderMap').style.display = 'none'; return; }
-
-  document.getElementById('dePlaceholderMap').style.display = 'block';
-  const list = document.getElementById('dePlaceholderList');
-  list.innerHTML = unique.map(ph => {
-    const col = DE.sheetHeaders.find(h => h.replace(/\s+/g,'_').toUpperCase() === ph || h.toUpperCase() === ph);
-    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-      <span class="ph-tag">{{${ph}}}</span>
-      <span style="color:var(--text3);font-size:10px;">→</span>
-      <span style="font-size:10px;color:${col?'#34D399':'var(--amber)'}">${col ? col : '⚠ no matching column'}</span>
-    </div>`;
+function renderAttachChips() {
+  const c = document.getElementById('attachChips');
+  if (!attachedFiles.length) { c.style.display='none'; c.innerHTML=''; return; }
+  c.style.display='flex';
+  c.innerHTML = attachedFiles.map((f,i) => {
+    const icon = f.isImage ? '<img src="'+f.dataUrl+'" class="attach-img-thumb" alt="">' : getAttachIcon(f.ext);
+    return '<div class="attach-chip">'+icon+'<span class="attach-chip-name" title="'+esc(f.name)+'">'+esc(f.name)+'</span><button class="attach-chip-rm" onclick="removeAttachment('+i+')" title="Remove">✕</button></div>';
   }).join('');
 }
 
-// ── Clause Parsing ─────────────────────────────────────────────
-function deParseClausesFull(text) {
-  const lines = text.split('\n');
-  const clauses = [];
-  let current = null;
+function clearAttachments() { attachedFiles=[]; renderAttachChips(); }
 
-  // Patterns for clause detection
-  const patterns = [
-    /^(CLAUSE|SECTION|ARTICLE|SCHEDULE|APPENDIX)\s+(\d+(?:\.\d+)*)(?:[:\s]+)(.+)/i,
-    /^(\d+(?:\.\d+)*)(?:[.)\s]+)([A-Z].+)/,
-  ];
+// ═══════════════════════════════════════════════════════════════
+//  EXPORT BAR (Excel / Word / PDF) on bot messages
+// ═══════════════════════════════════════════════════════════════
+function addExportBar(msgEl, responseText) {
+  const bar = document.createElement('div');
+  bar.className = 'msg-export-bar';
+  bar._responseText = responseText;
+  bar.innerHTML = '<span style="font-size:10px;color:var(--text3);font-weight:600;margin-right:2px">Export:</span>'
+    +'<button class="msg-export-btn" onclick="exportMsgExcel(this)">📊 Excel</button>'
+    +'<button class="msg-export-btn" onclick="exportMsgWord(this)">📝 Word</button>'
+    +'<button class="msg-export-btn" onclick="exportMsgPdf(this)">📄 PDF</button>';
+  msgEl.appendChild(bar);
+}
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-    if (!trimmed) { if (current) current.body.push(''); continue; }
+function exportMsgExcel(btn) {
+  const text = btn.closest('.msg-export-bar')._responseText;
+  const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+  const lines = text.split('\n').filter(l=>l.trim());
+  let data = [];
+  const tableLines = lines.filter(l=>l.includes('|'));
+  if (tableLines.length >= 2) {
+    for (const row of tableLines) {
+      const cells = row.split('|').map(c=>c.trim()).filter(c=>c&&!/^[-:]+$/.test(c));
+      if (cells.length) data.push(cells);
+    }
+  }
+  if (!data.length) data = [['AI Response'],...lines.filter(Boolean).map(l=>[l])];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'AI Response');
+  XLSX.writeFile(wb, 'ai-response-'+ts+'.xlsx');
+}
+window.exportMsgExcel = exportMsgExcel;
 
-    let matched = false;
-    for (const pat of patterns) {
-      const m = trimmed.match(pat);
-      if (m) {
-        if (current) clauses.push(current);
-        const isKeyword = isNaN(m[1][0]);
-        const num   = isKeyword ? m[2] : m[1];
-        const title = isKeyword ? m[3] : m[2];
-        current = {
-          id:       'cl_' + num.replace(/\./g,'_'),
-          number:   num,
-          title:    title.trim(),
-          body:     [],
-          excluded: false,
-          isTop:    !num.includes('.'),
-        };
-        matched = true;
-        break;
+async function exportMsgWord(btn) {
+  const text = btn.closest('.msg-export-bar')._responseText;
+  const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+  try {
+    const docxLib = (typeof docx!=='undefined')?docx:window.docx;
+    if (!docxLib) { alert('Word export library not loaded. Please refresh.'); return; }
+    const {Document,Packer,Paragraph,TextRun,HeadingLevel} = docxLib;
+    const lines = text.split('\n');
+    const children = lines.map(line => {
+      const t = line.trim();
+      if (!t) return new Paragraph({text:''});
+      if (/^#{1,2}\s/.test(t)) return new Paragraph({heading:HeadingLevel.HEADING_1, children:[new TextRun({text:t.replace(/^#+\s/,''),bold:true,size:26,font:'Calibri'})]});
+      if (/^#{3,}\s/.test(t)) return new Paragraph({heading:HeadingLevel.HEADING_2, children:[new TextRun({text:t.replace(/^#+\s/,''),bold:true,size:24,font:'Calibri'})]});
+      const parts = []; let rest=t, last=0; const bp=/\*\*(.*?)\*\*/g; let m;
+      while ((m=bp.exec(rest))!==null) {
+        if (m.index>last) parts.push(new TextRun({text:rest.slice(last,m.index),size:22,font:'Calibri'}));
+        parts.push(new TextRun({text:m[1],bold:true,size:22,font:'Calibri'}));
+        last=m.index+m[0].length;
+      }
+      if (last<rest.length) parts.push(new TextRun({text:rest.slice(last),size:22,font:'Calibri'}));
+      return new Paragraph({spacing:{before:60,after:60}, children:parts.length?parts:[new TextRun({text:t,size:22,font:'Calibri'})]});
+    });
+    const doc = new Document({sections:[{properties:{}, children:[
+      new Paragraph({spacing:{before:0,after:280}, children:[new TextRun({text:'AI Response',bold:true,size:32,font:'Calibri',color:'1E3A5F'})]}),
+      new Paragraph({spacing:{before:0,after:400}, children:[new TextRun({text:'Generated: '+new Date().toLocaleString(),size:18,color:'94A3B8',italics:true,font:'Calibri'})]}),
+      ...children
+    ]}]});
+    const blob = await Packer.toBlob(doc);
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ai-response-'+ts+'.docx'; a.click();
+  } catch(e) { alert('Word export failed: '+e.message); }
+}
+window.exportMsgWord = exportMsgWord;
+
+function exportMsgPdf(btn) {
+  const text = btn.closest('.msg-export-bar')._responseText;
+  const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+  try {
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(), M=22;
+    let y=M;
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(30,58,95);
+    doc.text('AI Response', M, y); y+=8;
+    doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(148,163,184);
+    doc.text('Generated: '+new Date().toLocaleString(), M, y); y+=10;
+    doc.setDrawColor(30,58,95); doc.setLineWidth(0.5);
+    doc.line(M,y,W-M,y); y+=8;
+    for (const line of text.split('\n')) {
+      const t=line.trim();
+      if (!t){y+=3;if(y>H-20){doc.addPage();y=M;}continue;}
+      if (/^#{1,2}\s/.test(t)){if(y>H-25){doc.addPage();y=M;}doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(30,58,95);doc.text(t.replace(/^#+\s/,''),M,y);y+=7;}
+      else if (/^#{3,}\s/.test(t)){if(y>H-20){doc.addPage();y=M;}doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(44,82,130);doc.text(t.replace(/^#+\s/,''),M,y);y+=6;}
+      else {
+        doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(30,41,59);
+        const clean=t.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1').replace(/`(.*?)`/g,'$1');
+        const wrapped=doc.splitTextToSize(clean,W-M*2);
+        if(y+wrapped.length*4.5>H-20){doc.addPage();y=M;}
+        doc.text(wrapped,M,y);y+=wrapped.length*4.5+1;
       }
     }
-    if (!matched && current) current.body.push(line);
-  }
-  if (current) clauses.push(current);
-  return clauses;
+    const total=doc.internal.getNumberOfPages();
+    for(let p=1;p<=total;p++){doc.setPage(p);doc.setFontSize(8);doc.setTextColor(148,163,184);doc.text('Page '+p+' of '+total,W/2,H-9,{align:'center'});}
+    doc.save('ai-response-'+ts+'.pdf');
+  } catch(e) { alert('PDF export failed: '+e.message); }
 }
+window.exportMsgPdf = exportMsgPdf;
 
-// ── Render Clause List ─────────────────────────────────────────
-function deRenderClauses() {
-  if (!DE.clauses.length) return;
-
-  document.getElementById('deClauseEmpty').style.display = 'none';
-  const editor = document.getElementById('deClauseEditor');
-  editor.style.display = 'flex';
-  editor.style.flexDirection = 'column';
-  editor.style.overflow = 'hidden';
-  editor.style.flex = '1';
-
-  const excl = DE.clauses.filter(c => c.excluded).length;
-  document.getElementById('deClauseInfo').textContent =
-    `${DE.clauses.length} clauses · ${excl} excluded`;
-
-  const list = document.getElementById('deClauseList');
-  list.innerHTML = DE.clauses.map((c, i) => {
-    const bodyPreview = c.body.filter(Boolean).join(' ').slice(0, 120);
-    const isNested = c.number.includes('.');
-    return `<div class="cl-item ${c.excluded?'excluded':''}" id="clitem_${i}">
-      <div class="cl-num ${isNested?'sub':''}">${c.number}</div>
-      <div class="cl-content">
-        <div class="cl-title">${esc(c.title)}${c.excluded?'<span style="font-size:9px;margin-left:6px;color:var(--danger);font-weight:700;background:rgba(239,68,68,.1);border-radius:3px;padding:1px 5px;">EXCLUDED</span>':''}</div>
-        ${bodyPreview?`<div class="cl-body">${esc(bodyPreview)}${bodyPreview.length>=120?'…':''}</div>`:''}
-      </div>
-      <div class="cl-actions">
-        <button class="cl-toggle" onclick="deToggleClause(${i})">${c.excluded?'Include':'Exclude'}</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function deToggleClause(i) {
-  DE.clauses[i].excluded = !DE.clauses[i].excluded;
-  deRenderClauses();
-}
-
-function deSelectAll(include) {
-  DE.clauses.forEach(c => c.excluded = !include);
-  deRenderClauses();
-}
-
-// ── AI Auto-Exclude ────────────────────────────────────────────
-async function deAiAnalyse() {
-  if (!DE.clauses.length) return;
-
-  // Use the locally loaded WebLLM engine — zero external API calls
-  if (!engine) {
-    deLog('warn', 'No model loaded — load an SLM from the Chat tab first, then return here');
+// ═══════════════════════════════════════════════════════════════
+//  PATCHED sendMsg — injects attachment context + export bar
+// ═══════════════════════════════════════════════════════════════
+const _origSendMsg = sendMsg;
+window.sendMsg = async function() {
+  // If no attachments, run original but add export bar
+  if (!attachedFiles.length) {
+    if (!engine || isGen) return;
+    const inp = document.getElementById('chatInput');
+    const txt = inp.value.trim(); if (!txt) return;
+    inp.value=''; inp.style.height='auto';
+    addUser(txt); isGen=true;
+    document.getElementById('sendBtn').style.display='none';
+    document.getElementById('stopBtn').style.display='block';
+    const typing = addTyping();
+    let abortCtrl = new AbortController();
+    window._currentAbort = abortCtrl;
+    try {
+      const kbChunks=activeSlm?.kbChunks||[]; const hasKb=kbChunks.length>0;
+      const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
+      let prompt=base; let srcInfo=null;
+      const modelKey=activeSlm?.modelKey||'llama3b';
+      const requestedMaxTok=activeSlm?.params?.maxTok||512;
+      const temp=activeSlm?.params?.temp??0.1;
+      const isStrict=!!(activeSlm?.strictMode);
+      const RAG_INSTRUCTIONS=isStrict
+        ?'STRICT INSTRUCTIONS: You MUST answer ONLY using the KNOWLEDGE BASE above. If the question is not answered by the Knowledge Base, respond with: "I can only answer questions related to '+(activeSlm?.name||'this topic')+'. This question falls outside my knowledge base." Do NOT use any general knowledge. Do NOT guess or infer beyond the provided context.'
+        :'INSTRUCTIONS: Answer using the KNOWLEDGE BASE as your primary source. Cite sources when referencing specific details. If the knowledge base has partial info, supplement with general knowledge where needed.';
+      if (hasKb) {
+        const topK=activeSlm?.params?.topK||6;
+        const {sources,found,topDocs,searchMode}=await hybridSearch(txt,kbChunks,topK);
+        if(found&&topDocs?.length){srcInfo=sources;prompt=buildSafePrompt(base,topDocs,RAG_INSTRUCTIONS,modelKey);console.log('[Forge] Search mode:',searchMode,'| chunks used:',topDocs.length,'| strict:',isStrict);}
+        else if(hasKb&&!found){prompt=isStrict?base+'\n\nSTRICT INSTRUCTION: No relevant information in KB. Refuse.':base+'\n\nNOTE: No specific information found in the knowledge base for this query.';}
+      } else if(isStrict&&!hasKb){prompt=base+'\n\nNOTE: Strict mode enabled but no KB loaded.';}
+      const historyToks=chatHistory.reduce((s,m)=>s+estTokens(m.content),0);
+      const {maxTok,finalPrompt}=safeParams(modelKey,prompt,txt,requestedMaxTok,historyToks);
+      const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
+      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+      const inputBudget=ctxLimit-maxOutToks-SAFETY;
+      const systemTok=estTokens(finalPrompt); const userTok=estTokens(txt);
+      let histAlloc=inputBudget-systemTok-userTok;
+      const recentHistory=[];
+      for(let i=chatHistory.length-1;i>=0;i--){const t=estTokens(chatHistory[i].content)+4;if(histAlloc-t<0)break;recentHistory.unshift(chatHistory[i]);histAlloc-=t;}
+      try{if(engine&&!engine._generating)await engine.resetChat();}catch(e){}
+      const messages=[{role:'system',content:finalPrompt},...recentHistory,{role:'user',content:txt}];
+      const totalEstimate=systemTok+recentHistory.reduce((s,m)=>s+estTokens(m.content)+4,0)+userTok;
+      const safeMsgs=totalEstimate+maxOutToks+SAFETY>ctxLimit?[{role:'system',content:finalPrompt},{role:'user',content:txt}]:messages;
+      const stream=await engine.chat.completions.create({messages:safeMsgs,temperature:temp,max_tokens:maxOutToks,stream:true});
+      let out=''; typing.remove(); const msgEl=addBot('');
+      for await(const chunk of stream){if(abortCtrl.signal.aborted)break;out+=chunk.choices[0]?.delta?.content||'';msgEl.querySelector('.body').innerHTML=out.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');}
+      chatHistory.push({role:'user',content:txt});chatHistory.push({role:'assistant',content:out});
+      if(chatHistory.length>MAX_HISTORY_TURNS*2)chatHistory=chatHistory.slice(-MAX_HISTORY_TURNS*2);
+      if(hasKb&&srcInfo?.length){const src=document.createElement('div');src.className='msg-source';src.innerHTML='📚 '+srcInfo.join(' · ');msgEl.appendChild(src);}
+      if(out.trim()) addExportBar(msgEl, out);
+      const kbChunksForMetrics=hasKb&&activeSlm?.kbChunks?.length?activeSlm.kbChunks.filter((_,i)=>i<4):[];
+      updateLiveMetrics(txt,out,kbChunksForMetrics,hasKb);
+    }catch(e){if(!abortCtrl.signal.aborted){typing.remove();addErr('Error: '+e.message);}}
+    finally{isGen=false;window._currentAbort=null;document.getElementById('sendBtn').style.display='block';document.getElementById('stopBtn').style.display='none';}
     return;
   }
 
-  deLog('step', '🤖 Using local model to analyse clause structure…');
+  // Has attachments
+  if (!engine || isGen) return;
+  const inp = document.getElementById('chatInput');
+  const userText = inp.value.trim();
+  inp.value=''; inp.style.height='auto';
+  const filesToProcess = [...attachedFiles];
+  clearAttachments();
+
+  let enrichedTxt = userText || 'Please analyse the attached file(s) and summarize the key information.';
+  const nonImg = filesToProcess.filter(f=>!f.isImage);
+  if (nonImg.length) {
+    enrichedTxt += '\n\n---\n📎 ATTACHED FILE CONTENTS:\n';
+    for (const f of nonImg) {
+      if(f.type==='xlsx'||f.type==='csv') enrichedTxt+='\n['+f.type.toUpperCase()+': '+f.name+']\n```\n'+f.content.slice(0,8000)+'\n```\n';
+      else if(f.type==='docx') enrichedTxt+='\n[Word: '+f.name+']\n'+f.content.slice(0,8000)+'\n';
+      else if(f.type==='pdf') enrichedTxt+='\n[PDF: '+f.name+']\n'+f.content.slice(0,8000)+'\n';
+      else enrichedTxt+='\n['+f.name+']\n'+f.content.slice(0,8000)+'\n';
+    }
+    enrichedTxt+='\n---';
+  }
+  if (filesToProcess.some(f=>f.isImage)) enrichedTxt+='\n\n[Note: Image attached — local WebLLM is text-only; image shown as label only]';
+
+  const fileLabels = filesToProcess.map(f=>'<span style="background:rgba(79,142,247,.12);padding:1px 5px;border-radius:3px;font-size:10px;color:var(--accent)">'+(f.isImage?'🖼':'📎')+' '+esc(f.name)+'</span>').join(' ');
+  const userEl = document.createElement('div'); userEl.className='msg user';
+  userEl.innerHTML='<div class="msg-who">YOU</div><div class="msg-bubble body">'+esc(userText||'Analyse attached file(s)')+'<br><div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">'+fileLabels+'</div></div>';
+  document.getElementById('chatBody').appendChild(userEl); userEl.scrollIntoView({behavior:'smooth'});
+
+  isGen=true; document.getElementById('sendBtn').style.display='none'; document.getElementById('stopBtn').style.display='block';
+  const typing=addTyping(); const abortCtrl=new AbortController(); window._currentAbort=abortCtrl;
   try {
-    const clauseList = DE.clauses.map(c => `${c.number}. ${c.title}`).join('\n');
-    const prompt = `You are a legal document assistant. These are clauses from an employment contract template:\n\n${clauseList}\n\nIdentify any clauses that are typically optional or role-specific (e.g. pension, equity, relocation, vehicle allowance, probation extensions, commission). Return ONLY a JSON array of clause numbers to flag as optional, e.g. ["2.1","4.3"]. Return [] if all clauses are standard. No explanation, no markdown, just the JSON array.`;
+    const kbChunks=activeSlm?.kbChunks||[]; const hasKb=kbChunks.length>0;
+    const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
+    const modelKey=activeSlm?.modelKey||'llama3b';
+    const requestedMaxTok=activeSlm?.params?.maxTok||512; const temp=activeSlm?.params?.temp??0.1;
+    const isStrict=!!(activeSlm?.strictMode);
+    const RAG=isStrict?'STRICT: Answer only from KB.':'Answer using KB as primary source.';
+    let prompt=base; let srcInfo=null;
+    if(hasKb){const topK=activeSlm?.params?.topK||6;const{sources,found,topDocs}=await hybridSearch(enrichedTxt,kbChunks,topK);if(found&&topDocs?.length){srcInfo=sources;prompt=buildSafePrompt(base,topDocs,RAG,modelKey);}}
+    const{maxTok,finalPrompt}=safeParams(modelKey,prompt,enrichedTxt,requestedMaxTok,0);
+    const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
+    const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+    try{if(engine&&!engine._generating)await engine.resetChat();}catch(e){}
+    const stream=await engine.chat.completions.create({messages:[{role:'system',content:finalPrompt},{role:'user',content:enrichedTxt}],temperature:temp,max_tokens:maxOutToks,stream:true});
+    let out=''; typing.remove(); const msgEl=addBot('');
+    for await(const chunk of stream){if(abortCtrl.signal.aborted)break;out+=chunk.choices[0]?.delta?.content||'';msgEl.querySelector('.body').innerHTML=out.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');}
+    chatHistory.push({role:'user',content:enrichedTxt});chatHistory.push({role:'assistant',content:out});
+    if(chatHistory.length>MAX_HISTORY_TURNS*2)chatHistory=chatHistory.slice(-MAX_HISTORY_TURNS*2);
+    if(hasKb&&srcInfo?.length){const src=document.createElement('div');src.className='msg-source';src.innerHTML='📚 '+srcInfo.join(' · ');msgEl.appendChild(src);}
+    if(out.trim()) addExportBar(msgEl, out);
+    const kbMetrics=hasKb&&activeSlm?.kbChunks?.length?activeSlm.kbChunks.filter((_,i)=>i<4):[];
+    updateLiveMetrics(enrichedTxt,out,kbMetrics,hasKb);
+  }catch(e){if(!abortCtrl.signal.aborted){typing.remove();addErr('Error: '+e.message);}}
+  finally{isGen=false;window._currentAbort=null;document.getElementById('sendBtn').style.display='block';document.getElementById('stopBtn').style.display='none';}
+};
 
-    // Reset engine to avoid context contamination
-    try { if (engine.resetChat) await engine.resetChat(); } catch(e) {}
-    const stream = await engine.chat.completions.create({
-      messages: [{ role:'user', content: prompt }],
-      temperature: 0.1,
-      max_tokens: 200,
-      stream: true,
-    });
+// ═══════════════════════════════════════════════════════════════
+//  BATCH PROCESSING
+// ═══════════════════════════════════════════════════════════════
+const BATCH = {
+  fileData:[], headers:[], promptCol:'', results:[], isRunning:false,
+  toggleStates:{ batchToggleHitl:true },
+};
 
-    let out = '';
-    for await (const chunk of stream) {
-      out += chunk.choices[0]?.delta?.content || '';
-    }
-
-    // Parse JSON from model output
-    const match = out.match(/\[.*?\]/s);
-    if (match) {
-      const nums = JSON.parse(match[0]);
-      if (Array.isArray(nums)) {
-        let flagged = 0;
-        nums.forEach(n => {
-          const c = DE.clauses.find(cl => cl.number === String(n));
-          if (c) { c.excluded = true; flagged++; }
-        });
-        deRenderClauses();
-        deLog('ok', `Local AI flagged ${flagged} optional clauses for review`);
-        return;
-      }
-    }
-    deLog('warn', 'Could not parse AI response — please exclude clauses manually');
-  } catch(e) {
-    deLog('warn', 'AI analysis failed: ' + e.message);
+function batchToggle(id) {
+  BATCH.toggleStates[id] = !BATCH.toggleStates[id];
+  const btn=document.getElementById(id), thumb=document.getElementById(id+'Thumb');
+  if (!btn) return;
+  if (BATCH.toggleStates[id]) {
+    btn.style.background='rgba(79,142,247,.25)'; btn.style.borderColor='var(--accent)';
+    if(thumb){thumb.style.background='var(--accent)';thumb.style.left='18px';}
+  } else {
+    btn.style.background='var(--surface2)'; btn.style.borderColor='var(--border)';
+    if(thumb){thumb.style.background='var(--text3)';thumb.style.left='2px';}
   }
 }
+window.batchToggle = batchToggle;
 
-function deCheckReady() {
-  const ready = DE.templateText && DE.sheetData.length > 0;
-  document.getElementById('deGenBtn').disabled = !ready;
+function batchTabSwitch(name, btn) {
+  document.querySelectorAll('.batch-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.batch-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('bpanel-'+name)?.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+window.batchTabSwitch = batchTabSwitch;
+
+async function batchLoadFile(file) {
+  if(!file) return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  batchLog('info','Loading: '+file.name);
+  try {
+    let data=[],headers=[];
+    if(ext==='csv'||ext==='txt'){
+      const text=await file.text();
+      const lines=text.split('\n').filter(l=>l.trim());
+      if(!lines.length) throw new Error('File is empty');
+      const delim=lines[0].includes('\t')?'\t':',';
+      headers=lines[0].split(delim).map(h=>h.trim().replace(/^"|"$/g,''));
+      for(let i=1;i<lines.length;i++){const vals=lines[i].split(delim).map(v=>v.trim().replace(/^"|"$/g,''));const row={};headers.forEach((h,j)=>{row[h]=vals[j]||'';});data.push(row);}
+    } else if(ext==='xlsx'||ext==='xls') {
+      const buf=await file.arrayBuffer(); const wb=XLSX.read(buf,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]]; data=XLSX.utils.sheet_to_json(ws,{defval:''});
+      headers=data.length?Object.keys(data[0]):[];
+    } else throw new Error('Unsupported file type. Use CSV, TXT, or Excel.');
+
+    BATCH.fileData=data; BATCH.headers=headers; BATCH.promptCol=headers[0]||''; BATCH.results=[];
+    const card=document.getElementById('batchFileCard');
+    card.style.display='flex'; card.className='batch-file-card';
+    card.innerHTML='<span style="font-size:18px">'+(ext==='csv'||ext==='txt'?'📋':'📊')+'</span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(file.name)+'</div>'
+      +'<div style="font-size:10px;color:var(--text3)">'+data.length+' rows · '+headers.length+' columns</div></div>'
+      +'<button onclick="batchClearFile()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:3px;" title="Remove">✕</button>';
+    document.getElementById('batchUploadZone').style.display='none';
+    const sel=document.getElementById('batchColSelect');
+    sel.innerHTML=headers.map(h=>'<option value="'+esc(h)+'">'+esc(h)+'</option>').join('');
+    BATCH.promptCol=sel.value||headers[0]||'';
+    sel.onchange=()=>{BATCH.promptCol=sel.value;batchLog('info','Prompt column set to: "'+sel.value+'"');};
+    sel.oninput=sel.onchange;
+    document.getElementById('batchColGroup').style.display='block';
+    document.getElementById('batchColGroupEmpty').style.display='none';
+    batchLog('ok','Loaded '+data.length+' rows — '+headers.slice(0,5).join(', ')+(headers.length>5?'…':''));
+    batchRenderPreview();
+    batchTabSwitch('preview',document.getElementById('btab-preview'));
+    document.getElementById('batchRunBtn').disabled=false;
+  } catch(e) { batchLog('err','Failed to load file: '+e.message); }
+}
+window.batchLoadFile = batchLoadFile;
+
+function batchClearFile() {
+  BATCH.fileData=[]; BATCH.headers=[]; BATCH.promptCol=''; BATCH.results=[];
+  document.getElementById('batchFileCard').style.display='none';
+  document.getElementById('batchUploadZone').style.display='block';
+  document.getElementById('batchColGroup').style.display='none';
+  document.getElementById('batchColGroupEmpty').style.display='block';
+  document.getElementById('batchRunBtn').disabled=true;
+  // Replace the file input so the same file can be re-uploaded
+  try{
+    const old=document.getElementById('batchFileInput');
+    const fresh=old.cloneNode(true);
+    fresh.value='';
+    fresh.onclick=function(){this.value=null;};
+    fresh.onchange=function(){batchLoadFile(this.files[0]);};
+    old.parentNode.replaceChild(fresh,old);
+  }catch(e){}
+  batchRenderPreview();
+}
+window.batchClearFile = batchClearFile;
+
+function batchRenderPreview() {
+  const empty=document.getElementById('batchPreviewEmpty'), table=document.getElementById('batchPreviewTable');
+  if(!BATCH.fileData.length){empty.style.display='flex';table.style.display='none';return;}
+  empty.style.display='none'; table.style.display='block';
+  const rows=BATCH.fileData.slice(0,20), cols=BATCH.headers;
+  table.innerHTML='<table class="batch-preview-table"><thead><tr>'+cols.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'
+    +rows.map(row=>'<tr>'+cols.map(c=>'<td title="'+esc(String(row[c]||''))+'">'+esc(String(row[c]||'').slice(0,60))+(String(row[c]||'').length>60?'…':'')+'</td>').join('')+'</tr>').join('')
+    +'</tbody></table>'+(BATCH.fileData.length>20?'<div style="text-align:center;padding:8px;font-size:11px;color:var(--text3)">Showing 20 of '+BATCH.fileData.length+' rows</div>':'');
 }
 
-// ── Main Generate Function ─────────────────────────────────────
-async function deGenerate() {
-  if (!DE.templateText || !DE.sheetData.length) return;
-  const btn = document.getElementById('deGenBtn');
-  btn.disabled = true; btn.textContent = '⏳ Generating…';
-
-  deTab('log', document.querySelectorAll('.de-tab')[1]);
-  document.getElementById('deLog').innerHTML = '';
-  document.getElementById('deProgressWrap').style.display = 'block';
-  document.getElementById('deResultsList').style.display = 'none';
-  document.getElementById('deResultsEmpty').style.display = '';
-
-  DE.results = [];
-  const zip = new JSZip();
-  const nameCol = document.getElementById('deNameCol').value || 'Employee Name';
-  const commentCol = document.getElementById('deCommentCol').value || 'Comments';
-  const total = DE.sheetData.length;
-  const makeDocx = DE.toggleState['deToggleDocx'];
-  const makePdf  = DE.toggleState['deTogglePdf'];
-
-  deLog('step', `Starting generation for ${total} employees`);
-  deLog('info', `DOCX: ${makeDocx} · PDF: ${makePdf}`);
-
-  for (let i = 0; i < DE.sheetData.length; i++) {
-    const row = DE.sheetData[i];
-    const empName = (row[nameCol] || row['Name'] || row['name'] || `Employee_${i+1}`).toString().replace(/[^a-zA-Z0-9_\s-]/g,'').trim();
-    const safeName = empName.replace(/\s+/g,'_');
-    const comment  = row[commentCol] || row['Comment'] || row['comment'] || '';
-
-    deProgress(i, total, `Processing ${empName}…`);
-    deLog('step', `[${i+1}/${total}] ${empName}`);
-
+async function batchRun() {
+  if(!engine){alert('No AI model loaded. Go to Chat tab and load an assistant first.');return;}
+  if(!BATCH.fileData.length){alert('No file loaded. Upload a CSV or Excel file first.');return;}
+  if(!BATCH.promptCol){alert('Please select which column contains the prompts.');return;}
+  if(BATCH.isRunning) return;
+  const maxRows=Math.min(parseInt(document.getElementById('batchMaxRows').value)||50,BATCH.fileData.length);
+  const rows=BATCH.fileData.slice(0,maxRows);
+  BATCH.isRunning=true; BATCH.results=[];
+  document.getElementById('batchRunBtn').disabled=true;
+  document.getElementById('batchRunBtn').textContent='⏳ Running…';
+  document.getElementById('batchProgressWrap').style.display='block';
+  document.getElementById('batchResultsContent').style.display='none';
+  document.getElementById('batchResultsEmpty').style.display='none';
+  document.getElementById('batchLog').innerHTML='';
+  batchTabSwitch('log',document.getElementById('btab-log'));
+  batchLog('step','Starting batch: '+rows.length+' rows · Column: "'+BATCH.promptCol+'"');
+  batchLog('info','Model: '+(activeSlm?.name||'current')+' · Mode: '+(activeSlm?.strictMode?'Strict':'Open'));
+  const kbChunks=activeSlm?.kbChunks||[]; const hasKb=kbChunks.length>0;
+  const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
+  const modelKey=activeSlm?.modelKey||'llama3b';
+  const requestedMaxTok=Math.min(activeSlm?.params?.maxTok||512,400);
+  const temp=activeSlm?.params?.temp??0.1;
+  const isStrict=!!(activeSlm?.strictMode);
+  const RAG=isStrict?'STRICT INSTRUCTIONS: Answer ONLY from the KNOWLEDGE BASE. If not found, say so.':'INSTRUCTIONS: Answer using the KNOWLEDGE BASE as primary source.';
+  const startTime=Date.now();
+  for(let i=0;i<rows.length;i++){
+    const row=rows[i]; const prompt=String(row[BATCH.promptCol]||'').trim();
+    batchProgress(i,rows.length,'Processing row '+(i+1)+' of '+rows.length+'…');
+    if(!prompt){batchLog('warn','Row '+(i+1)+': empty prompt — skipped');BATCH.results.push({...row,_prompt:'',_response:'(empty — skipped)',_status:'skip',_ms:0});continue;}
+    batchLog('info','['+(i+1)+'/'+rows.length+'] '+prompt.slice(0,80)+(prompt.length>80?'…':''));
+    const t0=Date.now();
     try {
-      // 1. Determine clause exclusions from comment
-      const exclusions = await deResolveExclusions(comment, DE.clauses);
-      if (exclusions.length) deLog('info', `  Excluded clauses: ${exclusions.join(', ')}`);
-
-      // 2. Build filtered clause list
-      const activeClauses = DE.clauses.map(c => ({
-        ...c,
-        excluded: c.excluded || exclusions.includes(c.number)
-      })).filter(c => !c.excluded);
-
-      // 3. Assemble document text with renumbering + reference cleanup
-      const docText = deAssembleDocument(DE.templateText, activeClauses, DE.clauses);
-
-      // 4. Replace placeholders with employee data
-      const finalText = deMergePlaceholders(docText, row);
-
-      // 5. Create subfolder
-      const folder = zip.folder(safeName);
-
-      // 6. Generate DOCX
-      if (makeDocx) {
-        const docxBlob = await deCreateDocx(finalText, empName, DE.templateName);
-        folder.file(`${safeName}.docx`, docxBlob);
-        deLog('ok', `  ✓ ${safeName}.docx`);
-      }
-
-      // 7. Generate PDF
-      if (makePdf) {
-        const pdfBlob = deCreatePdf(finalText, empName);
-        folder.file(`${safeName}.pdf`, pdfBlob);
-        deLog('ok', `  ✓ ${safeName}.pdf`);
-      }
-
-      DE.results.push({ name: empName, safeName, status:'ok', clauses: activeClauses.length, excluded: exclusions.length });
-
+      let sysPrompt=base;
+      if(hasKb){const topK=activeSlm?.params?.topK||4;const{found,topDocs}=await hybridSearch(prompt,kbChunks,topK);if(found&&topDocs?.length)sysPrompt=buildSafePrompt(base,topDocs,RAG,modelKey);}
+      const{maxTok,finalPrompt}=safeParams(modelKey,sysPrompt,prompt,requestedMaxTok,0);
+      const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
+      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+      try{if(engine&&!engine._generating)await engine.resetChat();}catch(e){}
+      const stream=await engine.chat.completions.create({messages:[{role:'system',content:finalPrompt},{role:'user',content:prompt}],temperature:temp,max_tokens:maxOutToks,stream:true});
+      let out='';
+      for await(const chunk of stream) out+=chunk.choices[0]?.delta?.content||'';
+      const elapsed=Date.now()-t0;
+      BATCH.results.push({...row,_prompt:prompt,_response:out.trim(),_status:'ok',_ms:elapsed});
+      batchLog('ok','  ✓ '+elapsed+'ms · '+out.trim().length+' chars');
     } catch(e) {
-      deLog('err', `  ✗ ${empName}: ${e.message}`);
-      DE.results.push({ name: empName, safeName, status:'err', error: e.message });
+      const elapsed=Date.now()-t0;
+      BATCH.results.push({...row,_prompt:prompt,_response:'ERROR: '+e.message,_status:'err',_ms:elapsed});
+      batchLog('err','  ✗ '+e.message);
     }
   }
+  const totalMs=Date.now()-startTime;
+  const ok=BATCH.results.filter(r=>r._status==='ok').length;
+  batchProgress(rows.length,rows.length,'Complete');
+  batchLog('step','Done — '+ok+'/'+rows.length+' successful · '+(totalMs/1000).toFixed(1)+'s total');
+  BATCH.isRunning=false;
+  document.getElementById('batchRunBtn').disabled=false;
+  document.getElementById('batchRunBtn').textContent='▶ Run Batch';
+  batchRenderResults();
+  batchTabSwitch('results',document.getElementById('btab-results'));
+  if(BATCH.toggleStates.batchToggleHitl&&BATCH.results.length) batchSendToReview();
+}
+window.batchRun = batchRun;
 
-  deProgress(total, total, 'Packaging ZIP…');
-  deLog('step', 'Packaging ZIP archive…');
+function batchRenderResults() {
+  const empty=document.getElementById('batchResultsEmpty');
+  const content=document.getElementById('batchResultsContent');
+  const badge=document.getElementById('batchResultBadge');
+  const wrap=document.getElementById('batchProgressWrap');
+  if(!BATCH.results.length){empty.style.display='flex';content.style.display='none';wrap.style.display='none';return;}
+  wrap.style.display='none'; empty.style.display='none'; content.style.display='flex';
+  const ok=BATCH.results.filter(r=>r._status==='ok').length;
+  badge.style.display='inline'; badge.textContent=ok;
+  document.getElementById('batchResultsSummary').textContent=BATCH.results.length+' rows processed · '+ok+' successful';
+  document.getElementById('batchDlBtn').style.display='block';
+  const table=document.getElementById('batchResultsTable');
+  table.innerHTML='<table class="batch-result-table"><thead><tr><th>#</th><th>'+esc(BATCH.promptCol)+'</th><th>AI Response</th><th>Time</th><th>Status</th></tr></thead><tbody>'
+    +BATCH.results.map((r,i)=>'<tr><td style="color:var(--text3)">'+(i+1)+'</td><td style="max-width:200px;white-space:pre-wrap;word-break:break-word">'+esc((r._prompt||'').slice(0,120))+((r._prompt||'').length>120?'…':'')+'</td><td class="response-cell">'+esc((r._response||'').slice(0,300))+((r._response||'').length>300?'…':'')+'</td><td style="white-space:nowrap;color:var(--text3)">'+(r._ms?r._ms+'ms':'—')+'</td><td class="status-'+(r._status==='ok'?'ok':'err')+'">'+(r._status==='ok'?'✓ OK':r._status==='skip'?'⚡ Skip':'✗ Err')+'</td></tr>').join('')
+    +'</tbody></table>';
+}
 
+function batchExportResults() {
+  if(!BATCH.results.length) return;
+  const fmt=document.getElementById('batchExportFmt').value;
+  const ts=new Date().toISOString().slice(0,10);
+  const exportData=BATCH.results.map((r,i)=>{
+    const row={'#':i+1}; BATCH.headers.forEach(h=>{row[h]=r[h]??'';});
+    row['AI Response']=r._response||''; row['Status']=r._status; row['Time (ms)']=r._ms||0; return row;
+  });
+  if(fmt==='xlsx'){
+    const ws=XLSX.utils.json_to_sheet(exportData);
+    const cols=Object.keys(exportData[0]||{});
+    ws['!cols']=cols.map(k=>({wch:Math.min(Math.max(k.length+2,12),60)}));
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Batch Results');
+    const summary=XLSX.utils.aoa_to_sheet([['Batch Results Summary'],['Generated',new Date().toLocaleString()],['Total Rows',BATCH.results.length],['Successful',BATCH.results.filter(r=>r._status==='ok').length],['Errors',BATCH.results.filter(r=>r._status==='err').length],['Prompt Column',BATCH.promptCol],['AI Assistant',activeSlm?.name||'Unknown']]);
+    XLSX.utils.book_append_sheet(wb,summary,'Summary');
+    XLSX.writeFile(wb,'batch-results-'+ts+'.xlsx');
+    batchLog('ok','Exported: batch-results-'+ts+'.xlsx');
+  } else {
+    const cols=['#',...BATCH.headers,'AI Response','Status','Time (ms)'];
+    const csvLines=[cols.join(',')];
+    exportData.forEach(row=>{csvLines.push(cols.map(c=>'"'+String(row[c]||'').replace(/"/g,'""')+'"').join(','));});
+    const blob=new Blob([csvLines.join('\n')],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='batch-results-'+ts+'.csv'; a.click();
+    batchLog('ok','Exported: batch-results-'+ts+'.csv');
+  }
+}
+window.batchExportResults = batchExportResults;
+
+function batchSendToReview() {
+  if(!BATCH.results.length){alert('No batch results. Run a batch job first.');return;}
+  const reviewable=BATCH.results.filter(r=>r._status==='ok');
+  if(!reviewable.length){alert('No successful results to review.');return;}
+  const mapped=reviewable.map(r=>({[BATCH.promptCol]:r._prompt,'_ai_response':r._response}));
   try {
-    DE.zipBlob = await zip.generateAsync({ type:'blob', compression:'DEFLATE', compressionOptions:{ level:6 } });
-    deLog('ok', `ZIP ready — ${Math.ceil(DE.zipBlob.size/1024)}KB · ${DE.results.length} employees`);
-    deRenderResults();
-    deTab('results', document.querySelectorAll('.de-tab')[2]);
+    populateReview(mapped, BATCH.promptCol, '_ai_response');
+    addSysMsg('📤 '+reviewable.length+' batch results sent to Human Review. Click "👥 Human Review ↗" in the top nav.');
+    goTab('chat',document.querySelector('.tb-tab'));
+    batchLog('ok',reviewable.length+' results queued for Human Review');
   } catch(e) {
-    deLog('err', 'ZIP generation failed: ' + e.message);
+    batchLog('warn','Could not send to review: '+e.message);
+    addSysMsg('ℹ️ Batch complete — '+reviewable.length+' results ready.');
   }
+}
+window.batchSendToReview = batchSendToReview;
 
-  deProgress(total, total, 'Complete');
-  document.getElementById('deProgressWrap').style.display = 'none';
-  btn.disabled = false; btn.textContent = '⚡ Generate Documents';
+function batchLog(type, msg) {
+  const log=document.getElementById('batchLog'); if(!log) return;
+  const line=document.createElement('div'); line.className='batch-log-line '+type;
+  const time=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  line.innerHTML='<span class="blt">'+time+'</span><span class="blm">'+esc(msg)+'</span>';
+  log.appendChild(line); log.scrollTop=log.scrollHeight;
 }
 
-// ── Resolve Exclusions from Comment (LLM + regex fallback) ────
-async function deResolveExclusions(comment, clauses) {
-  if (!comment.trim()) return [];
-
-  const clauseMap = clauses.map(c => `${c.number}: ${c.title}`).join('\n');
-
-  // Try local WebLLM engine first — zero external calls, full privacy
-  if (engine) {
-    try {
-      const prompt = `You are a contract processing assistant.\n\nContract clauses:\n${clauseMap}\n\nEmployee comment: "${comment}"\n\nWhich clause numbers should be EXCLUDED? Return ONLY a JSON array, e.g. ["2.1","3"] or []. No explanation.`;
-      try { if (engine.resetChat) await engine.resetChat(); } catch(e2) {}
-      const stream = await engine.chat.completions.create({
-        messages: [{ role:'user', content: prompt }],
-        temperature: 0.05, max_tokens: 150, stream: true,
-      });
-      let out = '';
-      for await (const chunk of stream) { out += chunk.choices[0]?.delta?.content || ''; }
-      const match = out.match(/\[.*?\]/s);
-      if (match) {
-        const nums = JSON.parse(match[0]);
-        if (Array.isArray(nums)) return nums.map(String);
-      }
-    } catch(e) { /* fallback to regex */ }
-  }
-
-  // Regex fallback — look for explicit clause references in comment
-  const excluded = [];
-  const lc = comment.toLowerCase();
-  clauses.forEach(c => {
-    const titleWords = c.title.toLowerCase().split(/\s+/);
-    const keyWords = titleWords.filter(w => w.length > 4);
-    if (keyWords.some(w => lc.includes(w))) {
-      if (lc.includes('remov') || lc.includes('exclud') || lc.includes('no ') ||
-          lc.includes('not ') || lc.includes('without') || lc.includes('n/a')) {
-        excluded.push(c.number);
-      }
-    }
-    // Direct clause number reference
-    if (new RegExp(`clause\s+${c.number.replace('.','\\.')}|section\s+${c.number.replace('.','\\..')}`,'i').test(comment)) {
-      excluded.push(c.number);
-    }
-  });
-  return [...new Set(excluded)];
+function batchProgress(done, total, label) {
+  const pct=total>0?Math.round((done/total)*100):0;
+  const fill=document.getElementById('batchProgFill');
+  const lbl=document.getElementById('batchProgLabel');
+  if(fill) fill.style.width=pct+'%';
+  if(lbl) lbl.textContent=label||done+'/'+total;
 }
-
-// ── Assemble Document with Renumbering + Reference Cleanup ────
-function deAssembleDocument(originalText, activeClauses, allClauses) {
-  // Build renumbering map: old number → new number
-  const excluded = allClauses.filter(c => c.excluded || !activeClauses.find(a => a.id === c.id));
-  const excludedNums = new Set(excluded.map(c => c.number));
-
-  // Renumber active clauses correctly
-  const renumMap = {};
-  const topCounters = {};
-  const subCounters = {};
-
-  let topN = 0;
-  activeClauses.forEach(c => {
-    const parts = c.number.split('.');
-    if (parts.length === 1) {
-      topN++;
-      renumMap[c.number] = String(topN);
-      subCounters[String(topN)] = 0;
-    } else {
-      const parentOld = parts.slice(0,-1).join('.');
-      const parentNew = renumMap[parentOld] || parentOld;
-      subCounters[parentNew] = (subCounters[parentNew] || 0) + 1;
-      renumMap[c.number] = parentNew + '.' + subCounters[parentNew];
-    }
-  });
-
-  // Rebuild document line by line
-  const lines = originalText.split('\n');
-  const output = [];
-  let skipMode = false;
-  let skipDepth = null;
-
-  const clauseLinePattern = /^(CLAUSE|SECTION|ARTICLE)\s+(\d+(?:\.\d+)*)(?:[:\s]+)(.+)/i;
-  const numLinePattern    = /^(\d+(?:\.\d+)*)(?:[.)\s]+)([A-Z].+)/;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-
-    // Check if this line starts a clause
-    let clauseNum = null;
-    let m = trimmed.match(clauseLinePattern);
-    if (m) clauseNum = m[2];
-    else { m = trimmed.match(numLinePattern); if (m) clauseNum = m[1]; }
-
-    if (clauseNum) {
-      // Entering a clause — check if excluded
-      if (excludedNums.has(clauseNum)) {
-        skipMode = true;
-        skipDepth = clauseNum;
-        continue;
-      }
-      // Coming back from skip — check if we've left the excluded section
-      if (skipMode && !clauseNum.startsWith(skipDepth + '.')) {
-        skipMode = false; skipDepth = null;
-      }
-      if (skipMode) continue;
-
-      // Renumber this clause
-      const newNum = renumMap[clauseNum] || clauseNum;
-      output.push(line.replace(clauseNum, newNum));
-      continue;
-    }
-
-    if (skipMode) continue;
-
-    // For non-clause lines: clean up cross-references to excluded clauses
-    let processed = line;
-    excludedNums.forEach(oldNum => {
-      // Remove sentences containing references to excluded clauses
-      const refPat = new RegExp(
-        `[^.!?]*(?:clause|section|paragraph|article|schedule)\\s+${oldNum.replace('.','\\.')}[^.!?]*[.!?]?`,
-        'gi'
-      );
-      processed = processed.replace(refPat, '').trim();
-      // Also update renumbered references
-      const newNum = renumMap[oldNum];
-      if (newNum) {
-        processed = processed.replace(
-          new RegExp(`(clause|section|paragraph)\\s+${oldNum.replace('.','\\.')}`, 'gi'),
-          `$1 ${newNum}`
-        );
-      }
-    });
-
-    // Update remaining references with new numbers
-    Object.entries(renumMap).forEach(([oldN, newN]) => {
-      if (oldN !== newN) {
-        processed = processed.replace(
-          new RegExp(`\\b(clause|section|article)\\s+${oldN.replace('.','\\.')}\\b`, 'gi'),
-          `$1 ${newN}`
-        );
-      }
-    });
-
-    if (processed.trim()) output.push(processed);
-  }
-
-  return output.join('\n');
-}
-
-// ── Placeholder Merge ──────────────────────────────────────────
-function deMergePlaceholders(text, row) {
-  let out = text;
-  // Map column names to placeholder format
-  Object.entries(row).forEach(([col, val]) => {
-    const key = col.replace(/\s+/g,'_').toUpperCase();
-    out = out.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), val||'');
-    // Also try direct column name match
-    const key2 = col.toUpperCase();
-    out = out.replace(new RegExp(`\\{\\{${key2}\\}\\}`, 'g'), val||'');
-  });
-  return out;
-}
-
-// ── DOCX Generation ────────────────────────────────────────────
-async function deCreateDocx(text, employeeName, templateName) {
-  const docxLib = (typeof docx !== 'undefined') ? docx : window.docx;
-  if (!docxLib) { throw new Error('docx library not loaded. Check your internet connection and reload the page.'); }
-  const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docxLib;
-
-  const lines = text.split('\n');
-  const children = [];
-
-  const clauseLinePattern = /^(CLAUSE|SECTION|ARTICLE)\s+(\d+(?:\.\d+)*)(?:[:\s]+)(.+)/i;
-  const numLinePattern    = /^(\d+(?:\.\d+)*)(?:[.)\s]+)([A-Z].+)/;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) { children.push(new Paragraph({ text:'' })); continue; }
-
-    let m = trimmed.match(clauseLinePattern);
-    let isHeading = false;
-    let num = '', title = '';
-
-    if (m) { isHeading=true; num=m[2]; title=m[3]; }
-    else { m = trimmed.match(numLinePattern); if(m){ isHeading=true; num=m[1]; title=m[2]; } }
-
-    if (isHeading && !num.includes('.')) {
-      children.push(new Paragraph({
-        heading: HeadingLevel.HEADING_1,
-        spacing: { before:300, after:120 },
-        children: [new TextRun({ text:`${num}. ${title}`, bold:true, size:26, font:'Calibri', color:'1E3A5F' })]
-      }));
-    } else if (isHeading && num.includes('.')) {
-      children.push(new Paragraph({
-        heading: HeadingLevel.HEADING_2,
-        spacing: { before:200, after:80 },
-        children: [new TextRun({ text:`${num} ${title}`, bold:true, size:23, font:'Calibri', color:'2C5282' })]
-      }));
-    } else {
-      children.push(new Paragraph({
-        spacing: { before:60, after:60 },
-        children: [new TextRun({ text:trimmed, size:22, font:'Calibri' })]
-      }));
-    }
-  }
-
-  const doc = new Document({
-    sections: [{
-      properties: {},
-      children: [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          spacing: { before:0, after:360 },
-          children: [new TextRun({ text:templateName.replace(/\.\w+$/,''), bold:true, size:32, font:'Calibri', color:'0D1B2A' })]
-        }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          spacing: { before:0, after:480 },
-          children: [new TextRun({ text:`Prepared for: ${employeeName}`, size:24, font:'Calibri', color:'475569', italics:true })]
-        }),
-        ...children,
-        new Paragraph({ spacing:{ before:480, after:0 },
-          children:[new TextRun({ text:`Generated: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`, size:18, color:'94A3B8', italics:true })]
-        }),
-      ]
-    }]
-  });
-
-  return Packer.toBlob(doc);
-}
-
-// ── PDF Generation ─────────────────────────────────────────────
-function deCreatePdf(text, employeeName) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const margin = 22;
-  const contentW = pageW - margin * 2;
-  let y = margin;
-
-  const addPage = () => {
-    doc.addPage();
-    y = margin;
-    // Header line
-    doc.setDrawColor(30, 58, 95);
-    doc.setLineWidth(0.5);
-    doc.line(margin, 14, pageW - margin, 14);
-    doc.setFontSize(8); doc.setTextColor(148, 163, 184);
-    doc.text(employeeName, margin, 11);
-    doc.text(new Date().toLocaleDateString('en-GB'), pageW - margin, 11, { align:'right' });
-  };
-
-  const checkPage = (needed=10) => { if (y + needed > pageH - 20) addPage(); };
-
-  const clauseLinePattern = /^(CLAUSE|SECTION|ARTICLE)\s+(\d+(?:\.\d+)*)(?:[:\s]+)(.+)/i;
-  const numLinePattern    = /^(\d+(?:\.\d+)*)(?:[.)\s]+)([A-Z].+)/;
-
-  const lines = text.split('\n');
-
-  // Title
-  doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(13,27,42);
-  doc.text(employeeName, pageW/2, y, { align:'center' }); y += 8;
-  doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(71,85,105);
-  doc.text('Employment Contract', pageW/2, y, { align:'center' }); y += 14;
-
-  // Divider
-  doc.setDrawColor(30,58,95); doc.setLineWidth(0.5);
-  doc.line(margin, y, pageW-margin, y); y += 8;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) { y += 3; checkPage(); continue; }
-
-    let m = trimmed.match(clauseLinePattern);
-    let isTopH=false, isSubH=false, num='', title='';
-    if (m) { isTopH=!m[2].includes('.'); isSubH=m[2].includes('.'); num=m[2]; title=m[3]; }
-    else { m=trimmed.match(numLinePattern); if(m){ isTopH=!m[1].includes('.'); isSubH=m[1].includes('.'); num=m[1]; title=m[2]; } }
-
-    if (isTopH) {
-      checkPage(12);
-      if (y > margin + 30) y += 4;
-      doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(30,58,95);
-      doc.text(`${num}.  ${title}`, margin, y); y += 7;
-    } else if (isSubH) {
-      checkPage(8);
-      y += 2;
-      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(44,82,130);
-      doc.text(`${num}  ${title}`, margin + 4, y); y += 5;
-    } else {
-      doc.setFontSize(9.5); doc.setFont('helvetica','normal'); doc.setTextColor(30,41,59);
-      const wrapped = doc.splitTextToSize(trimmed, contentW - 4);
-      checkPage(wrapped.length * 4.5 + 2);
-      doc.text(wrapped, margin + 4, y); y += wrapped.length * 4.5 + 1;
-    }
-  }
-
-  // Footer
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= totalPages; p++) {
-    doc.setPage(p);
-    doc.setFontSize(8); doc.setTextColor(148,163,184);
-    doc.setDrawColor(200,200,200); doc.setLineWidth(0.3);
-    doc.line(margin, pageH-14, pageW-margin, pageH-14);
-    doc.text(`Page ${p} of ${totalPages}`, pageW/2, pageH-9, { align:'center' });
-    doc.text(`Confidential — ${employeeName}`, margin, pageH-9);
-  }
-
-  return doc.output('blob');
-}
-
-// ── Results Render ─────────────────────────────────────────────
-function deRenderResults() {
-  const list = document.getElementById('deResultsList');
-  const empty = document.getElementById('deResultsEmpty');
-  const badge = document.getElementById('deResultBadge');
-
-  if (!DE.results.length) return;
-  empty.style.display = 'none';
-  list.style.display = 'block';
-
-  const ok = DE.results.filter(r=>r.status==='ok').length;
-  badge.style.display = 'inline';
-  badge.textContent = ok;
-
-  list.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div style="font-size:13px;font-weight:700;color:var(--text2)">${DE.results.length} employees processed · ${ok} successful</div>
-      <button class="de-dl-btn" onclick="deDownloadZip()">⬇ Download All (ZIP)</button>
-    </div>
-    ${DE.results.map(r => `
-      <div class="de-result-card">
-        <div style="font-size:20px">${r.status==='ok'?'✅':'❌'}</div>
-        <div style="flex:1;min-width:0">
-          <div class="rc-name">${esc(r.name)}</div>
-          <div class="rc-meta">${r.status==='ok'?`${r.clauses} clauses · ${r.excluded} excluded`:r.error}</div>
-        </div>
-        ${r.status==='ok'?`
-          <div class="rc-badges">
-            ${DE.toggleState['deToggleDocx']?'<span class="rc-badge docx">DOCX</span>':''}
-            ${DE.toggleState['deTogglePdf']?'<span class="rc-badge pdf">PDF</span>':''}
-          </div>`:''
-        }
-      </div>`).join('')}
-  `;
-}
-
-function deDownloadZip() {
-  if (!DE.zipBlob) return;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(DE.zipBlob);
-  a.download = `SLM_Forge_Documents_${new Date().toISOString().slice(0,10)}.zip`;
-  a.click();
-  deLog('ok', 'ZIP downloaded');
-}
-
-// ── Log Helper ─────────────────────────────────────────────────
-function deLog(type, msg) {
-  const log = document.getElementById('deLog');
-  const line = document.createElement('div');
-  line.className = 'de-log-line ' + type;
-  const time = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  line.innerHTML = `<span class="lt">${time}</span><span class="lm">${esc(msg)}</span>`;
-  log.appendChild(line);
-  log.scrollTop = log.scrollHeight;
-}
-
-// ── Progress ───────────────────────────────────────────────────
-function deProgress(done, total, label) {
-  const pct = total > 0 ? Math.round((done/total)*100) : 0;
-  document.getElementById('deProgFill').style.width = pct + '%';
-  document.getElementById('deProgLabel').textContent = label || `${done}/${total}`;
-}
-
-window.deLoadTemplate = deLoadTemplate;
-window.deLoadSheet    = deLoadSheet;
-window.deGenerate     = deGenerate;
-window.deTab          = deTab;
-window.deToggleClause = deToggleClause;
-window.deSelectAll    = deSelectAll;
-window.deAiAnalyse    = deAiAnalyse;
-window.deDownloadZip  = deDownloadZip;
-window.deDrag         = deDrag;
-window.deUnDrag       = deUnDrag;
-window.deDrop         = deDrop;
-window.deToggle       = deToggle;
-window.deClearTemplate= deClearTemplate;
-window.deClearSheet   = deClearSheet;
 
 </script>
 </body>
