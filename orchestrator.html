@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SLM Forge — Orchestrator</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f8ef7'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-size='18' font-family='Arial' fill='white'%3E⚡%3C/text%3E%3C/svg%3E"/>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap');
 :root{
@@ -660,16 +661,20 @@ const SUPER_ADMINS = [
 function checkSuperAdmin(email,pass){ const e=email.toLowerCase().trim(),h=btoa(pass); const f=SUPER_ADMINS.find(a=>a.email===e&&a.passHash===h); return f?{success:true,name:f.name,role:'admin',org:'',appAccess:['forge','studio','orchestrator'],isSuperAdmin:true}:null; }
 function isSuperAdminEmail(email){ return SUPER_ADMINS.some(a=>a.email===email.toLowerCase().trim()); }
 class GASDb {
-  constructor(url){ this.url=url; }
+  constructor(url){ this.gasUrl=url; this.proxy='/api/db'; }
   async _get(p){
-    try{ const r=await fetch(this.url+'?'+new URLSearchParams(p),{mode:'cors'}); if(r.ok) return r.json(); }catch(e){ console.warn('[GASDb._get]',e.message); }
+    try{
+      const r=await fetch(this.proxy+'?'+new URLSearchParams(p));
+      if(r.ok) return r.json();
+      console.warn('[GASDb._get] HTTP',r.status);
+    }catch(e){ console.warn('[GASDb._get]',e.message); }
     return null;
   }
   async _post(p){
     try{
-      const payload = encodeURIComponent(JSON.stringify(p));
-      const r = await fetch(this.url+'?payload='+payload, {method:'GET',mode:'cors'});
+      const r=await fetch(this.proxy,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
       if(r.ok) return r.json();
+      console.warn('[GASDb._post] HTTP',r.status);
     }catch(e){ console.warn('[GASDb._post]',e.message); }
     return null;
   }
@@ -774,26 +779,25 @@ function bootOrch(u) {
   loadUsers(); // auto-load users on boot so Refresh Users works immediately
 }
 
-// ── GAS helpers ──
+// ── GAS helpers (all go through /api/db proxy — direct GAS fetch blocked by COEP) ──
 async function gasPost(payload) {
   try {
-    const encoded = encodeURIComponent(JSON.stringify(payload));
-    await fetch(GAS_URL + '?payload=' + encoded, { method:'GET', mode:'cors' });
+    await fetch('/api/db', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
   } catch(e) { console.warn('[gasPost]', e.message); }
 }
 async function gasPostWithResponse(payload) {
   try {
-    const encoded = encodeURIComponent(JSON.stringify(payload));
-    const r = await fetch(GAS_URL + '?payload=' + encoded, { method:'GET', mode:'cors' });
+    const r = await fetch('/api/db', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
     if (r.ok) return r.json();
+    console.warn('[gasPostWithResponse] HTTP', r.status);
   } catch(e) { console.warn('[gasPostWithResponse]', e.message); }
   return null;
 }
 async function gasGet(params) {
   try {
-    const r = await fetch(GAS_URL+'?'+new URLSearchParams(params), {mode:'cors'});
+    const r = await fetch('/api/db?'+new URLSearchParams(params));
     if (r.ok) return r.json();
-    console.warn('[GAS] Non-OK response:', r.status, r.statusText);
+    console.warn('[GAS] Non-OK response:', r.status);
   } catch(e) {
     console.warn('[GAS] GET failed:', e.message, 'params:', params);
   }
