@@ -1,11 +1,9 @@
 {
-  "functions": {
-    "api/db.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "rewrites": [
-    { "source": "/api/db", "destination": "/api/db.js" }
+    {
+      "source": "/api/db",
+      "destination": "https://script.google.com/macros/s/AKfycbyGqUE3c7AV8c3sGB6t8LkzAjvv11dVtptV4KO3I756giB3g4Gqx6VX7-Mn0pq7AzKTpw/exec"
+    }
   ],
   "headers": [
     {
