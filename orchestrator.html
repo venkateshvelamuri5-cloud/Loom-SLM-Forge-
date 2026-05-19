@@ -827,16 +827,23 @@ async function loadAllProfiles() {
   const res = await gasGet({action:'getProfiles', role:'admin', email:'admin'});
   if (res?.profiles?.length) {
     allProfiles = res.profiles;
-    // Fetch real KB chunk counts from KB_Chunks sheet for each profile
+    // Fetch real KB chunks for each profile and cache them
+    const chunkCache = {};
+    try { Object.assign(chunkCache, JSON.parse(localStorage.getItem('slmforge_kb_cache')||'{}')); } catch(e){}
     await Promise.all(allProfiles.map(async p => {
       try {
         const cr = await gasGet({action:'getChunks', profileId:p.id});
-        if (cr?.chunks) {
-          p.kbChunks = cr.chunks; // Store chunks so metrics can use them
-          p.kbChunkCount = cr.count || cr.chunks.length;
+        if (cr?.chunks?.length) {
+          p.kbChunks = cr.chunks;
+          p.kbChunkCount = cr.chunks.length;
+          chunkCache[p.id] = { chunks: cr.chunks, cachedAt: Date.now() };
+        } else {
+          p.kbChunks = chunkCache[p.id]?.chunks || [];
+          p.kbChunkCount = p.kbChunks.length;
         }
       } catch(e) { p.kbChunks = []; p.kbChunkCount = 0; }
     }));
+    try { localStorage.setItem('slmforge_kb_cache', JSON.stringify(chunkCache)); } catch(e){}
   } else {
     // Fallback to local Studio profiles
     try {
@@ -1270,9 +1277,16 @@ async function confirmAssign() {
     });
     closeAssignModal();
     if (res?.success) {
+      // Bust the user-specific SLM cache for every assigned user so next refresh picks up new assignment
+      checked.forEach(email => {
+        try {
+          const cacheKey = 'slmforge_user_slms_' + email.toLowerCase().replace(/[^a-z0-9]/g,'_');
+          localStorage.removeItem(cacheKey);
+        } catch(e) {}
+      });
       // Re-fetch from GAS to get confirmed fresh state
       await refreshProfileAssignments();
-      toast(`Assigned to ${checked.length} user${checked.length>1?'s':''} ✓`, 'ok');
+      toast(`Assigned to ${checked.length} user${checked.length>1?'s':''} ✓ — they will see it on next login/refresh`, 'ok');
     } else {
       renderSlmGrid(); renderUserGrid();
       toast(`Assigned locally (GAS sync pending)`, 'ok');

@@ -1265,33 +1265,55 @@ async function removeSlm(profileId, ev) {
 window.removeSlm = removeSlm;
 
 async function fetchSlms(u){
+  const CACHE_KEY = 'slmforge_user_slms_' + (u.email||'').toLowerCase().replace(/[^a-z0-9]/g,'_');
+  const CHUNK_KEY = 'slmforge_kb_cache';
+
+  function getChunkCache(){ try{ return JSON.parse(localStorage.getItem(CHUNK_KEY)||'{}'); }catch(e){ return {}; } }
+  function saveChunkCache(c){ try{ localStorage.setItem(CHUNK_KEY, JSON.stringify(c)); }catch(e){} }
+
   // Try GAS first
   try{
-    const res=await gasGet({action:'getProfiles',email:u.email,role:u.role});
-    // KEY: check res?.success or Array.isArray(res?.profiles)
-    // Empty array IS a valid response (user has no assigned bots) — do NOT fall through
+    const res = await gasGet({action:'getProfiles', email:u.email, role:u.role});
     if(res && Array.isArray(res.profiles)){
-      slms = res.profiles; // may be empty — that is correct for unassigned users
-
+      slms = res.profiles; // GAS already filters by role/assignment server-side
       if(slms.length > 0){
-        // Fetch KB chunks for each profile from KB_Chunks sheet
-        const local = getLocalProfiles(u.email, u.role);
+        // Load KB chunks: try GAS, fall back to local cache
+        const chunkCache = getChunkCache();
         await Promise.all(slms.map(async (p) => {
           try {
             const cr = await gasGet({action:'getChunks', profileId:p.id});
-            if(cr?.chunks?.length){ p.kbChunks = cr.chunks; return; }
+            if(cr?.chunks?.length){
+              p.kbChunks = cr.chunks;
+              chunkCache[p.id] = { chunks: cr.chunks, cachedAt: Date.now() };
+              return;
+            }
           } catch(e){}
-          const lp = local.find(l=>l.id===p.id);
-          p.kbChunks = lp?.kbChunks?.length ? lp.kbChunks : [];
+          // Restore from cache
+          if(chunkCache[p.id]?.chunks?.length) p.kbChunks = chunkCache[p.id].chunks;
+          else p.kbChunks = [];
         }));
+        saveChunkCache(chunkCache);
       }
-      return; // GAS responded — trust it, don't fall through to local
+      // Persist full profile list so refresh works offline
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({profiles:slms, savedAt:Date.now(), email:u.email, role:u.role})); }catch(e){}
+      return;
     }
   }catch(e){ console.warn('[fetchSlms] GAS error:', e.message); }
 
-  // GAS unreachable only — use localStorage with access filtering
+  // GAS unreachable — restore from user-specific cache
+  try{
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(cached && cached.email===u.email && Array.isArray(cached.profiles) && cached.profiles.length){
+      slms = cached.profiles;
+      addSysMsg('📶 Offline mode — showing your last synced assistants. Refresh when online to get updates.');
+      return;
+    }
+  }catch(e){}
+
+  // Last resort: shared published profiles filtered for this user
   slms = getLocalProfiles(u.email, u.role);
 }
+
 
 function getLocalProfiles(email, role){
   let profiles = [];
@@ -2013,17 +2035,32 @@ async function applySlmUpdate() {
     addSysMsg(`✅ Updated to v${newVersion} — ${kbCount} KB chunks loaded. Ready.`);
   }
 
-  // Update localStorage cache
+  // Update localStorage caches
   try {
+    // 1. Update shared published profiles cache
     const all = JSON.parse(localStorage.getItem('slmforge_published_profiles')||'[]');
     const idx = all.findIndex(p => p.id === profileId);
     if (idx >= 0) {
       all[idx] = { ...all[idx], kbChunks:newChunks, activeVersion:newVersion, version:newVersion };
       localStorage.setItem('slmforge_published_profiles', JSON.stringify(all));
     }
+    // 2. Update user-specific SLM cache
+    const CACHE_KEY = 'slmforge_user_slms_' + (user?.email||'').toLowerCase().replace(/[^a-z0-9]/g,'_');
+    const userCache = JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if (userCache?.profiles) {
+      const pi = userCache.profiles.findIndex(p => p.id === profileId);
+      if (pi >= 0) {
+        userCache.profiles[pi] = { ...userCache.profiles[pi], kbChunks:newChunks, activeVersion:newVersion, version:newVersion };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(userCache));
+      }
+    }
+    // 3. Update KB chunk cache
+    const chunkCache = JSON.parse(localStorage.getItem('slmforge_kb_cache')||'{}');
+    chunkCache[profileId] = { chunks: newChunks, cachedAt: Date.now() };
+    localStorage.setItem('slmforge_kb_cache', JSON.stringify(chunkCache));
   } catch(e) {}
 
-  // Update slms list
+  // Update in-memory slms list
   const si = slms.findIndex(p => p.id === profileId);
   if (si >= 0) { slms[si].activeVersion = newVersion; slms[si].kbChunks = newChunks; }
 }
@@ -2505,6 +2542,9 @@ if (!_qEmbedderReady && !_qEmbedderLoading) {
 
 if(loadSess()){
   document.getElementById('loginModal').classList.add('hidden');
+  // Show sidebar loading state immediately — prevents blank sidebar flash on refresh
+  const slmListEl = document.getElementById('slmList');
+  if(slmListEl) slmListEl.innerHTML = '<div style="text-align:center;padding:20px 12px;color:var(--text3);font-size:11px"><div style="font-size:20px;margin-bottom:6px">⏳</div>Loading your assistants…</div>';
   fetchSlms(user).then(()=>bootApp(user));
 }else{
   document.getElementById('loginModal').classList.remove('hidden');
