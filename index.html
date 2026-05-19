@@ -541,7 +541,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <textarea class="chat-ta" id="chatInput" rows="1" placeholder="Type your question…"
         onkeydown="handleKey(event)"
         oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendMsg()" disabled>Send</button>
+      <button class="send-btn" id="sendBtn" onclick="window.sendMsg()">Send</button>
       <button class="stop-btn" id="stopBtn" onclick="stopGen()">■ Stop</button>
     </div>
     <div class="input-hint">Press Enter to send · Shift+Enter for new line · 📎 to attach files</div>
@@ -813,6 +813,10 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 <script type="module">
 import * as webllm from '@mlc-ai/web-llm';
 import { pipeline, env as tjsEnv } from '@xenova/transformers';
+
+// ── HTML escape helper (used throughout for safe innerHTML rendering) ──
+const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+window.esc = esc;
 
 // ── Local Embedding Model (all-MiniLM-L6-v2, ~23MB, 384-dim) ──
 // Runs 100% in browser — no API calls, no data leaves device
@@ -1674,7 +1678,7 @@ function handleKey(e){
     if(EXITS.some(w=>txt.toLowerCase()===w||txt.toLowerCase().startsWith(w+' '))){
       document.getElementById('fbBar').classList.remove('hidden');fbShown=true;return;
     }
-    sendMsg();
+    window.sendMsg();
   }
 }
 window.handleKey=handleKey;
@@ -2711,9 +2715,17 @@ window.exportMsgPdf = exportMsgPdf;
 // ═══════════════════════════════════════════════════════════════
 const _origSendMsg = sendMsg;
 window.sendMsg = async function() {
-  // If no attachments, run original but add export bar
+  // Guard: no engine or already generating
+  if (isGen) return;
+  if (!engine) {
+    const inp = document.getElementById('chatInput');
+    const txt = inp?.value?.trim();
+    if (!txt) return;
+    addSysMsg('⏳ No AI assistant loaded yet. Select an assistant from the sidebar to get started.');
+    return;
+  }
+  // Route: no attachments vs has attachments
   if (!attachedFiles.length) {
-    if (!engine || isGen) return;
     const inp = document.getElementById('chatInput');
     const txt = inp.value.trim(); if (!txt) return;
     inp.value=''; inp.style.height='auto';
@@ -2768,10 +2780,9 @@ window.sendMsg = async function() {
   }
 
   // Has attachments
-  if (!engine || isGen) return;
-  const inp = document.getElementById('chatInput');
-  const userText = inp.value.trim();
-  inp.value=''; inp.style.height='auto';
+  const inp2 = document.getElementById('chatInput');
+  const userText = inp2.value.trim();
+  inp2.value=''; inp2.style.height='auto';
   const filesToProcess = [...attachedFiles];
   clearAttachments();
 
