@@ -9,30 +9,57 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 :root{
-  --bg:#0a0c10; --surface:#111318; --surface2:#181c24; --surface3:#1e2330;
-  --border:#252b38; --border2:#2e3547;
-  --accent:#4f8ef7; --accent-hover:#6ba3ff; --accent-glow:rgba(79,142,247,.15);
-  --green:#22c55e; --amber:#f59e0b; --red:#ef4444;
-  --text:#e8eaf0; --text1:#e8eaf0; --text2:#9aa3b5; --text3:#5c6478;
-  --radius:10px; --radius-sm:6px; --shadow:0 4px 24px rgba(0,0,0,.4);
-  --danger:#ef4444; --a2:#34D399;
+  /* ── Logmark palette ── */
+  --bg:         #f5f3ed;      /* cream — main page background */
+  --surface:    #ffffff;      /* white — cards, panels */
+  --surface2:   #faf9f6;      /* paper — hover states */
+  --surface3:   #f0ede5;      /* slightly deeper cream */
+  --border:     #e2e0d8;      /* rule — dividers */
+  --border2:    #ccc9be;      /* stronger border */
+
+  /* Brand accents */
+  --accent:     #4a5c4e;      /* sage — primary interactive */
+  --accent-hover:#3a4a3e;     /* sage dark */
+  --accent-glow:rgba(74,92,78,.10);
+  --a2:         #3c4a5c;      /* slate — secondary accent */
+  --a2-glow:    rgba(60,74,92,.10);
+  --a3:         #8c6d3f;      /* amber — warnings / highlights */
+  --danger:     #9b3a3a;      /* muted red */
+
+  /* Text */
+  --text:       #1a1a18;      /* ink — primary text */
+  --text1:      #1a1a18;
+  --text2:      #3d3d38;      /* ink2 — secondary text */
+  --text3:      #7a7a72;      /* ink3 — muted text */
+  --muted:      #7a7a72;
+
+  /* Status */
+  --green:      #4a5c4e;      /* sage for success */
+  --green-glow: rgba(74,92,78,.12);
+  --amber:      #8c6d3f;
+  --red:        #9b3a3a;
+
+  /* Layout */
+  --radius:     4px;
+  --radius-sm:  2px;
+  --shadow:     0 2px 16px rgba(26,26,24,.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;}
+body{background:var(--bg);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;line-height:1.5;}
 
 /* TOPBAR */
 .topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;z-index:300;}
 .tb-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;flex-shrink:0;}
-.tb-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.tb-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--a2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;}
 .tb-name{font-weight:700;font-size:13px;}
 .tb-div{width:1px;height:20px;background:var(--border);flex-shrink:0;}
 .tb-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;}
 .tb-tabs::-webkit-scrollbar{height:0;}
-.tb-tab{padding:5px 12px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s;}
+.tb-tab{padding:5px 12px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text2);font-family:'Epilogue',sans-serif;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s;}
 .tb-tab:hover{color:var(--text);background:var(--surface2);}
 .tb-tab.active{color:var(--accent);background:var(--accent-glow);}
-.tb-back{padding:5px 14px;border-radius:var(--radius-sm);border:1px solid rgba(79,142,247,.3);background:var(--accent-glow);color:var(--accent);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:.15s;flex-shrink:0;}
+.tb-back{padding:5px 14px;border-radius:var(--radius-sm);border:1px solid rgba(74,92,78,.25);background:var(--accent-glow);color:var(--accent);font-family:'Epilogue',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:.15s;flex-shrink:0;}
 .tb-back:hover{background:var(--accent);color:#fff;}
 
 /* MAIN */
@@ -45,28 +72,28 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .page-sub{font-size:11px;color:var(--text3);}
 
 /* HANDOFF BANNER */
-.handoff-banner{display:none;align-items:center;gap:14px;padding:14px 18px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.25);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap;}
+.handoff-banner{display:none;align-items:center;gap:14px;padding:14px 18px;background:rgba(74,92,78,.06);border:1px solid rgba(74,92,78,.20);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap;}
 .handoff-banner.show{display:flex;}
 .handoff-icon{font-size:22px;flex-shrink:0;}
 .handoff-text{flex:1;min-width:0;}
-.handoff-title{font-size:13px;font-weight:700;color:#4ADE80;margin-bottom:2px;}
+.handoff-title{font-size:13px;font-weight:700;color:#4a5c4e;margin-bottom:2px;}
 .handoff-sub{font-size:11px;color:var(--text2);line-height:1.5;}
 .handoff-actions{display:flex;gap:8px;flex-shrink:0;}
 
 /* SESSION RESUME BANNER */
-.resume-banner{display:none;align-items:center;gap:12px;padding:12px 16px;background:rgba(79,142,247,.07);border:1px solid rgba(79,142,247,.25);border-radius:var(--radius);margin-bottom:14px;}
+.resume-banner{display:none;align-items:center;gap:12px;padding:12px 16px;background:rgba(74,92,78,.06);border:1px solid rgba(74,92,78,.20);border-radius:var(--radius);margin-bottom:14px;}
 .resume-banner.show{display:flex;}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-family:'Epilogue',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap;}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .btn-primary:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover);color:#fff;}
-.btn-success{border-color:rgba(34,197,94,.35);color:#4ADE80;}
-.btn-success:hover:not(:disabled){background:rgba(34,197,94,.1);}
-.btn-danger{border-color:rgba(239,68,68,.3);color:#F87171;}
-.btn-danger:hover:not(:disabled){background:rgba(239,68,68,.1);}
+.btn-success{border-color:rgba(34,197,94,.35);color:#4a5c4e;}
+.btn-success:hover:not(:disabled){background:rgba(74,92,78,.08);}
+.btn-danger{border-color:rgba(155,58,58,.25);color:#9b3a3a;}
+.btn-danger:hover:not(:disabled){background:rgba(155,58,58,.08);}
 .btn-sm{padding:4px 10px;font-size:10px;}
 
 /* UPLOAD ZONE */
@@ -78,10 +105,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* NOTICE */
 .notice{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;line-height:1.6;}
-.notice.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#FCD34D;}
-.notice.info{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);color:#93C5FD;}
-.notice.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#4ADE80;}
-.notice.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#FCA5A5;}
+.notice.warn{background:rgba(140,109,63,.08);border:1px solid rgba(140,109,63,.25);color:#8c6d3f;}
+.notice.info{background:var(--accent-glow);border:1px solid rgba(74,92,78,.20);color:#3c4a5c;}
+.notice.ok{background:rgba(74,92,78,.06);border:1px solid rgba(74,92,78,.20);color:#4a5c4e;}
+.notice.err{background:rgba(155,58,58,.06);border:1px solid rgba(155,58,58,.20);color:#f5e8e8;}
 
 /* CARD */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
@@ -90,12 +117,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 /* METRIC GRID */
 .metric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-bottom:16px;}
 .metric-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;text-align:center;}
-.mt-val{font-size:20px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.mt-val{font-size:20px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;}
 .mt-lbl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
 .mt-desc{font-size:9px;color:var(--text3);margin-top:4px;line-height:1.4;}
-.metric-tile.good .mt-val{color:#4ADE80;}
+.metric-tile.good .mt-val{color:#4a5c4e;}
 .metric-tile.warn .mt-val{color:#FBBF24;}
-.metric-tile.bad  .mt-val{color:#F87171;}
+.metric-tile.bad  .mt-val{color:#9b3a3a;}
 
 /* TABLE */
 .table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:480px;}
@@ -110,7 +137,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .review-card.submitted{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.03);}
 .review-card.pending-ready{border-color:rgba(251,191,36,.25);}
 .rc-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
-.rc-qnum{width:28px;height:28px;border-radius:50%;background:var(--accent-glow);border:1px solid rgba(79,142,247,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--accent);flex-shrink:0;margin-top:1px;}
+.rc-qnum{width:28px;height:28px;border-radius:50%;background:var(--accent-glow);border:1px solid rgba(74,92,78,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--accent);flex-shrink:0;margin-top:1px;}
 .rc-question{flex:1;font-size:12px;font-weight:600;color:var(--text1);line-height:1.5;}
 .review-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;flex-shrink:0;}
 .review-a-label{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
@@ -129,15 +156,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .yn-btn:hover:not(:disabled){border-color:var(--text2);color:var(--text2);}
 .yn-btn:disabled{opacity:.5;cursor:default;}
 /* Hallucination: Yes=bad (red), No=good (green) */
-.eval-col.hallucination .yn-btn.yes-active{background:rgba(239,68,68,.15);border-color:#F87171;color:#F87171;}
-.eval-col.hallucination .yn-btn.no-active{background:rgba(34,197,94,.12);border-color:#4ADE80;color:#4ADE80;}
-.eval-col.hallucination .yn-btn.yn-yes{border-color:rgba(239,68,68,.3);color:rgba(239,68,68,.6);}
+.eval-col.hallucination .yn-btn.yes-active{background:rgba(239,68,68,.15);border-color:#9b3a3a;color:#9b3a3a;}
+.eval-col.hallucination .yn-btn.no-active{background:rgba(74,92,78,.10);border-color:#4a5c4e;color:#4a5c4e;}
+.eval-col.hallucination .yn-btn.yn-yes{border-color:rgba(155,58,58,.25);color:rgba(239,68,68,.6);}
 .eval-col.hallucination .yn-btn.yn-no{border-color:rgba(34,197,94,.3);color:rgba(34,197,94,.6);}
 /* Completeness: Yes=good (green), No=bad (red) */
-.eval-col.completeness .yn-btn.yes-active{background:rgba(34,197,94,.12);border-color:#4ADE80;color:#4ADE80;}
-.eval-col.completeness .yn-btn.no-active{background:rgba(239,68,68,.15);border-color:#F87171;color:#F87171;}
+.eval-col.completeness .yn-btn.yes-active{background:rgba(74,92,78,.10);border-color:#4a5c4e;color:#4a5c4e;}
+.eval-col.completeness .yn-btn.no-active{background:rgba(239,68,68,.15);border-color:#9b3a3a;color:#9b3a3a;}
 .eval-col.completeness .yn-btn.yn-yes{border-color:rgba(34,197,94,.3);color:rgba(34,197,94,.6);}
-.eval-col.completeness .yn-btn.yn-no{border-color:rgba(239,68,68,.3);color:rgba(239,68,68,.6);}
+.eval-col.completeness .yn-btn.yn-no{border-color:rgba(155,58,58,.25);color:rgba(239,68,68,.6);}
 
 .eval-result{font-size:10px;margin-top:6px;font-weight:600;}
 .review-edit{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text1);font-size:11px;font-family:inherit;padding:8px 10px;resize:vertical;min-height:60px;line-height:1.6;transition:.15s;}
@@ -147,7 +174,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .submit-row-btn{margin-top:12px;padding:9px 16px;border-radius:7px;border:1px solid var(--accent);background:var(--accent-glow);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;}
 .submit-row-btn:hover:not(:disabled){background:var(--accent);color:#fff;}
 .submit-row-btn:disabled{opacity:.3;cursor:default;pointer-events:none;}
-.submit-row-btn.done{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.3);color:#4ADE80;opacity:1;cursor:default;pointer-events:none;}
+.submit-row-btn.done{background:rgba(74,92,78,.06);border-color:rgba(34,197,94,.3);color:#4a5c4e;opacity:1;cursor:default;pointer-events:none;}
 
 /* PROGRESS */
 .prog-wrap{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:4px;}
@@ -171,19 +198,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* TAG */
 .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
-.tag-red{background:rgba(239,68,68,.15);color:#F87171;}
-.tag-green{background:rgba(34,197,94,.12);color:#4ADE80;}
+.tag-red{background:rgba(239,68,68,.15);color:#9b3a3a;}
+.tag-green{background:rgba(74,92,78,.10);color:#4a5c4e;}
 .tag-amber{background:rgba(245,158,11,.12);color:#FBBF24;}
 .tag-blue{background:var(--accent-glow);color:var(--accent);}
 
 /* FORM */
 .field{margin-bottom:10px;}
 .field label{font-size:10px;color:var(--text3);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
-input[type=text],input[type=number],select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text1);font-family:'Inter',sans-serif;font-size:12px;padding:7px 10px;transition:.15s;width:100%;}
+input[type=text],input[type=number],select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text1);font-family:'Epilogue',sans-serif;font-size:12px;padding:7px 10px;transition:.15s;width:100%;}
 input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
 
 /* FILE INFO */
-.file-info{display:none;padding:8px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:11px;color:#4ADE80;font-family:'JetBrains Mono',monospace;margin-top:8px;word-break:break-all;}
+.file-info{display:none;padding:8px 12px;background:rgba(74,92,78,.06);border:1px solid rgba(34,197,94,.2);border-radius:6px;font-size:11px;color:#4a5c4e;font-family:'DM Mono',monospace;margin-top:8px;word-break:break-all;}
 
 /* PERSONA CHIP */
 .persona-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:14px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text2);margin:2px;}
@@ -191,7 +218,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outl
 .pc-rm:hover{color:var(--red);}
 
 /* KEYBOARD SHORTCUT HINT */
-.kbd-hint{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;display:inline-block;padding:1px 5px;border:1px solid var(--border);border-radius:3px;background:var(--surface2);}
+.kbd-hint{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;display:inline-block;padding:1px 5px;border:1px solid var(--border);border-radius:3px;background:var(--surface2);}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -261,11 +288,51 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outl
   <!-- Load panel -->
   <div class="card" style="margin-bottom:14px" id="loadPanel">
     <div class="card-title">📂 Load Results for Review</div>
+
+    <!-- Import from Forge (zero column-mapping) -->
+    <div id="forgeImportZone" style="margin-bottom:12px;border:1.5px dashed rgba(74,92,78,.4);border-radius:8px;padding:14px 16px;background:rgba(74,92,78,.04)">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:22px">📦</span>
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:12px;font-weight:700;color:#4a5c4e;margin-bottom:2px">Import HITL-Ready File from Forge</div>
+          <div style="font-size:11px;color:var(--text2)">Exported via "Export for HITL Review" in Forge — loads instantly, no column mapping needed</div>
+        </div>
+        <label style="cursor:pointer">
+          <input type="file" accept=".xlsx,.xls" style="display:none" id="forgeImportInput" onchange="loadForgeExport(this.files[0])">
+          <span class="btn btn-primary" style="font-size:11px;padding:5px 14px;pointer-events:none">📂 Choose File</span>
+        </label>
+      </div>
+      <div class="file-info" id="forgeImportInfo" style="margin-top:6px"></div>
+      <!-- WebLLM pre-scoring toggle (shown after file loads) -->
+      <div id="webllmToggleRow" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">🤖 AI Pre-scoring</div>
+            <div style="font-size:11px;color:var(--text2)" id="webllmStatusText">Uses a local model on this machine to pre-score Faithfulness, Coherence, and Bias before you review. Model loads once (~700 MB) and runs offline.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+              <input type="checkbox" id="webllmToggle" onchange="onWebLLMToggle(this.checked)" style="width:14px;height:14px;cursor:pointer">
+              Enable AI pre-scoring
+            </label>
+            <span id="webllmSpinner" style="display:none;font-size:11px;color:var(--text2)">&#x23F3; Loading model…</span>
+          </div>
+        </div>
+        <div id="webllmProgress" style="display:none;margin-top:6px">
+          <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+            <div id="webllmProgressBar" style="height:100%;background:#4a5c4e;width:0%;transition:width .3s"></div>
+          </div>
+          <div id="webllmProgressText" style="font-size:10px;color:var(--text3);margin-top:3px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Or upload any generic file with column mapping -->
     <div style="display:flex;gap:14px;flex-wrap:wrap">
       <label class="upload-zone" style="flex:1;min-width:200px;cursor:pointer">
         <input type="file" accept=".xlsx,.csv,.xls" style="display:none" id="reviewFileInput" onchange="loadReviewFile(this.files[0])">
         <span class="uz-icon">📂</span>
-        <span class="uz-label">Upload Batch Results (XLSX / CSV)</span>
+        <span class="uz-label">Upload Any Batch Results (XLSX / CSV)</span>
         <span class="uz-sub">Must include Question &amp; AI Response columns</span>
       </label>
       <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px">
@@ -315,9 +382,9 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outl
     <!-- Evaluation criteria explanation — plain English, no jargon -->
     <div id="evalLegend" class="notice info" style="display:none;margin-bottom:14px">
       <strong>📋 How to evaluate each response:</strong><br>
-      <strong style="color:#F87171">🔴 Hallucination</strong> — Did the AI make up facts that are NOT in the Knowledge Base or source documents? Answer <em>Yes</em> if it invented information, <em>No</em> if it stayed factual.<br>
+      <strong style="color:#9b3a3a">🔴 Hallucination</strong> — Did the AI make up facts that are NOT in the Knowledge Base or source documents? Answer <em>Yes</em> if it invented information, <em>No</em> if it stayed factual.<br>
       <strong style="color:#FBBF24">🟡 Completeness</strong> — Did the AI fully answer the question, or did it leave out important information? Answer <em>Yes</em> if the answer is complete, <em>No</em> if something is missing.<br>
-      <strong style="color:#4ADE80">✅ Correct Answer</strong> — If the AI got it wrong or missed something, write the ideal answer here. Leave blank if the AI's response is already correct.
+      <strong style="color:#4a5c4e">✅ Correct Answer</strong> — If the AI got it wrong or missed something, write the ideal answer here. Leave blank if the AI's response is already correct.
     </div>
 
     <!-- Stats bar -->
@@ -343,7 +410,8 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{outl
       <div id="reviewMetricsGrid" class="metric-grid" style="margin-bottom:16px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-success" onclick="downloadHITLReport()">⬇ Download Full Metrics Report (Excel)</button>
-        <button class="btn" onclick="generateHITLLeadershipReport()" style="background:rgba(21,128,61,.1);border:1px solid rgba(21,128,61,.3);color:#4ADE80">📄 Leadership Report (PDF-ready)</button>
+        <button class="btn" onclick="generateHITLLeadershipReport()" style="background:rgba(21,128,61,.1);border:1px solid rgba(21,128,61,.3);color:#4a5c4e">📄 Leadership Report (PDF-ready)</button>
+        <button class="btn" onclick="exportReviewedBatch()" style="background:rgba(74,92,78,.1);border:1px solid rgba(74,92,78,.3);color:#4a5c4e" title="Export reviewed rows back to a file — share with admin to import into Orchestrator">📤 Export Reviewed Batch</button>
       </div>
     </div>
   </div>
@@ -765,17 +833,17 @@ function renderReview() {
 
     // Status badge
     const badge = item.submitted
-      ? `<span class="review-status-badge" style="background:rgba(34,197,94,.15);color:#4ADE80">✅ Submitted</span>`
+      ? `<span class="review-status-badge" style="background:rgba(34,197,94,.15);color:#4a5c4e">✅ Submitted</span>`
       : isReady
         ? `<span class="review-status-badge" style="background:rgba(251,191,36,.12);color:#FBBF24">⚡ Ready</span>`
         : `<span class="review-status-badge" style="background:var(--surface2);color:var(--text3)">⏳ Pending</span>`;
 
     // Hallucination result text
     const hallResult = hSet
-      ? `<div class="eval-result" style="color:${item.hallucination?'#F87171':'#4ADE80'}">${item.hallucination?'⚠️ Hallucinated — AI invented facts':'✓ Grounded — AI used real information'}</div>` : '';
+      ? `<div class="eval-result" style="color:${item.hallucination?'#9b3a3a':'#4a5c4e'}">${item.hallucination?'⚠️ Hallucinated — AI invented facts':'✓ Grounded — AI used real information'}</div>` : '';
     // Completeness result text
     const compResult = cSet
-      ? `<div class="eval-result" style="color:${item.completeness?'#4ADE80':'#F87171'}">${item.completeness?'✓ Complete answer':'⚠️ Incomplete — key info missing'}</div>` : '';
+      ? `<div class="eval-result" style="color:${item.completeness?'#4a5c4e':'#9b3a3a'}">${item.completeness?'✓ Complete answer':'⚠️ Incomplete — key info missing'}</div>` : '';
 
     return `<div class="review-card ${item.submitted?'submitted':isReady?'pending-ready':''}" id="rcard-${item.id}" tabindex="0">
       <div class="rc-header">
@@ -795,38 +863,88 @@ function renderReview() {
         const q   = item.question   || '';
         if (!hyp) return '';
         const m = compute13Metrics(hyp, ref||q, null, null, null);
-        // Extra metrics from the 23-metric engine approach
+
+        // ── Improved heuristics for proxy metrics ──────────────
         const htoks = tokenize(hyp), rtoks = tokenize(ref||q);
-        const rSet = new Set(rtoks);
-        const RELEVANCE  = rtoks.length ? htoks.filter(t=>rSet.has(t)).length/rtoks.length : 0;
-        const relPct = Math.round(RELEVANCE*100);
-        const DIVERSITY  = htoks.length ? new Set(htoks).size/htoks.length : 0;
-        const divPct = Math.round(DIVERSITY*100);
-        const biasTrms = ['always','never','definitely','certainly','absolutely','guaranteed','impossible'];
-        const biasPct = Math.min(Math.round(biasTrms.filter(t=>hyp.toLowerCase().includes(t)).length/Math.max(hyp.split(/[.!?]+/).filter(s=>s.length>5).length,1)*100),100);
+        const rSet  = new Set(rtoks);
+        const htokSet = new Set(htoks);
+
+        // Relevance: precision against reference (correct label now)
+        const relPct = rtoks.length ? Math.round(htoks.filter(t=>rSet.has(t)).length/htoks.length*100) : 0;
+
+        // Diversity: type-token ratio, length-normalised to reduce short-text bias
+        const rawTTR = htoks.length ? htokSet.size/htoks.length : 0;
+        const divPct = Math.round(Math.min(rawTTR * (1 + Math.log10(Math.max(htoks.length,1))/4), 1) * 100);
+
+        // Coherence: avg cosine-like overlap between consecutive sentence TF-IDF vectors
+        const sents = hyp.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>8);
+        let cohSum=0;
+        for(let si=1;si<sents.length;si++){
+          const a=new Set(tokenize(sents[si-1])), b=tokenize(sents[si]);
+          const inter=b.filter(t=>a.has(t)).length;
+          cohSum += inter / Math.max(Math.sqrt(a.size*b.length),1);
+        }
+        const cohPct = sents.length>1 ? Math.round(Math.min(cohSum/(sents.length-1)*2,1)*100) : 85;
+
+        // Specificity: numbers + named entities (2+ cap words) + dates + domain terms
+        const specMatches = (hyp.match(/\d[\d,.]*|[A-Z][a-z]+(?:\s[A-Z][a-z]+)+|\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g)||[]);
+        const specPct = Math.round(Math.min(specMatches.length / Math.max(sents.length,1) / 1.5, 1)*100);
+
+        // Conciseness: ideal = 0.8–2.5× reference length; penalise both too short and too long
+        const hypWc = hyp.split(/\s+/).filter(Boolean).length;
+        const refWc = Math.max((ref||q).split(/\s+/).filter(Boolean).length, 10);
+        const ratio = hypWc / refWc;
+        const concPct = Math.round(ratio<0.5 ? ratio*2*80 : ratio<=2.5 ? 100 - Math.max(0,(ratio-1.5)*25) : Math.max(0, 100-(ratio-2.5)*20));
+
+        // Bias: expanded 40-word lexicon + normalised by sentence density
+        const biasTerms = ['always','never','definitely','certainly','absolutely','guaranteed','impossible','undoubtedly','obviously','clearly','everyone','nobody','all','none','best','worst','only','perfect','terrible','must','cannot','100%','completely','totally','entirely','solely','merely','simply','just','naturally','of course','without question','no doubt','unquestionably','invariably','infallibly','categorically'];
+        const biasHits = biasTerms.filter(t=>hyp.toLowerCase().includes(t)).length;
+        const biasPct = Math.min(Math.round(biasHits/Math.max(sents.length,1)*50),100);
+
+        // Semantic Similarity: weighted ROUGE blend (more honest than labelling it "semantic")
+        const semPct = Math.round((m.rouge1*0.4 + m.rougeL*0.4 + m.bleu*0.2));
+
+        // Use WebLLM scores where available (set by runWebLLMPreScore)
+        const llmFaith  = (item._llmFaithfulness != null) ? item._llmFaithfulness : null;
+        const llmCoh    = (item._llmCoherence    != null) ? item._llmCoherence    : null;
+        const llmBias   = (item._llmBias         != null) ? item._llmBias         : null;
+        const hasLLM    = llmFaith!=null || llmCoh!=null || llmBias!=null;
+
         const C = (v,inv=false,g=70,w=40)=>inv?(v<=20?'good':v<=50?'warn':'bad'):(v>=g?'good':v>=w?'warn':'bad');
+        const tileHtml = (label,val,inv,badge='') =>
+          `<div class="metric-tile ${C(val,inv)}"><div class="mt-val">${val}%</div><div class="mt-lbl">${label}${badge}</div></div>`;
+
+        const faithVal = llmFaith!=null ? llmFaith : m.faithfulness;
+        const cohVal   = llmCoh!=null   ? llmCoh   : cohPct;
+        const biasVal  = llmBias!=null  ? llmBias  : biasPct;
+        const llmBadge = hasLLM ? ' <span style="font-size:8px;opacity:.7">🤖</span>' : '';
+
         const tiles = [
-          {l:'Overall',    v:m.overall,       inv:false},
-          {l:'ROUGE-L',    v:m.rougeL,        inv:false},
-          {l:'F1',         v:m.f1,            inv:false},
-          {l:'Faithfulness',v:m.faithfulness, inv:false},
-          {l:'Precision',  v:m.precision,     inv:false},
-          {l:'Recall',     v:m.recall,        inv:false},
-          {l:'BLEU',       v:m.bleu,          inv:false},
-          {l:'Relevance',  v:relPct,          inv:false},
-          {l:'Completeness%',v:Math.round(m.completeness),inv:false},
-          {l:'Diversity',  v:divPct,          inv:false},
-          {l:'WER',        v:m.wer,           inv:true },
-          {l:'Bias',       v:biasPct,         inv:true },
-        ].map(t=>`<div class="metric-tile ${C(t.v,t.inv)}"><div class="mt-val">${t.v}%</div><div class="mt-lbl">${t.l}</div></div>`).join('');
+          tileHtml('Overall',       m.overall,  false),
+          tileHtml('ROUGE-L',       m.rougeL,   false),
+          tileHtml('F1',            m.f1,        false),
+          tileHtml('Faithfulness',  faithVal,   false, llmFaith!=null?llmBadge:''),
+          tileHtml('Precision',     m.precision, false),
+          tileHtml('Recall',        m.recall,    false),
+          tileHtml('BLEU',          m.bleu,      false),
+          tileHtml('Relevance',     relPct,      false),
+          tileHtml('Semantic Sim.', semPct,      false),
+          tileHtml('Coherence',     cohVal,      false, llmCoh!=null?llmBadge:''),
+          tileHtml('Diversity',     divPct,      false),
+          tileHtml('Specificity',   specPct,     false),
+          tileHtml('Conciseness',   concPct,     false),
+          tileHtml('WER',           m.wer,       true),
+          tileHtml('Bias',          biasVal,     true,  llmBias!=null?llmBadge:''),
+        ].join('');
+        const srcLabel = hasLLM ? '🤖 Auto-Metrics (15) · LLM-scored tiles marked 🤖' : '🤖 Auto-Metrics (15)';
         return `<div style="margin:8px 0">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">🤖 Auto-Metrics (12)</div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">${srcLabel}</div>
           <div class="metric-grid" style="grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px">${tiles}</div>
         </div>`;
       })()}
       <div class="eval-grid">
         <div class="eval-col hallucination">
-          <div class="eval-col-label" style="color:#F87171">🔴 Hallucination</div>
+          <div class="eval-col-label" style="color:#9b3a3a">🔴 Hallucination</div>
           <div class="eval-col-hint">Did the AI make up facts not in the Knowledge Base?</div>
           <div class="yn-group">
             <button class="yn-btn yn-yes ${item.hallucination===true?'yes-active':''}" onclick="setEval(${item.id},'hallucination',true)"  ${item.submitted?'disabled':''}>Yes — invented</button>
@@ -844,7 +962,7 @@ function renderReview() {
           ${compResult}
         </div>
         <div class="eval-col">
-          <div class="eval-col-label" style="color:#4ADE80">✅ Correct Answer</div>
+          <div class="eval-col-label" style="color:#4a5c4e">✅ Correct Answer</div>
           <div class="eval-col-hint">Write the ideal answer here — or leave blank if AI is correct.</div>
           <textarea class="review-edit" id="ca-${item.id}"
             placeholder="Type the correct answer, or leave blank if the AI response above is already right…"
@@ -1000,15 +1118,15 @@ function renderArchive() {
         <div style="font-size:11px;color:var(--text3)">${d}</div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-        <span class="arch-stat" style="background:rgba(239,68,68,.12);color:#F87171">🔴 Hallucination: ${hallPct}%</span>
-        <span class="arch-stat" style="background:rgba(34,197,94,.1);color:#4ADE80">✅ Completeness: ${compPct}%</span>
+        <span class="arch-stat" style="background:rgba(239,68,68,.12);color:#9b3a3a">🔴 Hallucination: ${hallPct}%</span>
+        <span class="arch-stat" style="background:rgba(74,92,78,.08);color:#4a5c4e">✅ Completeness: ${compPct}%</span>
         <span class="arch-stat" style="background:rgba(251,191,36,.1);color:#FBBF24">✏️ Corrections: ${b.corrected}</span>
         ${m ? `<span class="arch-stat" style="background:var(--surface2);color:var(--text2)">📊 Accuracy: ${m.accuracy}%</span>` : ''}
         ${m ? `<span class="arch-stat" style="background:var(--surface2);color:var(--text2)">🎯 Overall: ${m.overall}%</span>` : ''}
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-sm btn-success" onclick="exportArchiveBatch(${bi})">⬇ Export Excel</button>
-        <button class="btn btn-sm" onclick="generateArchiveLeadershipReport(${bi})" style="color:#4ADE80;border-color:rgba(34,197,94,.3)">📄 Leadership Report</button>
+        <button class="btn btn-sm" onclick="generateArchiveLeadershipReport(${bi})" style="color:#4a5c4e;border-color:rgba(34,197,94,.3)">📄 Leadership Report</button>
         <button class="btn btn-sm" onclick="reopenArchiveBatch(${bi})">🔄 Re-open for Editing</button>
         <button class="btn btn-sm" onclick="applyFeedbackToGS(${bi})">🏅 Save to Gold Standard</button>
         <button class="btn btn-sm btn-danger" onclick="deleteArchiveBatch(${bi})">🗑 Delete</button>
@@ -1146,8 +1264,8 @@ function updateReviewStats() {
   el.innerHTML = [
     {val:total,                              lbl:'Total',       col:'var(--accent)'},
     {val:total-submitted,                    lbl:'Pending',     col:'var(--text3)'},
-    {val:submitted,                          lbl:'Submitted',   col:'#4ADE80'},
-    {val:hallYes+' / '+submitted,            lbl:'Hallucinated',col:'#F87171'},
+    {val:submitted,                          lbl:'Submitted',   col:'#4a5c4e'},
+    {val:hallYes+' / '+submitted,            lbl:'Hallucinated',col:'#9b3a3a'},
     {val:(submitted-incomp)+' / '+submitted, lbl:'Complete',    col:'#FBBF24'},
     {val:corrected,                          lbl:'Corrected',   col:'#818CF8'},
   ].map(s=>`<div class="stat-tile"><div class="stat-val" style="color:${s.col}">${s.val}</div><div class="stat-lbl">${s.lbl}</div></div>`).join('');
@@ -1185,20 +1303,34 @@ function computeAndShowHITLMetrics() {
     sumFaith += m.faithfulness; sumPrec += m.precision; sumRec += m.recall;
     sumBleu  += m.bleu;     sumSem  += m.semanticSim; sumWer += m.wer;
     sumOverall += m.overall; sumAcc  += m.accuracy;
-    // Extended metrics
+    // Extended metrics — improved heuristics matching per-row tile logic
     const htoks = tokenize(hyp), rtoks = tokenize(ref);
     const rSet = new Set(rtoks), htokSet = new Set(htoks);
-    const sentences = hyp.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>5);
-    sumRelev += rtoks.length ? htoks.filter(t=>rSet.has(t)).length/rtoks.length : 0;
-    sumDiv   += htoks.length ? htokSet.size/htoks.length : 0;
-    const biasTrms=['always','never','definitely','certainly','absolutely','guaranteed','impossible'];
-    sumBias  += Math.min(biasTrms.filter(t=>hyp.toLowerCase().includes(t)).length/Math.max(sentences.length,1),1);
-    const idealLen=Math.max(rtoks.length*3,20), rWords=hyp.split(/\s+/).filter(Boolean);
-    sumConc  += Math.max(0,1-Math.max(0,rWords.length-idealLen*2)/(idealLen*4));
-    let coh=0; for(let i=1;i<sentences.length;i++){const p=new Set(tokenize(sentences[i-1])),c=tokenize(sentences[i]);coh+=c.filter(t=>p.has(t)).length/Math.max(c.length,1);}
-    sumCoh   += sentences.length>1 ? coh/(sentences.length-1) : 1;
-    const specTerms=(hyp.match(/\b\d+[\.,\d]*\b|[A-Z][a-z]+\s[A-Z][a-z]+|\d{1,2}\/\d{1,2}\/\d{2,4}/g)||[]);
-    sumSpec  += Math.min(specTerms.length/Math.max(sentences.length,1),1);
+    const sentences = hyp.split(/[.!?]+/).map(s=>s.trim()).filter(s=>s.length>8);
+    // Relevance: precision (hyp tokens found in ref)
+    sumRelev += htoks.length ? htoks.filter(t=>rSet.has(t)).length/htoks.length : 0;
+    // Diversity: length-normalised TTR
+    const rawTTR = htoks.length ? htokSet.size/htoks.length : 0;
+    sumDiv   += Math.min(rawTTR * (1 + Math.log10(Math.max(htoks.length,1))/4), 1);
+    // Bias: expanded 37-term lexicon, normalised by sentence count
+    const biasTerms=['always','never','definitely','certainly','absolutely','guaranteed','impossible','undoubtedly','obviously','clearly','everyone','nobody','all','none','best','worst','only','perfect','terrible','must','cannot','completely','totally','entirely','solely','merely','simply','just','naturally','of course','without question','no doubt','unquestionably','invariably','infallibly','categorically'];
+    const biasHits=biasTerms.filter(t=>hyp.toLowerCase().includes(t)).length;
+    sumBias  += Math.min(biasHits/Math.max(sentences.length,1)*0.5, 1);
+    // Conciseness: ideal 0.8–2.5x reference length
+    const hypWc=hyp.split(/\s+/).filter(Boolean).length;
+    const refWc=Math.max(rtoks.length,10);
+    const ratio=hypWc/refWc;
+    sumConc  += ratio<0.5?ratio*2*0.8:ratio<=2.5?1-Math.max(0,(ratio-1.5)*0.25):Math.max(0,1-(ratio-2.5)*0.2);
+    // Coherence: cosine-like consecutive sentence overlap
+    let cohSum=0; for(let i=1;i<sentences.length;i++){const a=new Set(tokenize(sentences[i-1])),b=tokenize(sentences[i]);const inter=b.filter(t=>a.has(t)).length;cohSum+=inter/Math.max(Math.sqrt(a.size*b.length),1);}
+    sumCoh   += sentences.length>1 ? Math.min(cohSum/(sentences.length-1)*2,1) : 0.85;
+    // Specificity: numbers + named entity bigrams + dates
+    const specTerms=(hyp.match(/\d[\d,.]*|[A-Z][a-z]+(?:\s[A-Z][a-z]+)+|\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g)||[]);
+    sumSpec  += Math.min(specTerms.length/Math.max(sentences.length,1)/1.5, 1);
+    // WebLLM scores — use if available (from runWebLLMPreScore)
+    if (r._llmFaithfulness != null) { sumFaith -= m.faithfulness; sumFaith += r._llmFaithfulness; }
+    if (r._llmCoherence    != null) { sumCoh   -= sentences.length>1?Math.min(cohSum/(sentences.length-1)*2,1):0.85; sumCoh += r._llmCoherence/100; }
+    if (r._llmBias         != null) { sumBias  -= Math.min(biasHits/Math.max(sentences.length,1)*0.5,1); sumBias += r._llmBias/100; }
   });
 
   const pct = v => Math.round(v/n*100);
@@ -1235,6 +1367,8 @@ function computeAndShowHITLMetrics() {
     semanticSim: Math.round(sumSem/n),
     wer:         Math.round(sumWer/n),
     relevance:   pct(sumRelev),
+    conciseness_score: pct(sumConc),
+    specificity_score: pct(sumSpec),
     diversity:   pct(sumDiv),
     coherence:   pct(sumCoh),
     specificity: pct(sumSpec),
@@ -1249,8 +1383,8 @@ function computeAndShowHITLMetrics() {
 
   // ── Render summary box ──────────────────────────────────
   const m = _hitlAggMetrics;
-  const col = v => v>=70?'#4ADE80':v>=40?'#FBBF24':'#F87171';
-  const colInv = v => v<=25?'#4ADE80':v<=45?'#FBBF24':'#F87171';
+  const col = v => v>=70?'#4a5c4e':v>=40?'#FBBF24':'#9b3a3a';
+  const colInv = v => v<=25?'#4a5c4e':v<=45?'#FBBF24':'#9b3a3a';
 
   const summaryHtml = `
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px">
@@ -1300,7 +1434,8 @@ function computeAndShowHITLMetrics() {
     {label:'Coherence',           val:m.coherence,         low:false, desc:'Sentence-to-sentence continuity'},
     {label:'Specificity',         val:m.specificity,       low:false, desc:'Numbers & named entities'},
     {label:'Diversity',           val:m.diversity,         low:false, desc:'Vocabulary richness'},
-    {label:'Conciseness',         val:m.conciseness,       low:false, desc:'Response length appropriateness'},
+    {label:'Conciseness',         val:m.conciseness_score||m.conciseness, low:false, desc:'Response length appropriateness (0.8–2.5× reference)'},
+    {label:'Specificity',          val:m.specificity_score||m.specificity, low:false, desc:'Numbers, named entities, dates present'},
     {label:'Bias Score ↓',        val:m.bias,              low:true,  desc:'Overconfident language (lower=better)'},
     {label:'WER ↓',               val:m.wer,               low:true,  desc:'Word Error Rate (lower=better)'},
     {label:'Overall (Auto)',      val:m.overall,           low:false, desc:'Weighted auto-NLP composite'},
@@ -1602,6 +1737,499 @@ function generateHITLLeadershipReport() {
 }
 window.generateHITLLeadershipReport = generateHITLLeadershipReport;
 
+// ═══════════════════════════════════════════════════════════
+//  FORGE IMPORT — zero-config cross-machine handoff
+// ═══════════════════════════════════════════════════════════
+let _forgeMeta = {};  // metadata from Forge export
+
+async function loadForgeExport(file) {
+  if (!file) return;
+  try {
+    const ab = await file.arrayBuffer();
+    const wb = XLSX.read(ab, { type:'array', cellDates:true });
+
+    // Read metadata sheet if present (sentinel check)
+    const metaSheet = wb.Sheets['Metadata'];
+    _forgeMeta = {};
+    if (metaSheet) {
+      const rows = XLSX.utils.sheet_to_json(metaSheet, { header:1 });
+      rows.forEach(r => { if (r[0]) _forgeMeta[String(r[0])] = String(r[1]||''); });
+    }
+    const isForgeExport = _forgeMeta['SLM_Forge_HITL_Export'] === '1';
+
+    // Read the review sheet
+    const sheetName = wb.SheetNames.includes('HITL_Review') ? 'HITL_Review' : wb.SheetNames[0];
+    const data = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval:'' });
+    if (!data.length) { alert('File appears empty.'); return; }
+
+    if (isForgeExport) {
+      // Auto-populate all fields — no user mapping needed
+      document.getElementById('reviewSlmName').value = _forgeMeta['SLM_Name'] || 'AI Assistant';
+      document.getElementById('reviewQCol').value    = 'Question';
+      document.getElementById('reviewACol').value    = 'AI_Response';
+      document.getElementById('reviewExpCol').value  = 'Expected_Answer';
+      _rawReviewData = data;
+      document.getElementById('forgeImportInfo').textContent =
+        '✓ ' + file.name + ' — ' + data.length + ' rows · SLM: ' +
+        (_forgeMeta['SLM_Name']||'?') + ' · Task: ' + (_forgeMeta['SLM_Task']||'custom') +
+        ' · Batch: ' + (_forgeMeta['Batch_ID']||'?');
+      document.getElementById('forgeImportInfo').style.color = '#4a5c4e';
+      // Show WebLLM toggle
+      document.getElementById('webllmToggleRow').style.display = 'block';
+      // Auto-load rows immediately
+      applyReviewCols();
+    } else {
+      // Not a Forge export — fall through to manual column mapping
+      _rawReviewData = data;
+      const headers = Object.keys(data[0]||{});
+      document.getElementById('forgeImportInfo').textContent =
+        '⚠ Generic file (' + file.name + ') — use the column mapping below to load';
+      document.getElementById('forgeImportInfo').style.color = 'var(--text2)';
+      // Pre-fill column guesses
+      const trySet=(id,pats)=>{const el=document.getElementById(id);if(el&&!el.value.trim())el.value=headers.find(h=>pats.some(p=>p.test(h)))||'';};
+      trySet('reviewQCol', [/^question$/i,/query/i,/prompt/i,/input/i]);
+      trySet('reviewACol', [/ai_response/i,/slm_response/i,/response/i,/answer/i,/output/i]);
+      trySet('reviewExpCol',[/expected/i,/gold/i,/correct/i,/reference/i]);
+      document.getElementById('reviewFileInfo').textContent = '✓ ' + file.name + ' — ' + data.length + ' rows';
+    }
+  } catch(e) { alert('Error reading file: ' + e.message); }
+}
+window.loadForgeExport = loadForgeExport;
+
+// ─── Export reviewed batch back to a file the admin can import into Orchestrator
+function exportReviewedBatch() {
+  const submitted = reviewItems.filter(r=>r.submitted);
+  if (!submitted.length) { alert('No submitted reviews yet.'); return; }
+  const slmName = submitted[0]?.slmName || 'AI Assistant';
+  const batchId = submitted[0]?.batchId || ('batch_'+Date.now());
+  const ts = new Date().toISOString().slice(0,10);
+
+  const rows = submitted.map((r,i) => ({
+    '#':             i+1,
+    Question:        r.question||'',
+    AI_Response:     r.aiAnswer||'',
+    Expected_Answer: r.expectedAnswer||'',
+    Correct_Answer:  r.correctAnswer||'',
+    Hallucination:   r.hallucination ? 1 : 0,
+    Completeness:    r.completeness  ? 1 : 0,
+    Reviewed_At:     r.reviewedAt||'',
+    SLM_Name:        r.slmName||slmName,
+    Batch_ID:        batchId,
+  }));
+
+  // Aggregate summary row
+  if (_hitlAggMetrics) {
+    const m = _hitlAggMetrics;
+    const meta = [
+      ['SLM_Forge_HITL_Reviewed', '1'],
+      ['SLM_Name',    slmName],
+      ['SLM_Task',    _forgeMeta['SLM_Task']||'custom'],
+      ['Batch_ID',    batchId],
+      ['Reviewed_Rows', submitted.length],
+      ['Hallucination_Rate', m.hallucinationRate+'%'],
+      ['Completeness_Rate',  m.completenessRate+'%'],
+      ['Accuracy',           m.accuracy+'%'],
+      ['Faithfulness',       m.faithfulness+'%'],
+      ['Overall',            m.overall+'%'],
+      ['Generated_At',       new Date().toISOString()],
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows),    'Reviewed_Rows');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(meta),     'Summary');
+    const fname = 'hitl-reviewed-' + slmName.replace(/\s+/g,'-') + '-' + ts + '.xlsx';
+    XLSX.writeFile(wb, fname);
+  } else {
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Reviewed_Rows');
+    XLSX.writeFile(wb, 'hitl-reviewed-' + slmName.replace(/\s+/g,'-') + '-' + ts + '.xlsx');
+  }
+}
+window.exportReviewedBatch = exportReviewedBatch;
+
+// ═══════════════════════════════════════════════════════════
+//  WebLLM PRE-SCORING — opt-in, graceful degradation
+// ═══════════════════════════════════════════════════════════
+let _webllmEngine   = null;
+let _webllmLoading  = false;
+let _webllmEnabled  = false;
+let _webllmReady    = false;
+
+async function onWebLLMToggle(checked) {
+  _webllmEnabled = checked;
+  if (!checked) { _webllmReady = false; return; }
+  if (_webllmReady) { await runWebLLMPreScore(); return; }
+  if (_webllmLoading) return;
+  _webllmLoading = true;
+  document.getElementById('webllmSpinner').style.display = 'inline';
+  document.getElementById('webllmProgress').style.display = 'block';
+  document.getElementById('webllmStatusText').textContent = 'Downloading model (~700 MB, cached after first load)…';
+  try {
+    const { CreateMLCEngine } = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.83/+esm');
+    _webllmEngine = await CreateMLCEngine('Llama-3.2-1B-Instruct-q4f16_1-MLC', {
+      initProgressCallback: (p) => {
+        const pct = Math.round((p.progress||0)*100);
+        document.getElementById('webllmProgressBar').style.width = pct + '%';
+        document.getElementById('webllmProgressText').textContent = p.text || ('Loading… ' + pct + '%');
+      }
+    });
+    _webllmReady   = true;
+    _webllmLoading = false;
+    document.getElementById('webllmSpinner').style.display = 'none';
+    document.getElementById('webllmProgress').style.display = 'none';
+    document.getElementById('webllmStatusText').textContent = '✓ Model ready — scoring ' + reviewItems.length + ' rows…';
+    await runWebLLMPreScore();
+  } catch(e) {
+    _webllmLoading = false;
+    _webllmEnabled = false;
+    document.getElementById('webllmToggle').checked = false;
+    document.getElementById('webllmSpinner').style.display = 'none';
+    document.getElementById('webllmProgress').style.display = 'none';
+    document.getElementById('webllmStatusText').textContent = '⚠ Model could not load (' + e.message.slice(0,80) + '). AI pre-scoring disabled — all other metrics still work.';
+  }
+}
+
+async function runWebLLMPreScore() {
+  if (!_webllmEngine || !_webllmReady || !reviewItems.length) return;
+  document.getElementById('webllmStatusText').textContent = '🤖 Pre-scoring rows with local model… (0/' + reviewItems.length + ')';
+  for (let i = 0; i < reviewItems.length; i++) {
+    const r = reviewItems[i];
+    if (r.submitted) continue;
+    const hyp = r.aiAnswer || '';
+    const ref = r.expectedAnswer || r.question || '';
+    if (!hyp) continue;
+    try {
+      const prompt = `You are an AI evaluation assistant. Score the following AI response on three dimensions.
+Question: ${ref.slice(0,300)}
+AI Response: ${hyp.slice(0,400)}
+Reply ONLY with a JSON object like: {"faithfulness":75,"coherence":80,"bias":15}
+- faithfulness: 0-100, how grounded is the response in verifiable facts (not invented)
+- coherence: 0-100, how logically consistent and well-structured is the response
+- bias: 0-100, how overconfident or one-sided is the language (lower is better)`;
+      const reply = await _webllmEngine.chat.completions.create({
+        messages: [{ role:'user', content: prompt }],
+        temperature: 0.1, max_tokens: 60,
+      });
+      const txt = reply.choices[0]?.message?.content || '{}';
+      const match = txt.match(/\{[^}]+\}/);
+      if (match) {
+        const scores = JSON.parse(match[0]);
+        r._llmFaithfulness = typeof scores.faithfulness === 'number' ? scores.faithfulness : null;
+        r._llmCoherence    = typeof scores.coherence    === 'number' ? scores.coherence    : null;
+        r._llmBias         = typeof scores.bias         === 'number' ? scores.bias         : null;
+      }
+    } catch(e) { /* skip row on error */ }
+    document.getElementById('webllmStatusText').textContent =
+      '🤖 Pre-scoring… (' + (i+1) + '/' + reviewItems.length + ')';
+  }
+  document.getElementById('webllmStatusText').textContent =
+    '✓ AI pre-scoring complete — LLM scores shown in metric tiles where available.';
+  renderReview();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  USE-CASE AWARE REPORT
+// ═══════════════════════════════════════════════════════════
+// Maps SLM task key → what this use case actually cares about
+const TASK_REPORT_CONFIG = {
+  hr: {
+    label: 'HR Assistant',
+    priority_metrics: ['hallucinationRate','completenessRate','accuracy'],
+    risk_label: 'Compliance & Policy Risk',
+    compliance_note: 'HR responses must be strictly grounded in approved policy documents. Any hallucination is a compliance risk — employees may act on incorrect policy information.',
+    what_good_looks_like: 'Hallucination <10%, Completeness >80%, Accuracy >75%.',
+    top_risk: (m) => m.hallucinationRate > 20 ? 'HIGH — employees may receive incorrect policy guidance. Enable Strict Mode immediately.' : m.completenessRate < 60 ? 'MEDIUM — partial answers may leave employees without the guidance they need.' : 'LOW — performance is within acceptable range.',
+    extra_action: 'Feed all human-corrected answers back into the HR policy Knowledge Base using "Save to Gold Standard".',
+  },
+  interview: {
+    label: 'Interview Scorer',
+    priority_metrics: ['accuracy','coherence','specificity'],
+    risk_label: 'Scoring Consistency Risk',
+    compliance_note: 'Interview scoring must be consistent and explainable. Bias in scoring language could expose the organisation to fairness challenges.',
+    what_good_looks_like: 'Accuracy >70%, Bias <15%, Coherence >65%.',
+    top_risk: (m) => m.bias > 30 ? 'HIGH — scoring language shows high confidence/certainty bias. Review criteria definitions.' : m.accuracy < 60 ? 'MEDIUM — scores may not align with human evaluator judgement.' : 'LOW',
+    extra_action: 'Review cases where AI score diverged from human expectation and update the scoring criteria in Studio.',
+  },
+  lead: {
+    label: 'Lead Qualifier',
+    priority_metrics: ['accuracy','completenessRate','faithfulness'],
+    risk_label: 'Revenue & Pipeline Risk',
+    compliance_note: 'Incorrect lead scores can misdirect sales effort and cause revenue leakage. False positives waste rep time; false negatives lose deals.',
+    what_good_looks_like: 'Accuracy >75%, Completeness >70%.',
+    top_risk: (m) => m.accuracy < 60 ? 'HIGH — lead scores are unreliable. Sales team may be chasing the wrong prospects.' : m.completenessRate < 60 ? 'MEDIUM — qualification rationale is often incomplete, making it hard for reps to act.' : 'LOW',
+    extra_action: 'Compare AI qualification scores against actual deal outcomes and update ICP criteria in the SLM profile.',
+  },
+  contract: {
+    label: 'Contract Analyst',
+    priority_metrics: ['hallucinationRate','faithfulness','completenessRate'],
+    risk_label: 'Legal & Contractual Risk',
+    compliance_note: 'Contract analysis errors can have direct legal and financial consequences. Hallucinated clause interpretations are a serious liability.',
+    what_good_looks_like: 'Hallucination <5%, Faithfulness >80%, Completeness >75%.',
+    top_risk: (m) => m.hallucinationRate > 10 ? 'CRITICAL — the assistant is inventing contract terms. Do not use in production without human legal review of every output.' : m.faithfulness < 65 ? 'HIGH — outputs may not be grounded in the actual contract text.' : 'LOW',
+    extra_action: 'All flagged hallucinations must be reviewed by legal counsel. Consider requiring human sign-off on all high-risk clause summaries.',
+  },
+  financial: {
+    label: 'Financial Analyst',
+    priority_metrics: ['hallucinationRate','accuracy','faithfulness'],
+    risk_label: 'Financial Accuracy Risk',
+    compliance_note: 'Financial analysis errors can affect investment decisions. Figures or trends not present in the source documents must never appear in AI output.',
+    what_good_looks_like: 'Hallucination <5%, Accuracy >75%.',
+    top_risk: (m) => m.hallucinationRate > 10 ? 'CRITICAL — fabricated financial data detected. Immediate review required before any decision use.' : m.accuracy < 65 ? 'HIGH — analysis accuracy is below threshold for financial decision support.' : 'LOW',
+    extra_action: 'Cross-reference all numerical outputs against source documents. Expand the KB with structured financial data where gaps are identified.',
+  },
+  codereview: {
+    label: 'Code Reviewer',
+    priority_metrics: ['accuracy','completenessRate','coherence'],
+    risk_label: 'Code Quality & Security Risk',
+    compliance_note: 'Missed security vulnerabilities or incorrect code suggestions can introduce production defects. Completeness is critical — a partial review is worse than none.',
+    what_good_looks_like: 'Completeness >80%, Accuracy >70%.',
+    top_risk: (m) => m.completenessRate < 60 ? 'HIGH — many reviews are incomplete. Security issues may be missed.' : m.accuracy < 60 ? 'MEDIUM — accuracy below threshold; suggestions may introduce bugs.' : 'LOW',
+    extra_action: 'Add more code examples to the KB, especially for security patterns and anti-patterns relevant to your tech stack.',
+  },
+  prd: {
+    label: 'PRD Reviewer',
+    priority_metrics: ['completenessRate','accuracy','coherence'],
+    risk_label: 'Product Spec Quality Risk',
+    compliance_note: 'Incomplete or inaccurate PRD feedback can lead to engineering building the wrong thing. Gaps in feedback that reach sprint planning are expensive.',
+    what_good_looks_like: 'Completeness >75%, Accuracy >70%.',
+    top_risk: (m) => m.completenessRate < 65 ? 'HIGH — feedback is often partial. Engineers may miss critical gaps in the spec.' : 'LOW',
+    extra_action: 'Review incomplete feedback cases and add canonical PRD review examples to the Knowledge Base.',
+  },
+  proposal: {
+    label: 'Proposal Reviewer',
+    priority_metrics: ['completenessRate','accuracy','bias'],
+    risk_label: 'Win Rate & Revenue Risk',
+    compliance_note: 'Overconfident or generic proposal feedback does not help sales teams win deals. Bias in feedback language reduces its usefulness.',
+    what_good_looks_like: 'Completeness >70%, Bias <20%.',
+    top_risk: (m) => m.bias > 35 ? 'MEDIUM — feedback language is overconfident. Ensure suggestions are specific and actionable, not generic.' : m.completenessRate < 60 ? 'MEDIUM — many reviews are incomplete.' : 'LOW',
+    extra_action: 'Add winning proposal examples to the KB to improve the specificity of improvement suggestions.',
+  },
+  custom: {
+    label: 'Custom SLM',
+    priority_metrics: ['accuracy','completenessRate','hallucinationRate'],
+    risk_label: 'General Quality Risk',
+    compliance_note: 'Quality standards depend on your specific use case. Focus on the metrics most relevant to how this SLM is being used.',
+    what_good_looks_like: 'Accuracy >70%, Completeness >65%, Hallucination <20%.',
+    top_risk: (m) => m.hallucinationRate > 30 ? 'HIGH — high hallucination rate detected.' : m.accuracy < 55 ? 'MEDIUM — accuracy below general threshold.' : 'LOW',
+    extra_action: 'Define a Gold Standard Q&A set specific to this use case and run monthly evaluation cycles.',
+  },
+};
+
+function generateHITLLeadershipReport() {
+  if (!_hitlAggMetrics) computeAndShowHITLMetrics();
+  const m = _hitlAggMetrics;
+  if (!m) { alert('No metrics available. Submit at least one row first.'); return; }
+
+  const name  = m.slmName || 'SLM Assistant';
+  const date  = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  // Resolve use-case config from Forge metadata or fall back to custom
+  const taskKey = _forgeMeta['SLM_Task'] || 'custom';
+  const cfg = TASK_REPORT_CONFIG[taskKey] || TASK_REPORT_CONFIG.custom;
+
+  function rag(v, good=70, warn=40) {
+    if (v>=good) return {label:'Good',             col:'#15803D',bg:'#DCFCE7',icon:'✅'};
+    if (v>=warn) return {label:'Needs Attention',  col:'#B45309',bg:'#FEF3C7',icon:'⚠️'};
+    return              {label:'Needs Improvement',col:'#B91C1C',bg:'#FEE2E2',icon:'❌'};
+  }
+  function ragLow(v, bad=25) {
+    if (v<=bad)    return {label:'Good',            col:'#15803D',bg:'#DCFCE7',icon:'✅'};
+    if (v<=bad+20) return {label:'Needs Attention', col:'#B45309',bg:'#FEF3C7',icon:'⚠️'};
+    return                {label:'Needs Improvement',col:'#B91C1C',bg:'#FEE2E2',icon:'❌'};
+  }
+
+  const acc   = rag(m.accuracy);
+  const comp  = rag(m.completenessRate);
+  const hall  = ragLow(m.hallucinationRate);
+  const faith = rag(m.faithfulness);
+  const overallActual = Math.round(m.accuracy*0.35 + m.completenessRate*0.30 + (100-m.hallucinationRate)*0.20 + m.faithfulness*0.15);
+  const overall = rag(overallActual);
+  const overallLabel = overallActual>=75?'Performing Well':overallActual>=50?'Needs Attention':'Needs Improvement';
+
+  // Use-case-specific top risk
+  const topRisk = cfg.top_risk(m);
+  const topRiskColor = topRisk.startsWith('CRITICAL')||topRisk.startsWith('HIGH') ? '#B91C1C' : topRisk.startsWith('MEDIUM') ? '#B45309' : '#15803D';
+
+  // Determine which metrics to show as priority cards based on task
+  const priorityMetricMap = {
+    hallucinationRate:  { label:'Hallucination Rate ↓', val:m.hallucinationRate, r:hall,  low:true,  note:'Lower is better — target ≤' + (taskKey==='contract'||taskKey==='financial'?'5':'25') + '%' },
+    completenessRate:   { label:'Completeness',          val:m.completenessRate,  r:comp,  low:false, note:'% responses fully answering the question' },
+    accuracy:           { label:'Accuracy',              val:m.accuracy,          r:acc,   low:false, note:'Blended human + NLP score' },
+    faithfulness:       { label:'Faithfulness',          val:m.faithfulness,      r:faith, low:false, note:'Grounded in KB / source documents' },
+    coherence:          { label:'Coherence',             val:m.coherence,         r:rag(m.coherence,65,40), low:false, note:'Logical structure and flow' },
+    specificity:        { label:'Specificity',           val:m.specificity,       r:rag(m.specificity,50,30), low:false, note:'Concrete details and named entities' },
+    bias:               { label:'Bias ↓',                val:m.bias,              r:ragLow(m.bias,20), low:true,  note:'Lower is better — certainty language' },
+  };
+
+  const priorityCards = cfg.priority_metrics.map(k => priorityMetricMap[k]).filter(Boolean);
+  // Remaining metrics as a compact table
+  const allMetricKeys = ['hallucinationRate','completenessRate','accuracy','faithfulness','coherence','specificity','bias'];
+  const secondaryKeys = allMetricKeys.filter(k => !cfg.priority_metrics.includes(k));
+  const secondaryMetrics = secondaryKeys.map(k => priorityMetricMap[k]).filter(Boolean);
+
+  function rec(key) {
+    const map = {
+      accuracy: { Good:'Accuracy is strong. Continue monitoring with monthly batch tests.', 'Needs Attention':'Review the Knowledge Base for gaps. Ensure common topics are covered with clear, complete explanations.', 'Needs Improvement':'The Knowledge Base needs significant expansion. Upload additional documents and rewrite existing content in clearer language.' },
+      completenessRate: { Good:'The assistant is providing full answers — a sign of well-structured Knowledge Base content.', 'Needs Attention':'Some answers are partial. Ensure documents contain complete explanations, not just bullet points or short fragments.', 'Needs Improvement':'Many answers are incomplete. Expand the KB with detailed content for the most commonly asked topics.' },
+      hallucinationRate: { Good:'Low hallucination. The assistant is reliably grounded in verified information.', 'Needs Attention':'Some hallucination detected. Enable Strict Mode in Studio and review KB for ambiguous content.', 'Needs Improvement':'High hallucination rate — the assistant is frequently inventing answers. Enable Strict Mode immediately.' },
+      faithfulness: { Good:'The assistant reliably uses only its approved Knowledge Base.', 'Needs Attention':'Occasionally drawing on information outside the KB. Enable Strict Mode and review KB quality.', 'Needs Improvement':'High out-of-KB usage. Enable Strict Mode immediately and expand KB coverage.' },
+      coherence: { Good:'Responses are logically structured and easy to follow.', 'Needs Attention':'Some responses lack logical flow. Review few-shot examples in Studio to improve structure.', 'Needs Improvement':'Responses are frequently incoherent. Rewrite the system prompt to require structured output format.' },
+      specificity: { Good:'Responses contain concrete details and specific information.', 'Needs Attention':'Responses are sometimes generic. Add more specific reference material to the KB.', 'Needs Improvement':'Responses are mostly generic. Add domain-specific documents with concrete facts, figures, and names.' },
+      bias: { Good:'Language is appropriately measured — no over-confidence detected.', 'Needs Attention':'Some over-confident language detected. Add a constraint to the system prompt: "Avoid absolute statements. Say 'typically' rather than 'always'."', 'Needs Improvement':'Highly over-confident language. This reduces user trust. Update the system prompt with explicit hedging instructions.' },
+    };
+    const metric = priorityMetricMap[key];
+    if (!metric) return '';
+    const status = metric.r.label;
+    return (map[key]||{})[status] || 'Continue monitoring this metric.';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Quality Report — ${name}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#F8FAFC;color:#0F172A}
+  .page{max-width:940px;margin:0 auto;background:#fff;padding:48px;min-height:100vh}
+  .header{background:linear-gradient(135deg,#0D1B2A,#1B4FD8);color:#fff;padding:36px;border-radius:12px;margin-bottom:36px}
+  .header h1{font-size:26px;font-weight:700;margin-bottom:4px}
+  .header .sub{font-size:12px;opacity:.7;margin-bottom:2px}
+  .header .task-badge{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;margin-bottom:14px}
+  .header .meta{display:flex;gap:28px;margin-top:16px;font-size:13px;flex-wrap:wrap}
+  .header .meta div{opacity:.85}
+  .header .meta strong{display:block;font-size:20px;font-weight:700;opacity:1}
+  .section{margin-bottom:36px}
+  .section-title{font-size:17px;font-weight:700;color:#0D1B2A;border-bottom:3px solid #1B4FD8;padding-bottom:8px;margin-bottom:18px}
+  .risk-box{border-radius:10px;padding:18px 22px;margin-bottom:18px;border:1px solid}
+  .priority-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:18px}
+  .mc{border-radius:8px;padding:18px 20px;border:1px solid}
+  .mc .ml{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+  .mc .ms{font-size:34px;font-weight:800;margin-bottom:4px}
+  .mc .mst{font-size:12px;font-weight:600;margin-bottom:8px}
+  .mc .mn{font-size:11px;color:#64748B;margin-bottom:10px}
+  .mc .mr{font-size:12px;line-height:1.6;padding:10px;border-radius:6px;background:rgba(0,0,0,.04)}
+  .mc .mr strong{display:block;margin-bottom:3px;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+  .secondary-table{width:100%;border-collapse:collapse;font-size:13px}
+  .secondary-table th{background:#F1F5F9;color:#475569;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .secondary-table td{padding:8px 12px;border-bottom:1px solid #F1F5F9;vertical-align:top}
+  .narrative{background:#F0F7FF;border:1px solid #BFDBFE;border-radius:10px;padding:22px 26px;line-height:1.85;font-size:13px;color:#1E3A5F}
+  .narrative p{margin-bottom:12px}.narrative p:last-child{margin-bottom:0}
+  .action-table{width:100%;border-collapse:collapse;font-size:13px}
+  .action-table th{background:#0D1B2A;color:#fff;padding:10px 14px;text-align:left}
+  .action-table th:first-child{border-radius:6px 0 0 6px}.action-table th:last-child{border-radius:0 6px 6px 0}
+  .action-table td{padding:10px 14px;vertical-align:top;border-bottom:1px solid #F1F5F9}
+  .footer{margin-top:48px;text-align:center;font-size:11px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:20px}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+  @media print{body{background:#fff}.page{padding:20px}button{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div style="text-align:right;margin-bottom:16px">
+    <button onclick="window.print()" style="padding:10px 20px;background:#1B4FD8;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">🖨 Print / Save as PDF</button>
+  </div>
+
+  <div class="header">
+    <div class="sub">AI Assistant Quality Report — Human Review (HITL)</div>
+    <h1>${name}</h1>
+    <div class="task-badge">${cfg.label}</div>
+    <div class="meta">
+      <div><strong>${m.sampleCount}</strong>Responses Reviewed</div>
+      <div><strong>${date}</strong>Report Date</div>
+      <div><strong>${m.corrected}</strong>Corrections Provided</div>
+      <div><strong><span class="badge" style="background:${overall.bg};color:${overall.col}">${overallLabel}</span></strong>Overall Status</div>
+    </div>
+  </div>
+
+  <!-- USE-CASE SPECIFIC RISK BOX -->
+  <div class="section">
+    <div class="section-title">⚠️ ${cfg.risk_label}</div>
+    <div class="risk-box" style="background:#FFF7ED;border-color:#FED7AA">
+      <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Top Risk Assessment</div>
+      <div style="font-size:18px;font-weight:800;color:${topRiskColor};margin-bottom:10px">${topRisk}</div>
+      <div style="font-size:13px;color:#374151;line-height:1.7">${cfg.compliance_note}</div>
+      <div style="margin-top:10px;font-size:12px;color:#64748B"><strong>Target:</strong> ${cfg.what_good_looks_like}</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section">
+    <div class="section-title">📋 Executive Summary</div>
+    <div class="narrative">
+      <p><strong>${name}</strong> (${cfg.label}) was evaluated across <strong>${m.sampleCount} responses</strong> by a human review team.
+      Accuracy is <strong>${m.accuracy}%</strong>, completeness is <strong>${m.completenessRate}%</strong>,
+      and the hallucination rate is <strong>${m.hallucinationRate}%</strong>${m.hallucinationRate<=25?' — within the acceptable limit':' — above the recommended threshold'}.</p>
+      ${m.corrected > 0 ? `<p>Human reviewers provided corrected answers for <strong>${m.corrected} responses</strong>. These corrections should be fed back into the Knowledge Base immediately.</p>` : ''}
+      <p>${overallActual>=75?`Overall performance is <strong>good</strong>. The assistant is ready for continued deployment with regular monitoring.`:overallActual>=50?`Overall performance <strong>needs attention</strong>. The issues identified in this report should be addressed before broader rollout.`:`Overall performance <strong>needs improvement</strong>. Deployment should be paused or restricted until the issues below are resolved.`}</p>
+    </div>
+  </div>
+
+  <!-- PRIORITY METRICS FOR THIS USE CASE -->
+  <div class="section">
+    <div class="section-title">📊 Priority Metrics for ${cfg.label}</div>
+    <div class="priority-grid">
+      ${priorityCards.map(card => `
+      <div class="mc" style="background:${card.r.bg};border-color:${card.r.col}30">
+        <div class="ml" style="color:${card.r.col}">${card.label}</div>
+        <div class="ms" style="color:${card.r.col}">${card.val}%</div>
+        <div class="mst">${card.r.icon} ${card.r.label}</div>
+        <div class="mn">${card.note}</div>
+        <div class="mr"><strong>💡 Recommendation</strong>${rec(cfg.priority_metrics[priorityCards.indexOf(card)])}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- SECONDARY METRICS -->
+  <div class="section">
+    <div class="section-title">📈 All Metrics</div>
+    <table class="secondary-table">
+      <thead><tr><th>Metric</th><th>Score</th><th>Status</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        ${secondaryMetrics.map(card=>`<tr>
+          <td style="font-weight:600">${card.label}</td>
+          <td><strong style="color:${card.r.col}">${card.val}%</strong></td>
+          <td><span style="color:${card.r.col}">${card.r.icon} ${card.r.label}</span></td>
+          <td style="font-size:12px;color:#475569">${rec(secondaryKeys[secondaryMetrics.indexOf(card)])}</td>
+        </tr>`).join('')}
+        <tr><td style="font-weight:600">ROUGE-L</td><td><strong style="color:#1B4FD8">${m.rougeL}%</strong></td><td style="color:#64748B;font-size:12px">Auto-NLP</td><td style="font-size:12px;color:#475569">Sequence match with reference answers. Improves as KB coverage grows.</td></tr>
+        <tr><td style="font-weight:600">F1 Score</td><td><strong style="color:#7C3AED">${m.f1}%</strong></td><td style="color:#64748B;font-size:12px">Auto-NLP</td><td style="font-size:12px;color:#475569">Balance of precision and recall against expected answers.</td></tr>
+        <tr><td style="font-weight:600">WER ↓</td><td><strong style="color:${m.wer<=30?'#15803D':m.wer<=55?'#B45309':'#B91C1C'}">${m.wer}%</strong></td><td style="color:#64748B;font-size:12px">Auto-NLP</td><td style="font-size:12px;color:#475569">Word error rate vs reference. Lower is better. Target ≤30%.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RECOMMENDED ACTIONS (USE-CASE SPECIFIC) -->
+  <div class="section">
+    <div class="section-title">🚀 Recommended Next Steps</div>
+    <table class="action-table">
+      <thead><tr><th>Priority</th><th>Action</th><th>Who</th></tr></thead>
+      <tbody>
+        ${m.hallucinationRate>(taskKey==='contract'||taskKey==='financial'?10:45)?'<tr style="background:#FEF2F2"><td style="font-weight:700;color:#B91C1C">🔴 Urgent</td><td>Enable Strict Mode in SLM Studio to prevent out-of-Knowledge-Base responses immediately</td><td>SLM Developer</td></tr>':''}
+        ${m.corrected>0?`<tr style="background:#F5F3FF"><td style="font-weight:700;color:#7C3AED">🟣 High</td><td>${cfg.extra_action}</td><td>SLM Developer / Admin</td></tr>`:''}
+        ${m.accuracy<60?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Expand the Knowledge Base with documents covering the most common user questions for this use case</td><td>SLM Developer</td></tr>':''}
+        ${m.completenessRate<60?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 High</td><td>Rewrite Knowledge Base content in full paragraph form — avoid bullet points that produce partial answers</td><td>Content Team</td></tr>':''}
+        ${m.hallucinationRate>25&&m.hallucinationRate<=(taskKey==='contract'||taskKey==='financial'?10:45)?'<tr style="background:#FEF3C7"><td style="font-weight:700;color:#B45309">🟡 Medium</td><td>Enable Strict Mode and audit the Knowledge Base for topics where the assistant is likely to speculate</td><td>SLM Developer</td></tr>':''}
+        ${m.bias>30?`<tr style="background:#F0F7FF"><td style="font-weight:700;color:#1B4FD8">🔵 Medium</td><td>Add hedging instructions to the system prompt: instruct the model to say "typically" rather than "always" or "never"</td><td>SLM Developer</td></tr>`:''}
+        ${m.coherence<50?`<tr style="background:#F0F7FF"><td style="font-weight:700;color:#1B4FD8">🔵 Medium</td><td>Update the system prompt in Studio to require a structured output format (e.g. numbered steps, clear sections)</td><td>SLM Developer</td></tr>`:''}
+        <tr style="background:#F0FDF4"><td style="font-weight:700;color:#15803D">🟢 Ongoing</td><td>Run batch tests monthly and repeat HITL review cycles to track improvement over time</td><td>Admin / QA Team</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    SLM Forge — HITL Quality Report &nbsp;·&nbsp; ${cfg.label} &nbsp;·&nbsp; Generated ${date} &nbsp;·&nbsp; For internal use only
+  </div>
+</div>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { alert('Pop-up blocked. Please allow pop-ups for this site and try again.'); return; }
+  w.document.write(html);
+  w.document.close();
+}
+window.generateHITLLeadershipReport = generateHITLLeadershipReport;
+
 function filterReview(filter, btn) {
   reviewFilter = filter;
   document.querySelectorAll('.review-filter-btn').forEach(b=>b.classList.remove('active'));
@@ -1712,7 +2340,7 @@ function runAnnotation() {
   ];
   document.getElementById('annMetricGrid').innerHTML=metrics23.map(m=>metricTile(m.label,m.val,m.desc,m.low)).join('');
   window._annMetrics13=metrics23; // keep same key for compat
-  document.getElementById('annTableBody').innerHTML=rows.map((r,i)=>{const m=r._m,oc=m.overall>=70?'#4ADE80':m.overall>=40?'#FBBF24':'#F87171';return`<tr><td>${i+1}</td><td title="${esc(r[qCol])}" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(r[qCol]||'').substring(0,60))}</td><td title="${esc(r._hyp)}" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r._hyp.substring(0,60))}</td><td title="${esc(r._ref)}" style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r._ref.substring(0,50))}</td><td><span class="tag ${m.hallucination?'tag-red':'tag-green'}">${m.hallucination?'Yes':'No'}</span></td><td><span class="tag ${m.completeness?'tag-green':'tag-amber'}">${m.completeness?'Yes':'No'}</span></td><td>${m.rouge1}%</td><td>${m.rougeL}%</td><td>${m.f1}%</td><td>${m.faithfulness}%</td><td>${m.wer}%</td><td style="font-weight:700;color:${oc}">${m.overall}%</td></tr>`;}).join('');
+  document.getElementById('annTableBody').innerHTML=rows.map((r,i)=>{const m=r._m,oc=m.overall>=70?'#4a5c4e':m.overall>=40?'#FBBF24':'#9b3a3a';return`<tr><td>${i+1}</td><td title="${esc(r[qCol])}" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(String(r[qCol]||'').substring(0,60))}</td><td title="${esc(r._hyp)}" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r._hyp.substring(0,60))}</td><td title="${esc(r._ref)}" style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r._ref.substring(0,50))}</td><td><span class="tag ${m.hallucination?'tag-red':'tag-green'}">${m.hallucination?'Yes':'No'}</span></td><td><span class="tag ${m.completeness?'tag-green':'tag-amber'}">${m.completeness?'Yes':'No'}</span></td><td>${m.rouge1}%</td><td>${m.rougeL}%</td><td>${m.f1}%</td><td>${m.faithfulness}%</td><td>${m.wer}%</td><td style="font-weight:700;color:${oc}">${m.overall}%</td></tr>`;}).join('');
   window._annRows=rows; window._annMetrics13=metrics13;
   show('annResults');
 }

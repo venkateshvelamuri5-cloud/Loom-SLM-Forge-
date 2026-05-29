@@ -9,50 +9,65 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 :root{
-  --bg:#0a0c10;
-  --surface:#111318;
-  --surface2:#181c24;
-  --surface3:#1e2330;
-  --border:#252b38;
-  --border2:#2e3547;
-  --accent:#4f8ef7;
-  --accent-hover:#6ba3ff;
-  --accent-glow:rgba(79,142,247,.15);
-  --green:#22c55e;
-  --green-glow:rgba(34,197,94,.12);
-  --amber:#f59e0b;
-  --red:#ef4444;
-  --text:#e8eaf0;
-  --text2:#9aa3b5;
-  --text3:#5c6478;
-  --radius:10px;
-  --radius-sm:6px;
-  --shadow:0 4px 24px rgba(0,0,0,.4);
+  /* ── Logmark palette ── */
+  --bg:         #f5f3ed;      /* cream — main page background */
+  --surface:    #ffffff;      /* white — cards, panels */
+  --surface2:   #faf9f6;      /* paper — hover states */
+  --surface3:   #f0ede5;      /* slightly deeper cream */
+  --border:     #e2e0d8;      /* rule — dividers */
+  --border2:    #ccc9be;      /* stronger border */
+
+  /* Brand accents */
+  --accent:     #4a5c4e;      /* sage — primary interactive */
+  --accent-hover:#3a4a3e;     /* sage dark */
+  --accent-glow:rgba(74,92,78,.10);
+  --a2:         #3c4a5c;      /* slate — secondary accent */
+  --a2-glow:    rgba(60,74,92,.10);
+  --a3:         #8c6d3f;      /* amber — warnings / highlights */
+  --danger:     #9b3a3a;      /* muted red */
+
+  /* Text */
+  --text:       #1a1a18;      /* ink — primary text */
+  --text1:      #1a1a18;
+  --text2:      #3d3d38;      /* ink2 — secondary text */
+  --text3:      #7a7a72;      /* ink3 — muted text */
+  --muted:      #7a7a72;
+
+  /* Status */
+  --green:      #4a5c4e;      /* sage for success */
+  --green-glow: rgba(74,92,78,.12);
+  --amber:      #8c6d3f;
+  --red:        #9b3a3a;
+
+  /* Layout */
+  --radius:     4px;
+  --radius-sm:  2px;
+  --shadow:     0 2px 16px rgba(26,26,24,.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;}
+body{background:var(--bg);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;line-height:1.5;}
 
 /* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:300;}
 .tb-brand{display:flex;align-items:center;gap:8px;margin-right:8px;}
-.tb-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(79,142,247,.3);}
+.tb-logo{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--a2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(74,92,78,.25);}
 .tb-name{font-weight:700;font-size:14px;letter-spacing:-.2px;}
 .tb-divider{width:1px;height:20px;background:var(--border);margin:0 4px;}
 .tb-tabs{display:flex;gap:2px;}
-.tb-tab{padding:5px 14px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;}
+.tb-tab{padding:5px 14px;border-radius:var(--radius-sm);border:none;background:transparent;color:var(--text2);font-family:'Epilogue',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;}
 .tb-tab:hover{color:var(--text);background:var(--surface2);}
 .tb-tab.active{color:var(--accent);background:var(--accent-glow);}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
 .tb-user{display:none;align-items:center;gap:8px;padding:4px 12px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;}
-.tb-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.tb-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
 .tb-uname{font-size:12px;font-weight:500;color:var(--text2);}
-.tb-signout{padding:4px 10px;border-radius:var(--radius-sm);border:1px solid rgba(239,68,68,.2);background:transparent;color:var(--red);font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;display:none;}
+.tb-signout{padding:4px 10px;border-radius:var(--radius-sm);border:1px solid rgba(155,58,58,.20);background:transparent;color:var(--red);font-size:11px;cursor:pointer;font-family:'Epilogue',sans-serif;display:none;}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
 .status-dot.ready{background:var(--green);box-shadow:0 0 6px var(--green);}
 .status-dot.loading{background:var(--amber);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.tb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.tb-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;}
 
 /* ── LAYOUT ── */
 .app{display:flex;height:100vh;padding-top:52px;}
@@ -65,13 +80,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 /* SLM Cards */
 .slm-card{padding:10px 12px;border-radius:var(--radius-sm);border:1px solid transparent;background:transparent;margin-bottom:3px;cursor:pointer;transition:.15s;}
 .slm-card:hover{background:var(--surface2);border-color:var(--border);}
-.slm-card.active{background:var(--accent-glow);border-color:rgba(79,142,247,.3);}
+.slm-card.active{background:var(--accent-glow);border-color:rgba(74,92,78,.25);}
 .slm-card-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
 .slm-icon{width:28px;height:28px;border-radius:6px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .slm-card.active .slm-icon{background:var(--accent-glow);}
 .slm-cname{font-size:12px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .slm-cat{font-size:10px;color:var(--text3);margin-left:36px;}
-.slm-load-btn{width:100%;margin-top:6px;padding:4px;border-radius:4px;border:1px solid rgba(79,142,247,.2);background:transparent;color:var(--accent);font-size:10px;font-weight:500;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif;}
+.slm-load-btn{width:100%;margin-top:6px;padding:4px;border-radius:4px;border:1px solid rgba(79,142,247,.2);background:transparent;color:var(--accent);font-size:10px;font-weight:500;cursor:pointer;transition:.15s;font-family:'Epilogue',sans-serif;}
 .slm-load-btn:hover{background:var(--accent-glow);}
 .slm-load-btn.active{background:var(--accent-glow);border-color:rgba(79,142,247,.4);}
 
@@ -79,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .sb-empty-icon{font-size:28px;margin-bottom:8px;}
 .sb-empty p{font-size:11px;line-height:1.6;}
 .sb-footer{margin-top:auto;padding:10px 12px;border-top:1px solid var(--border);}
-.privacy-badge{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:var(--radius-sm);background:var(--green-glow);border:1px solid rgba(34,197,94,.15);font-size:9px;color:var(--green);font-family:'JetBrains Mono',monospace;}
+.privacy-badge{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:var(--radius-sm);background:var(--green-glow);border:1px solid rgba(34,197,94,.15);font-size:9px;color:var(--green);font-family:'DM Mono',monospace;}
 
 /* ── MAIN ── */
 main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
@@ -91,22 +106,22 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .chat-slm-icon{width:32px;height:32px;border-radius:8px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:16px;}
 .chat-slm-name{font-size:14px;font-weight:600;}
 .chat-slm-desc{font-size:11px;color:var(--text2);margin-top:1px;}
-.chat-badge{margin-left:auto;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;border:1px solid transparent;}
+.chat-badge{margin-left:auto;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;border:1px solid transparent;}
 .chat-badge.idle{background:var(--surface2);border-color:var(--border);color:var(--text3);}
-.chat-badge.loading{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2);color:var(--amber);}
+.chat-badge.loading{background:rgba(140,109,63,.08);border-color:rgba(245,158,11,.2);color:var(--amber);}
 .chat-badge.ready{background:var(--green-glow);border-color:rgba(34,197,94,.2);color:var(--green);}
 
 .load-strip{padding:8px 20px;background:rgba(245,158,11,.04);border-bottom:1px solid rgba(245,158,11,.1);display:none;}
 .load-strip.show{display:block;}
 .load-track{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-bottom:5px;}
 .load-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:1px;transition:width .3s;}
-.load-label{font-size:10px;color:var(--amber);font-family:'JetBrains Mono',monospace;}
+.load-label{font-size:10px;color:var(--amber);font-family:'DM Mono',monospace;}
 
 .chat-body{flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:16px;}
 
 /* Welcome */
 .welcome-state{margin:auto;max-width:460px;text-align:center;padding:40px 24px;}
-.welcome-logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;box-shadow:0 0 24px rgba(79,142,247,.25);}
+.welcome-logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;box-shadow:0 0 24px rgba(74,92,78,.20);}
 .welcome-title{font-size:22px;font-weight:700;margin-bottom:8px;}
 .welcome-sub{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;}
 .welcome-steps{text-align:left;display:flex;flex-direction:column;gap:8px;}
@@ -120,12 +135,12 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .msg.user{align-self:flex-end;}
 .msg.bot{align-self:flex-start;width:100%;}
-.msg-who{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.msg-who{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;font-family:'DM Mono',monospace;}
 .msg-bubble{padding:12px 16px;border-radius:var(--radius);font-size:13px;line-height:1.7;}
 .msg.user .msg-bubble{background:var(--accent);color:#fff;border-radius:var(--radius) var(--radius) 2px var(--radius);}
 .msg.bot .msg-bubble{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) var(--radius) 2px;}
 .msg.err .msg-bubble{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);color:var(--red);}
-.msg-source{margin-top:6px;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:5px;}
+.msg-source{margin-top:6px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:5px;}
 .typing-dots{display:flex;gap:3px;align-items:center;padding:4px 0;}
 .tdot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:tdot 1.2s infinite;}
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
@@ -135,19 +150,19 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .chat-foot{padding:14px 20px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;}
 .input-box{display:flex;gap:10px;align-items:flex-end;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;transition:.2s;}
 .input-box:focus-within{border-color:rgba(79,142,247,.4);box-shadow:0 0 0 3px rgba(79,142,247,.06);}
-.chat-ta{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:none;min-height:20px;max-height:120px;line-height:1.5;}
+.chat-ta{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;resize:none;min-height:20px;max-height:120px;line-height:1.5;}
 .chat-ta::placeholder{color:var(--text3);}
 .live-metrics-bar{display:none;padding:8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
 .live-metrics-bar.visible{display:flex;align-items:center;gap:0;flex-wrap:nowrap;}
 .lm-tile{display:flex;flex-direction:column;align-items:center;padding:4px 12px;border-right:1px solid var(--border);min-width:70px;flex-shrink:0;}
 .lm-tile:last-child{border-right:none;}
-.lm-val{font-size:15px;font-weight:800;font-family:'JetBrains Mono','Consolas',monospace;line-height:1;}
+.lm-val{font-size:15px;font-weight:800;font-family:'DM Mono','Consolas',monospace;line-height:1;}
 .lm-label{font-size:9px;color:var(--text3);margin-top:2px;font-weight:600;letter-spacing:.3px;white-space:nowrap;}
 .lm-divider{flex:1;}
 .lm-info{font-size:10px;color:var(--text3);padding-left:10px;}
-.slm-update-bar{display:none;align-items:center;justify-content:space-between;padding:8px 14px;background:rgba(245,166,35,.1);border-bottom:1px solid rgba(245,166,35,.3);font-size:11px;color:#f5a623;}
-.slm-update-bar button{padding:4px 10px;border-radius:5px;border:1px solid rgba(245,166,35,.5);background:rgba(245,166,35,.15);color:#f5a623;font-size:10px;font-weight:700;cursor:pointer;}
-.slm-update-bar button:hover{background:rgba(245,166,35,.3);}
+.slm-update-bar{display:none;align-items:center;justify-content:space-between;padding:8px 14px;background:rgba(245,166,35,.1);border-bottom:1px solid rgba(140,109,63,.25);font-size:11px;color:#f5a623;}
+.slm-update-bar button{padding:4px 10px;border-radius:5px;border:1px solid rgba(245,166,35,.5);background:rgba(140,109,63,.12);color:#f5a623;font-size:10px;font-weight:700;cursor:pointer;}
+.slm-update-bar button:hover{background:rgba(140,109,63,.25);}
 .metrics-panel{display:none;margin-top:16px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);}
 .metrics-panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);}
 .metrics-panel-title{font-size:13px;font-weight:700;color:var(--text);}
@@ -155,14 +170,14 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .metrics-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border);}
 .metric-tile{padding:14px 12px;text-align:center;border-right:1px solid var(--border);}
 .metric-tile:last-child{border-right:none;}
-.metric-tile .mt-val{font-size:26px;font-weight:800;font-family:'JetBrains Mono','Consolas',monospace;line-height:1;}
+.metric-tile .mt-val{font-size:26px;font-weight:800;font-family:'DM Mono','Consolas',monospace;line-height:1;}
 .metric-tile .mt-label{font-size:10px;color:var(--text3);margin-top:4px;font-weight:600;letter-spacing:.3px;}
 .metric-tile .mt-status{font-size:9px;font-weight:700;margin-top:3px;padding:1px 6px;border-radius:10px;display:inline-block;}
 .metrics-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:0;}
 .metric-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
 .metric-row:nth-child(even){border-right:none;}
 .metric-row:last-child,.metric-row:nth-last-child(2):nth-child(odd){border-bottom:none;}
-.mr-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono','Consolas',monospace;min-width:48px;text-align:right;flex-shrink:0;}
+.mr-val{font-size:18px;font-weight:800;font-family:'DM Mono','Consolas',monospace;min-width:48px;text-align:right;flex-shrink:0;}
 .mr-info{flex:1;min-width:0;}
 .mr-name{font-size:11px;font-weight:700;margin-bottom:1px;}
 .mr-desc{font-size:10px;color:var(--text3);line-height:1.4;}
@@ -171,33 +186,33 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .metrics-insight{padding:12px 14px;background:rgba(59,130,246,.04);border-top:1px solid var(--border);}
 .metrics-insight-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
 .metrics-insight-text{font-size:11px;color:var(--text2);line-height:1.7;}
-.send-btn{padding:8px 16px;border-radius:7px;background:var(--accent);border:none;color:#fff;font-weight:600;font-size:12px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;white-space:nowrap;}
+.send-btn{padding:8px 16px;border-radius:7px;background:var(--accent);border:none;color:#fff;font-weight:600;font-size:12px;cursor:pointer;transition:.2s;font-family:'Epilogue',sans-serif;white-space:nowrap;}
 .send-btn:hover{background:var(--accent-hover);}
 .send-btn:disabled{opacity:.3;cursor:not-allowed;}
-.stop-btn{padding:8px 16px;border-radius:7px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);color:#ef4444;font-weight:600;font-size:12px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;white-space:nowrap;display:none;}
-.stop-btn:hover{background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.6);}
+.stop-btn{padding:8px 16px;border-radius:7px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);color:#9b3a3a;font-weight:600;font-size:12px;cursor:pointer;transition:.2s;font-family:'Epilogue',sans-serif;white-space:nowrap;display:none;}
+.stop-btn:hover{background:rgba(155,58,58,.20);border-color:rgba(239,68,68,.6);}
 .input-hint{font-size:10px;color:var(--text3);margin-top:6px;text-align:center;}
 
 /* ── LOGIN MODAL ── */
 .modal-back{position:fixed;inset:0;background:rgba(10,12,16,.92);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);}
 .modal-back.hidden{display:none;}
 .modal-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:36px;width:100%;max-width:420px;box-shadow:var(--shadow);position:relative;}
-.modal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),#7c3aed);border-radius:14px 14px 0 0;}
+.modal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),#3c4a5c);border-radius:14px 14px 0 0;}
 .m-brand{display:flex;align-items:center;gap:8px;margin-bottom:22px;}
-.m-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.m-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--a2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
 .m-title-sm{font-size:14px;font-weight:700;}
 .m-headline{font-size:22px;font-weight:700;margin-bottom:5px;letter-spacing:-.3px;}
 .m-sub{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:22px;}
 .m-field{margin-bottom:14px;}
 .m-label{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:3px;}
 .req{color:var(--red);}
-.m-input{width:100%;padding:10px 13px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:.2s;}
+.m-input{width:100%;padding:10px 13px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:.2s;}
 .m-input:focus{border-color:rgba(79,142,247,.5);box-shadow:0 0 0 3px rgba(79,142,247,.08);}
 .m-error{color:var(--red);font-size:11px;margin-bottom:12px;padding:9px 12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:var(--radius-sm);display:none;}
-.m-submit{width:100%;padding:12px;border-radius:var(--radius-sm);background:var(--accent);border:none;color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;letter-spacing:-.1px;}
+.m-submit{width:100%;padding:12px;border-radius:var(--radius-sm);background:var(--accent);border:none;color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:'Epilogue',sans-serif;transition:.2s;letter-spacing:-.1px;}
 .m-submit:hover{background:var(--accent-hover);}
 .m-submit:disabled{opacity:.35;cursor:not-allowed;}
-.m-toggle{background:none;border:none;color:var(--text3);font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;display:block;width:100%;text-align:center;margin-top:12px;transition:.15s;}
+.m-toggle{background:none;border:none;color:var(--text3);font-family:'Epilogue',sans-serif;font-size:11px;cursor:pointer;display:block;width:100%;text-align:center;margin-top:12px;transition:.15s;}
 .m-toggle:hover{color:var(--text2);}
 .m-note{font-size:10px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.6;}
 .m-success{text-align:center;padding:8px 0;}
@@ -213,7 +228,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .fb-bar.hidden{display:none;}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .fb-text{font-size:13px;font-weight:600;flex:1;}
-.fb-btn{padding:7px 16px;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);}
+.fb-btn{padding:7px 16px;border-radius:var(--radius-sm);font-family:'Epilogue',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);}
 .fb-btn.prim{background:var(--accent);color:#fff;border-color:var(--accent);}
 .fb-close{color:var(--text3);cursor:pointer;font-size:16px;padding:4px;}
 
@@ -237,7 +252,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .de-file-card .df-name{font-size:11px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .de-file-card .df-meta{font-size:10px;color:var(--text3);}
 .de-file-card .df-rm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:3px;}
-.de-file-card .df-rm:hover{color:var(--danger);background:rgba(239,68,68,.1);}
+.de-file-card .df-rm:hover{color:var(--danger);background:rgba(155,58,58,.08);}
 .de-divider{height:1px;background:var(--border);margin:10px 12px;}
 .de-gen-btn{margin:10px 12px 14px;padding:11px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .de-gen-btn:hover{opacity:.9;transform:translateY(-1px);}
@@ -282,10 +297,10 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .de-result-card .rc-badges{display:flex;gap:5px;}
 .rc-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
 .rc-badge.docx{background:rgba(59,130,246,.15);color:#60A5FA;}
-.rc-badge.pdf{background:rgba(239,68,68,.15);color:#F87171;}
-.de-dl-btn{padding:5px 12px;border-radius:6px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#34D399;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
+.rc-badge.pdf{background:rgba(239,68,68,.15);color:#9b3a3a;}
+.de-dl-btn{padding:5px 12px;border-radius:6px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#4a5c4e;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
 .de-dl-btn:hover{background:rgba(16,185,129,.15);}
-.ph-tag{display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#FCD34D;border-radius:3px;padding:0 4px;font-size:10px;font-family:'Consolas',monospace;margin:1px;}
+.ph-tag{display:inline-block;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#8c6d3f;border-radius:3px;padding:0 4px;font-size:10px;font-family:'Consolas',monospace;margin:1px;}
 .de-progress{padding:10px 20px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;}
 .de-prog-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:4px;}
 .de-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#8B5CF6);border-radius:2px;transition:width .3s;}
@@ -325,14 +340,14 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .batch-log-line.err .blm{color:var(--red);}
 .batch-log-line.info .blm{color:var(--text2);}
 .batch-log-line.step .blm{color:#8B5CF6;font-weight:700;}
-.batch-dl-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#34D399;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
+.batch-dl-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#4a5c4e;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
 .batch-dl-btn:hover{background:rgba(16,185,129,.15);}
 .batch-result-table{width:100%;border-collapse:collapse;font-size:11px;}
 .batch-result-table th{padding:8px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;text-align:left;letter-spacing:.5px;text-transform:uppercase;position:sticky;top:0;z-index:1;}
 .batch-result-table td{padding:8px 12px;border:1px solid var(--border);color:var(--text2);vertical-align:top;line-height:1.5;}
 .batch-result-table tr:hover td{background:var(--surface2);}
 .batch-result-table td.response-cell{max-width:420px;white-space:pre-wrap;word-break:break-word;}
-.batch-result-table td.status-ok{color:#34D399;}
+.batch-result-table td.status-ok{color:#4a5c4e;}
 .batch-result-table td.status-err{color:var(--red);}
 .batch-preview-table{width:100%;border-collapse:collapse;font-size:11px;}
 .batch-preview-table th{padding:7px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;text-align:left;position:sticky;top:0;}
@@ -371,11 +386,11 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .yn-group{display:flex;gap:6px;}
 .yn-btn{flex:1;padding:5px 0;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text3);font-size:11px;font-weight:700;cursor:pointer;text-align:center;transition:.15s;}
 .yn-btn:hover{border-color:var(--text3);color:var(--text2);}
-.yn-btn.yes-active{background:rgba(239,68,68,.15);border-color:#F87171;color:#F87171;}
-.yn-btn.no-active{background:rgba(34,197,94,.12);border-color:#4ADE80;color:#4ADE80;}
+.yn-btn.yes-active{background:rgba(239,68,68,.15);border-color:#9b3a3a;color:#9b3a3a;}
+.yn-btn.no-active{background:rgba(74,92,78,.10);border-color:#4a5c4e;color:#4a5c4e;}
 /* completeness flipped: yes=good */
-.eval-col.completeness .yn-btn.yes-active{background:rgba(34,197,94,.12);border-color:#4ADE80;color:#4ADE80;}
-.eval-col.completeness .yn-btn.no-active{background:rgba(239,68,68,.15);border-color:#F87171;color:#F87171;}
+.eval-col.completeness .yn-btn.yes-active{background:rgba(74,92,78,.10);border-color:#4a5c4e;color:#4a5c4e;}
+.eval-col.completeness .yn-btn.no-active{background:rgba(239,68,68,.15);border-color:#9b3a3a;color:#9b3a3a;}
 
 .submit-row-btn{margin-top:10px;padding:6px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent-glow);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer;transition:.15s;width:100%;}
 .submit-row-btn:hover{background:var(--accent);color:#fff;}
@@ -585,9 +600,9 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <!-- Attack vector legend -->
       <div id="attackLegend" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.8">
         <strong style="color:var(--text1);font-size:12px">📡 Attack Vectors — what each column measures:</strong><br>
-        <strong style="color:#F87171">Hallucination</strong> — Did the AI invent facts not present in the Knowledge Base or input? <em>Yes = hallucinated (bad)</em><br>
+        <strong style="color:#9b3a3a">Hallucination</strong> — Did the AI invent facts not present in the Knowledge Base or input? <em>Yes = hallucinated (bad)</em><br>
         <strong style="color:#FBBF24">Completeness</strong> — Did the AI answer the full question without omitting critical information? <em>Yes = complete (good)</em><br>
-        <strong style="color:#4ADE80">Correct Answer</strong> — Free-form field: write the ideal answer, or leave blank if AI answer is already correct.
+        <strong style="color:#4a5c4e">Correct Answer</strong> — Free-form field: write the ideal answer, or leave blank if AI answer is already correct.
       </div>
 
       <!-- Stats bar -->
@@ -658,7 +673,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <span style="color:var(--text2)">Send to Human Review</span>
-      <div class="toggle on" id="batchToggleHitl" onclick="batchToggle('batchToggleHitl')" style="cursor:pointer;width:36px;height:20px;border-radius:10px;background:rgba(79,142,247,.25);border:1px solid var(--accent);position:relative;transition:.2s">
+      <div class="toggle on" id="batchToggleHitl" onclick="batchToggle('batchToggleHitl')" style="cursor:pointer;width:36px;height:20px;border-radius:10px;background:rgba(74,92,78,.20);border:1px solid var(--accent);position:relative;transition:.2s">
         <div id="batchToggleHitlThumb" style="width:14px;height:14px;border-radius:50%;background:var(--accent);position:absolute;top:2px;left:18px;transition:.2s"></div>
       </div>
     </div>
@@ -683,7 +698,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
   <div class="batch-tabs">
     <div class="batch-tab active" id="btab-preview" onclick="batchTabSwitch('preview',this)">Preview</div>
     <div class="batch-tab" id="btab-log" onclick="batchTabSwitch('log',this)">Log</div>
-    <div class="batch-tab" id="btab-results" onclick="batchTabSwitch('results',this)">Results <span id="batchResultBadge" style="display:none;margin-left:4px;padding:1px 6px;border-radius:10px;background:rgba(16,185,129,.2);color:#34D399;font-size:10px;font-weight:700"></span></div>
+    <div class="batch-tab" id="btab-results" onclick="batchTabSwitch('results',this)">Results <span id="batchResultBadge" style="display:none;margin-left:4px;padding:1px 6px;border-radius:10px;background:rgba(16,185,129,.2);color:#4a5c4e;font-size:10px;font-weight:700"></span></div>
   </div>
 
   <!-- PREVIEW PANEL -->
@@ -714,8 +729,9 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:10px;flex-shrink:0">
         <span id="batchResultsSummary" style="font-size:12px;font-weight:700;color:var(--text2);flex:1"></span>
         <button class="batch-dl-btn" id="batchDlBtn" onclick="batchExportResults()" style="display:none">⬇ Download Results</button>
+        <button class="batch-dl-btn" id="batchHitlBtn" onclick="batchExportForHITL()" style="display:none;background:rgba(74,92,78,.12);color:#4a5c4e;border-color:rgba(74,92,78,.3)" title="Export a pre-formatted file your HITL specialist can import on any machine — no column mapping required">👥 Export for HITL Review</button>
         <button class="batch-dl-btn" id="dlMetricsBtn" onclick="downloadMetricsReport()" style="display:none;background:rgba(21,128,61,.1);border:1px solid rgba(21,128,61,.3);color:#15803D">📊 Leadership Report</button>
-        <button class="batch-dl-btn" onclick="batchSendToReview()" style="background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.3);color:var(--accent)">👥 Send to Human Review</button>
+        <button class="batch-dl-btn" onclick="batchSendToReview()" style="background:rgba(79,142,247,.1);border-color:rgba(74,92,78,.25);color:var(--accent)">👥 Send to Human Review</button>
       </div>
       <div id="batchResultsTable" style="flex:1;overflow:auto;padding:16px"></div>
     </div>
@@ -793,10 +809,10 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
       <div class="m-headline" style="font-size:18px">How was your session?</div>
       <div class="m-sub">60 seconds. Helps us build a better product.</div>
       <div style="display:flex;gap:4px;margin-bottom:16px" id="fbDots"></div>
-      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;font-family:'JetBrains Mono',monospace" id="fbNum">FEEDBACK 1 OF 3</div>
+      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;font-family:'DM Mono',monospace" id="fbNum">FEEDBACK 1 OF 3</div>
       <div style="font-size:15px;font-weight:600;margin-bottom:5px;line-height:1.4" id="fbQ"></div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6" id="fbS"></div>
-      <textarea style="width:100%;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;resize:none;min-height:80px;transition:.2s" id="fbAns" placeholder="Share your thoughts…"></textarea>
+      <textarea style="width:100%;padding:10px 12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;resize:none;min-height:80px;transition:.2s" id="fbAns" placeholder="Share your thoughts…"></textarea>
       <button class="m-submit" id="fbNext" onclick="fbAdvance(false)" style="margin-top:10px">Next</button>
       <button class="m-toggle" onclick="fbAdvance(true)">Skip</button>
     </div>
@@ -1375,7 +1391,7 @@ function renderSidebar(){
         <button class="slm-load-btn ${activeSlm?.id===p.id?'active':''}" onclick="event.stopPropagation();pickSlm('${p.id}')">
           ${activeSlm?.id===p.id?'✓ Active':'Use this assistant'}
         </button>
-        <button onclick="removeSlm('${p.id}',event)" title="Remove this assistant" style="width:100%;margin-top:4px;padding:3px;border-radius:4px;border:1px solid rgba(239,68,68,.25);background:transparent;color:rgba(239,68,68,.7);font-size:10px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s" onmouseover="this.style.background='rgba(239,68,68,.1)'" onmouseout="this.style.background='transparent'">✕ Remove</button>
+        <button onclick="removeSlm('${p.id}',event)" title="Remove this assistant" style="width:100%;margin-top:4px;padding:3px;border-radius:4px;border:1px solid rgba(155,58,58,.20);background:transparent;color:rgba(239,68,68,.7);font-size:10px;font-weight:500;cursor:pointer;font-family:'Epilogue',sans-serif;transition:.15s" onmouseover="this.style.background='rgba(155,58,58,.08)'" onmouseout="this.style.background='transparent'">✕ Remove</button>
       </div>`).join('')}
   `).join('');
 }
@@ -1435,17 +1451,17 @@ const DEFAULT_CTX = 4096; // safe fallback for unknown models
 function estTokens(text) { return Math.ceil((text||'').length / 3.5); }
 
 // Shared token budget calculator — used by BOTH safeParams and buildSafePrompt
-function getTokenBudget(modelKey, requestedMaxTok=512) {
+function getTokenBudget(modelKey, requestedMaxTok=1024) {
   const ctx        = MODEL_CTX[modelKey] || DEFAULT_CTX;
   const SAFETY     = 128;
-  const maxOut     = Math.min(requestedMaxTok, Math.floor(ctx * 0.25));
+  const maxOut     = Math.min(requestedMaxTok, Math.floor(ctx * 0.45));
   // Reserve 25% for output + 15% for history + 128 safety = available for system+KB+query
   const histReserve= Math.floor(ctx * 0.15);
   const inputMax   = ctx - maxOut - histReserve - SAFETY;
   return { ctx, inputMax, maxOut };
 }
 
-function safeParams(modelKey, promptText, queryText, requestedMaxTok=512, historyTok=0) {
+function safeParams(modelKey, promptText, queryText, requestedMaxTok=1024, historyTok=0) {
   const { inputMax, maxOut } = getTokenBudget(modelKey, requestedMaxTok);
   const queryTok  = estTokens(queryText);
   const available = inputMax - queryTok - 16; // 16 for role overhead
@@ -1725,7 +1741,7 @@ async function sendMsg(){
     let srcInfo=null;
 
     const modelKey = activeSlm?.modelKey || 'llama3b';
-    const requestedMaxTok = activeSlm?.params?.maxTok || 512;
+    const requestedMaxTok = activeSlm?.params?.maxTok || 1024;
     const temp = activeSlm?.params?.temp ?? 0.1;
     // Strict mode: SLM only answers from KB — refuses out-of-scope questions
     const isStrict = !!(activeSlm?.strictMode);
@@ -1761,7 +1777,7 @@ async function sendMsg(){
     // ── Hard token budget ─────────────────────────────────────────
     const ctxLimit   = MODEL_CTX[modelKey] || DEFAULT_CTX;
     const SAFETY     = 256;
-    const maxOutToks = Math.min(requestedMaxTok, Math.floor(ctxLimit * 0.20));
+    const maxOutToks = Math.min(requestedMaxTok, Math.floor(ctxLimit * 0.40));
     const inputBudget= ctxLimit - maxOutToks - SAFETY;
 
     const systemTok = estTokens(finalPrompt);
@@ -1910,7 +1926,7 @@ function compute23Metrics(query, response, contextChunks, hasKb) {
 
 function _scoreColor(v, inv=false) {
   const s = inv ? 100-v : v;
-  return s>=70 ? '#4ADE80' : s>=40 ? '#FBBF24' : '#F87171';
+  return s>=70 ? '#4a5c4e' : s>=40 ? '#FBBF24' : '#9b3a3a';
 }
 
 function resetLiveMetrics() {
@@ -2071,7 +2087,7 @@ function addBot(h){return addMsg('bot',(activeSlm?.name||'ASSISTANT').toUpperCas
 function addErr(t){return addMsg('err','SYSTEM',t);}
 function addSysMsg(t){
   const el=document.createElement('div');
-  el.style.cssText='text-align:center;padding:6px 12px;font-size:11px;color:var(--text3);font-family:"JetBrains Mono",monospace;';
+  el.style.cssText='text-align:center;padding:6px 12px;font-size:11px;color:var(--text3);font-family:"DM Mono",monospace;';
   el.textContent=t;
   document.getElementById('chatBody').appendChild(el);
   el.scrollIntoView({behavior:'smooth'});
@@ -2113,7 +2129,7 @@ function toggleStrictMode() {
     tog.classList.add('on');
     thumb.style.left = '18px';
     thumb.style.background = 'var(--accent)';
-    tog.style.background = 'rgba(79,142,247,.25)';
+    tog.style.background = 'rgba(74,92,78,.20)';
     tog.style.borderColor = 'var(--accent)';
     label.textContent = 'Strict Mode ON';
     label.style.color = 'var(--accent)';
@@ -2146,7 +2162,7 @@ function updateStrictPanel() {
     if (activeSlm.strictMode) {
       tog.classList.add('on');
       thumb.style.left = '18px'; thumb.style.background = 'var(--accent)';
-      tog.style.background = 'rgba(79,142,247,.25)'; tog.style.borderColor = 'var(--accent)';
+      tog.style.background = 'rgba(74,92,78,.20)'; tog.style.borderColor = 'var(--accent)';
       label.textContent = 'Strict Mode ON'; label.style.color = 'var(--accent)';
       desc.textContent = 'KB-only · refuses off-topic questions';
     } else {
@@ -2235,7 +2251,7 @@ function renderReview() {
     const cSet = cVal !== null;
     const canSubmit = hSet && cSet && !item.submitted;
     const statusBadge = item.submitted
-      ? `<span class="review-status-badge" style="background:rgba(34,197,94,.15);color:#4ADE80">\u2705 Submitted</span>`
+      ? `<span class="review-status-badge" style="background:rgba(34,197,94,.15);color:#4a5c4e">\u2705 Submitted</span>`
       : (hSet && cSet)
         ? `<span class="review-status-badge" style="background:rgba(251,191,36,.12);color:#FBBF24">\u26A1 Ready</span>`
         : `<span class="review-status-badge" style="background:var(--surface2);color:var(--text3)">\u23F3 Pending</span>`;
@@ -2250,13 +2266,13 @@ function renderReview() {
       <div class="review-a">${esc(item.aiAnswer)}</div>
       <div class="eval-row">
         <div class="eval-col">
-          <div class="eval-col-label" style="color:#F87171">Hallucination</div>
+          <div class="eval-col-label" style="color:#9b3a3a">Hallucination</div>
           <div style="font-size:10px;color:var(--text3);margin-bottom:6px">Did AI invent facts not in KB?</div>
           <div class="yn-group">
             <button class="yn-btn ${hVal===true?'yes-active':''}" onclick="setEval(${item.id},'hallucination',true)"  ${item.submitted?'disabled':''}>Yes</button>
             <button class="yn-btn ${hVal===false?'no-active':''}"  onclick="setEval(${item.id},'hallucination',false)" ${item.submitted?'disabled':''}>No</button>
           </div>
-          ${hSet ? `<div style="font-size:10px;margin-top:4px;color:${hVal?'#F87171':'#4ADE80'}">${hVal?'\u26A0\uFE0F Hallucinated':'\u2713 Grounded'}</div>` : ''}
+          ${hSet ? `<div style="font-size:10px;margin-top:4px;color:${hVal?'#9b3a3a':'#4a5c4e'}">${hVal?'\u26A0\uFE0F Hallucinated':'\u2713 Grounded'}</div>` : ''}
         </div>
         <div class="eval-col completeness">
           <div class="eval-col-label" style="color:#FBBF24">Completeness</div>
@@ -2265,10 +2281,10 @@ function renderReview() {
             <button class="yn-btn ${cVal===true?'yes-active':''}"  onclick="setEval(${item.id},'completeness',true)"  ${item.submitted?'disabled':''}>Yes</button>
             <button class="yn-btn ${cVal===false?'no-active':''}"   onclick="setEval(${item.id},'completeness',false)" ${item.submitted?'disabled':''}>No</button>
           </div>
-          ${cSet ? `<div style="font-size:10px;margin-top:4px;color:${cVal?'#4ADE80':'#F87171'}">${cVal?'\u2713 Complete':'\u26A0\uFE0F Incomplete'}</div>` : ''}
+          ${cSet ? `<div style="font-size:10px;margin-top:4px;color:${cVal?'#4a5c4e':'#9b3a3a'}">${cVal?'\u2713 Complete':'\u26A0\uFE0F Incomplete'}</div>` : ''}
         </div>
         <div class="eval-col">
-          <div class="eval-col-label" style="color:#4ADE80">Correct Answer</div>
+          <div class="eval-col-label" style="color:#4a5c4e">Correct Answer</div>
           <div style="font-size:10px;color:var(--text3);margin-bottom:6px">Ideal answer (blank = AI is correct)</div>
           <textarea class="review-edit" id="ca-${item.id}"
             placeholder="Type the correct answer, or leave blank if AI is correct\u2026"
@@ -2279,7 +2295,7 @@ function renderReview() {
       <button class="submit-row-btn" id="sbtn-${item.id}"
         onclick="submitRow(${item.id})"
         ${canSubmit?'':'disabled'}
-        ${item.submitted?'style="opacity:.4;cursor:default;background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.3);color:#4ADE80"':''}>
+        ${item.submitted?'style="opacity:.4;cursor:default;background:rgba(74,92,78,.06);border-color:rgba(34,197,94,.3);color:#4a5c4e"':''}>
         ${item.submitted ? '\u2705 Submitted' : '\u21A9 Submit this row'}
       </button>
     </div>`;
@@ -2405,15 +2421,15 @@ function renderArchive() {
         <div class="archive-batch-meta">${d}</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-        <span class="arch-stat" style="background:rgba(239,68,68,.12);color:#F87171">\u{1F534} Hallucination: ${hallPct}%</span>
-        <span class="arch-stat" style="background:rgba(34,197,94,.1);color:#4ADE80">\u2705 Completeness: ${compPct}%</span>
+        <span class="arch-stat" style="background:rgba(239,68,68,.12);color:#9b3a3a">\u{1F534} Hallucination: ${hallPct}%</span>
+        <span class="arch-stat" style="background:rgba(74,92,78,.08);color:#4a5c4e">\u2705 Completeness: ${compPct}%</span>
         <span class="arch-stat" style="background:rgba(251,191,36,.1);color:#FBBF24">\u270F\uFE0F Corrected: ${b.corrected}</span>
         ${b.metrics ? `<span class="arch-stat" style="background:var(--surface2);color:var(--text2)">\u{1F4CA} Score: ${b.metrics.overall}%</span>` : ''}
       </div>
       <div class="archive-actions">
         <button class="btn btn-secondary" style="font-size:11px;padding:5px 12px" onclick="exportArchiveBatch(${bi})">\u2B07 Export Excel</button>
         <button class="btn btn-secondary" style="font-size:11px;padding:5px 12px" onclick="applyArchiveFeedbackToKB(${bi})">\u{1F9E0} Apply to KB</button>
-        <button class="btn" style="font-size:11px;padding:5px 12px;color:#F87171;border-color:rgba(239,68,68,.3)" onclick="deleteArchiveBatch(${bi})">\u{1F5D1} Delete</button>
+        <button class="btn" style="font-size:11px;padding:5px 12px;color:#9b3a3a;border-color:rgba(155,58,58,.25)" onclick="deleteArchiveBatch(${bi})">\u{1F5D1} Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -2488,8 +2504,8 @@ function updateReviewStats() {
   el.innerHTML = [
     {val:total,                             lbl:'Total',       col:'var(--accent)'},
     {val:total-submitted,                   lbl:'Pending',     col:'var(--text3)'},
-    {val:submitted,                         lbl:'Submitted',   col:'#4ADE80'},
-    {val:hallYes+' / '+submitted,           lbl:'Hallucinated',col:'#F87171'},
+    {val:submitted,                         lbl:'Submitted',   col:'#4a5c4e'},
+    {val:hallYes+' / '+submitted,           lbl:'Hallucinated',col:'#9b3a3a'},
     {val:(submitted-incomp)+' / '+submitted,lbl:'Complete',    col:'#FBBF24'},
     {val:corrected,                         lbl:'Corrected',   col:'#818CF8'},
   ].map(s=>`<div class="review-stat-tile"><div class="review-stat-val" style="color:${s.col}">${s.val}</div><div class="review-stat-lbl">${s.lbl}</div></div>`).join('');
@@ -2781,7 +2797,7 @@ window.sendMsg = async function() {
       const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
       let prompt=base; let srcInfo=null;
       const modelKey=activeSlm?.modelKey||'llama3b';
-      const requestedMaxTok=activeSlm?.params?.maxTok||512;
+      const requestedMaxTok=activeSlm?.params?.maxTok||1024;
       const temp=activeSlm?.params?.temp??0.1;
       const isStrict=!!(activeSlm?.strictMode);
       const RAG_INSTRUCTIONS=isStrict
@@ -2796,7 +2812,7 @@ window.sendMsg = async function() {
       const historyToks=chatHistory.reduce((s,m)=>s+estTokens(m.content),0);
       const {maxTok,finalPrompt}=safeParams(modelKey,prompt,txt,requestedMaxTok,historyToks);
       const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
-      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.40));
       const inputBudget=ctxLimit-maxOutToks-SAFETY;
       const systemTok=estTokens(finalPrompt); const userTok=estTokens(txt);
       let histAlloc=inputBudget-systemTok-userTok;
@@ -2852,14 +2868,14 @@ window.sendMsg = async function() {
     const kbChunks=activeSlm?.kbChunks||[]; const hasKb=kbChunks.length>0;
     const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
     const modelKey=activeSlm?.modelKey||'llama3b';
-    const requestedMaxTok=activeSlm?.params?.maxTok||512; const temp=activeSlm?.params?.temp??0.1;
+    const requestedMaxTok=activeSlm?.params?.maxTok||1024; const temp=activeSlm?.params?.temp??0.1;
     const isStrict=!!(activeSlm?.strictMode);
     const RAG=isStrict?'STRICT: Answer only from KB.':'Answer using KB as primary source.';
     let prompt=base; let srcInfo=null;
     if(hasKb){const topK=activeSlm?.params?.topK||6;const{sources,found,topDocs}=await hybridSearch(enrichedTxt,kbChunks,topK);if(found&&topDocs?.length){srcInfo=sources;prompt=buildSafePrompt(base,topDocs,RAG,modelKey);}}
     const{maxTok,finalPrompt}=safeParams(modelKey,prompt,enrichedTxt,requestedMaxTok,0);
     const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
-    const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+    const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.40));
     try{if(engine&&!engine._generating)await engine.resetChat();}catch(e){}
     const stream=await engine.chat.completions.create({messages:[{role:'system',content:finalPrompt},{role:'user',content:enrichedTxt}],temperature:temp,max_tokens:maxOutToks,stream:true});
     let out=''; typing.remove(); const msgEl=addBot('');
@@ -2887,7 +2903,7 @@ function batchToggle(id) {
   const btn=document.getElementById(id), thumb=document.getElementById(id+'Thumb');
   if (!btn) return;
   if (BATCH.toggleStates[id]) {
-    btn.style.background='rgba(79,142,247,.25)'; btn.style.borderColor='var(--accent)';
+    btn.style.background='rgba(74,92,78,.20)'; btn.style.borderColor='var(--accent)';
     if(thumb){thumb.style.background='var(--accent)';thumb.style.left='18px';}
   } else {
     btn.style.background='var(--surface2)'; btn.style.borderColor='var(--border)';
@@ -2996,7 +3012,7 @@ async function batchRun() {
   const kbChunks=activeSlm?.kbChunks||[]; const hasKb=kbChunks.length>0;
   const base=activeSlm?.systemPrompt||activeSlm?.role||'You are a helpful AI assistant.';
   const modelKey=activeSlm?.modelKey||'llama3b';
-  const requestedMaxTok=Math.min(activeSlm?.params?.maxTok||512,400);
+  const requestedMaxTok=Math.min(activeSlm?.params?.maxTok||1024,800);
   const temp=activeSlm?.params?.temp??0.1;
   const isStrict=!!(activeSlm?.strictMode);
   const RAG=isStrict?'STRICT INSTRUCTIONS: Answer ONLY from the KNOWLEDGE BASE. If not found, say so.':'INSTRUCTIONS: Answer using the KNOWLEDGE BASE as primary source.';
@@ -3012,7 +3028,7 @@ async function batchRun() {
       if(hasKb){const topK=activeSlm?.params?.topK||4;const{found,topDocs}=await hybridSearch(prompt,kbChunks,topK);if(found&&topDocs?.length)sysPrompt=buildSafePrompt(base,topDocs,RAG,modelKey);}
       const{maxTok,finalPrompt}=safeParams(modelKey,sysPrompt,prompt,requestedMaxTok,0);
       const ctxLimit=MODEL_CTX[modelKey]||DEFAULT_CTX; const SAFETY=256;
-      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.20));
+      const maxOutToks=Math.min(requestedMaxTok,Math.floor(ctxLimit*0.40));
       try{if(engine&&!engine._generating)await engine.resetChat();}catch(e){}
       const stream=await engine.chat.completions.create({messages:[{role:'system',content:finalPrompt},{role:'user',content:prompt}],temperature:temp,max_tokens:maxOutToks,stream:true});
       let out='';
@@ -3090,9 +3106,17 @@ function batchRenderResults() {
   badge.style.display='inline'; badge.textContent=ok;
   document.getElementById('batchResultsSummary').textContent=BATCH.results.length+' rows processed · '+ok+' successful';
   document.getElementById('batchDlBtn').style.display='block';
+  const hitlBtn = document.getElementById('batchHitlBtn'); if(hitlBtn) hitlBtn.style.display='block';
   const table=document.getElementById('batchResultsTable');
   table.innerHTML='<table class="batch-result-table"><thead><tr><th>#</th><th>'+esc(BATCH.promptCol)+'</th><th>AI Response</th><th>Time</th><th>Status</th></tr></thead><tbody>'
-    +BATCH.results.map((r,i)=>'<tr><td style="color:var(--text3)">'+(i+1)+'</td><td style="max-width:200px;white-space:pre-wrap;word-break:break-word">'+esc((r._prompt||'').slice(0,120))+((r._prompt||'').length>120?'…':'')+'</td><td class="response-cell">'+esc((r._response||'').slice(0,300))+((r._response||'').length>300?'…':'')+'</td><td style="white-space:nowrap;color:var(--text3)">'+(r._ms?r._ms+'ms':'—')+'</td><td class="status-'+(r._status==='ok'?'ok':'err')+'">'+(r._status==='ok'?'✓ OK':r._status==='skip'?'⚡ Skip':'✗ Err')+'</td></tr>').join('')
+    +BATCH.results.map((r,i)=>{
+    const prompt = r._prompt||'';
+    const resp   = r._response||'';
+    const uid    = 'brow'+i;
+    // Show full prompt; response collapsed to 500 chars with expand toggle
+    const respPreview = resp.length>500 ? esc(resp.slice(0,500))+'<span id="'+uid+'_more" style="display:none">'+esc(resp.slice(500))+'</span>…<button onclick="var m=document.getElementById(\''+uid+'_more\');var b=document.getElementById(\''+uid+'_btn\');m.style.display=m.style.display===\'none\'?\'inline\':\'none\';b.textContent=m.style.display===\'none\'?\'▼ more\':\'▲ less\';" id="'+uid+'_btn" style="margin-left:4px;font-size:10px;padding:1px 5px;border:1px solid var(--border2);border-radius:3px;background:var(--surface2);cursor:pointer;color:var(--text2)">▼ more</button>' : esc(resp);
+    return '<tr><td style="color:var(--text3)">'+(i+1)+'</td><td style="max-width:200px;white-space:pre-wrap;word-break:break-word">'+esc(prompt)+'</td><td class="response-cell">'+respPreview+'</td><td style="white-space:nowrap;color:var(--text3)">'+(r._ms?r._ms+'ms':'—')+'</td><td class="status-'+(r._status==='ok'?'ok':'err')+'">'+(r._status==='ok'?'✓ OK':r._status==='skip'?'⚡ Skip':'✗ Err')+'</td></tr>';
+  }).join('')
     +'</tbody></table>';
 }
 
@@ -3123,6 +3147,58 @@ function batchExportResults() {
   }
 }
 window.batchExportResults = batchExportResults;
+
+// ── Export a HITL-ready file — standard column names + metadata so the
+//    HITL specialist on a different machine can import with zero column mapping.
+function batchExportForHITL() {
+  if(!BATCH.results.length){alert('No batch results to export.');return;}
+  const reviewable=BATCH.results.filter(r=>r._status==='ok');
+  if(!reviewable.length){alert('No successful results found.');return;}
+  const slmName  = activeSlm?.name||'AI Assistant';
+  const slmTask  = activeSlm?.task||'custom';
+  const slmDesc  = activeSlm?.desc||'';
+  const batchId  = 'batch_'+Date.now();
+  const ts       = new Date().toISOString().slice(0,10);
+
+  // Row sheet — fixed column names HITL expects, no column-mapping needed
+  const rows = reviewable.map((r,i)=>({
+    '#':          i+1,
+    Question:     r._prompt||'',
+    AI_Response:  r._response||'',
+    Expected_Answer: '',         // blank — specialist fills or leaves empty
+    Hallucination:   '',         // blank — specialist labels
+    Completeness:    '',         // blank — specialist labels
+    Correct_Answer:  '',         // blank — specialist fills if wrong
+    SLM_Name:     slmName,
+    SLM_Task:     slmTask,
+    Batch_ID:     batchId,
+    Exported_At:  new Date().toISOString(),
+    Time_ms:      r._ms||0,
+  }));
+
+  // Metadata sheet — lets HITL pre-fill its UI fields on import
+  const meta = [
+    ['SLM_Forge_HITL_Export', '1'],         // version sentinel HITL checks for
+    ['SLM_Name',   slmName],
+    ['SLM_Task',   slmTask],
+    ['SLM_Desc',   slmDesc],
+    ['Batch_ID',   batchId],
+    ['Total_Rows', reviewable.length],
+    ['Exported_At',new Date().toISOString()],
+    ['Prompt_Col', BATCH.promptCol],
+  ];
+
+  const wb  = XLSX.utils.book_new();
+  const ws  = XLSX.utils.json_to_sheet(rows);
+  const wm  = XLSX.utils.aoa_to_sheet(meta);
+  ws['!cols']= Object.keys(rows[0]).map(k=>({wch:Math.min(Math.max(k.length+2,14),60)}));
+  XLSX.utils.book_append_sheet(wb, ws, 'HITL_Review');
+  XLSX.utils.book_append_sheet(wb, wm, 'Metadata');
+  const fname = `hitl-ready-${slmName.replace(/\s+/g,'-')}-${ts}.xlsx`;
+  XLSX.writeFile(wb, fname);
+  batchLog('ok','HITL export: '+fname+' ('+reviewable.length+' rows) — share this file with your HITL specialist.');
+}
+window.batchExportForHITL = batchExportForHITL;
 
 function batchSendToReview() {
   if(!BATCH.results.length){alert('No batch results. Run a batch job first.');return;}
