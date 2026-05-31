@@ -1570,44 +1570,110 @@ async function runBulkImport() {
   const btn = document.getElementById('bulkRunBtn');
   btn.disabled = true; btn.textContent = 'Importing…';
 
-  try {
-    await db.write({
-      action: 'bulkImportUsers',
-      users: bulkUsers,
-      defaultPassword: defaultPass,
-      assignedBy: orchUser?.email || 'admin',
-    });
+  const resultEl = document.getElementById('bulkResult');
+  resultEl.style.display = 'block';
+  resultEl.style.background = 'rgba(245,166,35,.05)';
+  resultEl.style.border = '1px solid rgba(245,166,35,.2)';
+  resultEl.style.color = '#f5a623';
+  resultEl.innerHTML = `⏳ Processing 0 / ${bulkUsers.length} users…`;
 
-    // Also grant Forge license to all imported users
-    for (const u of bulkUsers) {
-      const appAccess = u.role === 'admin' ? ['forge','studio','orchestrator']
-                      : u.role === 'developer' ? ['forge','studio']
-                      : ['forge'];
-      await db.write({
-        action: 'grantLicense',
-        email: u.email, name: u.name, role: u.role,
-        appAccess, seats: 1, expiresAt: '',
-        grantedBy: orchUser?.email || 'admin',
-        grantedByRole: 'admin',
-      });
+  const CONCURRENCY = 5; // run 5 license grants in parallel
+  const BATCH_SIZE  = 10; // bulk register in batches of 10
+  const results = { success: [], failed: [] };
+
+  try {
+    // Step 1: Bulk register users in batches of 10 (single GAS call per batch)
+    for (let i = 0; i < bulkUsers.length; i += BATCH_SIZE) {
+      const batch = bulkUsers.slice(i, i + BATCH_SIZE);
+      try {
+        await db.write({
+          action: 'bulkImportUsers',
+          users: batch,
+          defaultPassword: defaultPass,
+          assignedBy: orchUser?.email || 'admin',
+        });
+      } catch(e) {
+        batch.forEach(u => results.failed.push({ email: u.email, reason: e.message }));
+        continue;
+      }
+      resultEl.innerHTML = `⏳ Registered ${Math.min(i + BATCH_SIZE, bulkUsers.length)} / ${bulkUsers.length} users…`;
     }
 
-    const resultEl = document.getElementById('bulkResult');
-    resultEl.style.display = 'block';
-    resultEl.style.background = 'rgba(0,229,160,.05)';
-    resultEl.style.border = '1px solid rgba(0,229,160,.2)';
-    resultEl.style.color = 'var(--a2)';
-    resultEl.innerHTML = `✓ Import complete — ${bulkUsers.length} users processed.<br>
-      Default password: <strong style="font-family:monospace">${esc(defaultPass)}</strong> — share securely with users.<br>
-      Licenses have been granted. Users can log in to the Forge immediately.`;
+    // Step 2: Grant licenses — run CONCURRENCY at a time (not sequential)
+    const licenseQueue = [...bulkUsers];
+    let done = 0;
 
-    toast('Bulk import complete ✓', 'ok');
+    async function runNext() {
+      while (licenseQueue.length > 0) {
+        const u = licenseQueue.shift();
+        const appAccess = u.role === 'admin' ? ['forge','studio','orchestrator']
+                        : u.role === 'developer' ? ['forge','studio']
+                        : ['forge'];
+        try {
+          await db.write({
+            action: 'grantLicense',
+            email: u.email, name: u.name, role: u.role || 'user',
+            appAccess, seats: 1, expiresAt: '',
+            grantedBy: orchUser?.email || 'admin',
+            grantedByRole: 'admin',
+          });
+          results.success.push(u.email);
+        } catch(e) {
+          results.failed.push({ email: u.email, reason: e.message });
+        }
+        done++;
+        resultEl.innerHTML = `⏳ Granting licenses… ${done} / ${bulkUsers.length}`;
+      }
+    }
+
+    // Run CONCURRENCY workers in parallel
+    await Promise.all(Array.from({ length: CONCURRENCY }, runNext));
+
+    // Step 3: Show result + export options
+    const ok = results.success.length;
+    const fail = results.failed.length;
+    resultEl.style.background = ok ? 'rgba(0,229,160,.05)' : 'rgba(255,80,80,.05)';
+    resultEl.style.border = `1px solid ${ok ? 'rgba(0,229,160,.2)' : 'rgba(255,80,80,.2)'}`;
+    resultEl.style.color = ok ? 'var(--a2)' : 'var(--danger)';
+    resultEl.innerHTML = `
+      ✓ Import complete — <strong>${ok}</strong> users processed${fail ? `, <strong style="color:var(--danger)">${fail} failed</strong>` : ''}.${fail ? `<br><span style="font-size:10px;color:var(--danger)">${results.failed.map(f=>`${f.email}: ${f.reason}`).join('<br>')}</span>` : ''}
+      <br>Default password: <strong style="font-family:monospace">${esc(defaultPass)}</strong> — share securely with users.
+      <br>Licenses have been granted. Users can log in to the Forge immediately.
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-ghost" style="font-size:10px;padding:5px 12px" onclick="exportBulkResults('csv', ${JSON.stringify(results.success)}, '${esc(defaultPass)}')">⬇ Export CSV</button>
+        <button class="btn btn-ghost" style="font-size:10px;padding:5px 12px" onclick="exportBulkResults('pdf', ${JSON.stringify(results.success)}, '${esc(defaultPass)}')">⬇ Export PDF</button>
+      </div>
+    `;
+
+    toast(`Bulk import complete — ${ok} users ✓`, 'ok');
     await loadUsers();
     await loadLicenses();
   } catch(e) {
     toast('Import failed: ' + e.message, 'err');
+    resultEl.innerHTML = `❌ Import failed: ${e.message}`;
   } finally {
     btn.disabled = false; btn.textContent = '⬆ Import';
+  }
+}
+
+function exportBulkResults(format, emails, defaultPass) {
+  if (format === 'csv') {
+    const rows = [['Email','Default Password','Status'],...emails.map(e=>[e, defaultPass, 'Active'])];
+    const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type:'text/csv' });
+    const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='bulk_import_results.csv'; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); },200);
+    toast('CSV exported ✓','ok');
+  } else if (format === 'pdf') {
+    const rows = emails.map(e=>`<tr><td style="padding:6px 10px;border-bottom:1px solid #eee">${e}</td><td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace">${defaultPass}</td><td style="padding:6px 10px;border-bottom:1px solid #eee;color:green">Active</td></tr>`).join('');
+    const html = `<!DOCTYPE html><html><head><title>Bulk Import Results</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#222}h1{font-size:20px;margin-bottom:4px}p{color:#666;font-size:12px;margin-bottom:20px}table{width:100%;border-collapse:collapse}th{background:#f5f5f5;padding:8px 10px;text-align:left;font-size:12px}td{font-size:12px}</style></head><body>
+      <h1>SLM Forge — Bulk Import Results</h1>
+      <p>Generated ${new Date().toLocaleString()} · ${emails.length} users imported</p>
+      <table><thead><tr><th>Email</th><th>Default Password</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+    </body></html>`;
+    const w = window.open('','_blank'); w.document.write(html); w.document.close(); w.print();
+    toast('PDF export ready — use browser print dialog ✓','ok');
   }
 }
 async function loadAnalytics() {

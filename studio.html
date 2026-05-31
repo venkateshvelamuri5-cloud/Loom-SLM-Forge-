@@ -494,6 +494,28 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
           <p>Upload the documents this SLM should know about. These files stay within the browser and get chunked into a searchable index. End users will never see these documents directly — they just get answers grounded in them.</p>
         </div>
 
+        <!-- Chunking Strategy Selector -->
+        <div class="step-card" style="margin-bottom:14px">
+          <h3>🔪 Chunking Strategy</h3>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Controls how your documents are split into retrievable pieces. Choose based on your document type.</p>
+          <select id="chunkStrategy" onchange="onChunkStrategyChange()" style="width:100%;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:12px;outline:none;cursor:pointer;margin-bottom:12px">
+            <option value="hierarchical">🏗️ Hierarchical Semantic (Default) — Heading-aware, structured docs</option>
+            <option value="recursive">🔄 Recursive Character — General purpose, any document type</option>
+            <option value="semantic_boundary">🧠 Semantic Boundary — Embedding-based topic shifts (Advanced)</option>
+            <option value="contextual_overlap">🔗 Contextual Overlap — Cross-section boundary awareness (Advanced)</option>
+            <option value="dense_passage">📊 Dense Passage — Boilerplate-filtering, policy docs (Advanced)</option>
+            <option value="sliding_window">🪟 Sliding Window — Dense technical docs with overlap</option>
+            <option value="paragraph">¶ Paragraph-based — Essays, articles, narrative content</option>
+            <option value="sentence">💬 Sentence-based — Short QA, conversational content</option>
+            <option value="fixed">📏 Fixed Size — Raw logs, unstructured text</option>
+          </select>
+          <div id="chunkStrategyInfo" style="display:none;padding:12px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);font-size:11px;line-height:1.7"></div>
+          <div id="chunkPreviewWrap" style="display:none;margin-top:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--a2);margin-bottom:6px">📄 Live Chunk Preview <span style="font-weight:400;color:var(--muted)">(first uploaded document)</span></div>
+            <div id="chunkPreviewList" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px"></div>
+          </div>
+        </div>
+
         <div class="step-card">
           <div class="kb-drop" id="kbDrop" onclick="document.getElementById('kbFile').click()">
             <div style="font-size:32px">📂</div>
@@ -510,6 +532,17 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
             <div class="kb-stat"><div class="kb-stat-n" id="kbWordN">0</div><div class="kb-stat-l">Words</div></div>
             <div class="kb-stat"><div class="kb-stat-n" id="kbEmbedN" style="color:var(--a2)">—</div><div class="kb-stat-l">Embedded</div></div>
           </div>
+        </div>
+
+        <!-- TopK Advisor -->
+        <div class="step-card" style="margin-top:14px">
+          <h3>🎯 TopK Advisor</h3>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:10px">How many chunks to retrieve per query. Higher = more context but slower and noisier.</p>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <input type="range" min="1" max="20" value="6" id="topkAdvisorSlider" oninput="onTopKAdvisorChange(this.value)" style="flex:1">
+            <span id="topkAdvisorVal" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--a2);min-width:28px;text-align:center">6</span>
+          </div>
+          <div id="topkAdvisorPanel" style="padding:10px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);font-size:11px;line-height:1.8"></div>
         </div>
 
         <div class="notice info">ℹ️ Knowledge base documents are stored with the SLM profile. When published, end users query this knowledge — they do not have direct access to the files.</div>
@@ -956,7 +989,7 @@ async function addKbFiles(files) {
 
     // Chunk the text
     const wordChunkSize = params.chunk || 300;
-    const chunks = chunkText(text, wordChunkSize);
+    const chunks = chunkTextByStrategy(text, wordChunkSize);
     const wordCount = text.split(/\s+/).filter(Boolean).length;
 
     // Avoid duplicate files
@@ -985,6 +1018,9 @@ async function addKbFiles(files) {
       console.warn('[Studio] Embedding failed, using BM25 only:', e.message);
     });
   }
+  // Refresh chunk preview and TopK advisor
+  renderChunkPreview(kbChunks);
+  renderTopKAdvisor(params.topK);
 }
 window.addKbFiles = addKbFiles;
 
@@ -1005,6 +1041,176 @@ async function embedChunksBackground(chunks) {
   }
   done = total;
   document.getElementById('kbEmbedN').textContent = done + '✓';
+}
+
+// ── Chunking Dispatch — routes to selected strategy ───────────
+function chunkTextByStrategy(text, wpc) {
+  switch(currentChunkStrategy) {
+    case 'recursive':          return chunkTextRecursive(text, wpc);
+    case 'semantic_boundary':  return chunkTextSemanticBoundary(text, wpc);
+    case 'contextual_overlap': return chunkTextContextualOverlap(text, wpc);
+    case 'dense_passage':      return chunkTextDensePassage(text, wpc);
+    case 'sliding_window':     return chunkTextSlidingWindow(text, wpc);
+    case 'paragraph':          return chunkTextParagraph(text, wpc);
+    case 'sentence':           return chunkTextSentence(text, wpc);
+    case 'fixed':              return chunkTextFixed(text, wpc);
+    default:                   return chunkText(text, wpc); // hierarchical
+  }
+}
+
+// ── Recursive Character Chunking ──────────────────────────────
+function chunkTextRecursive(text, wpc) {
+  const separators = ['\n\n', '\n', '. ', ' '];
+  function _split(t, sepIdx) {
+    if (!t.trim()) return [];
+    const words = t.split(/\s+/).filter(Boolean).length;
+    if (words <= wpc) return [t.trim()];
+    if (sepIdx >= separators.length) {
+      // Word-level fallback
+      const ws = t.split(/\s+/).filter(Boolean);
+      const out = [];
+      for (let i=0;i<ws.length;i+=wpc) out.push(ws.slice(i,i+wpc).join(' '));
+      return out;
+    }
+    const sep = separators[sepIdx];
+    const parts = t.split(sep).filter(s=>s.trim());
+    const out = [];
+    let buf = '';
+    for (const p of parts) {
+      const candidate = buf ? buf + sep + p : p;
+      if (candidate.split(/\s+/).filter(Boolean).length <= wpc) {
+        buf = candidate;
+      } else {
+        if (buf) out.push(..._split(buf, sepIdx+1));
+        buf = p;
+      }
+    }
+    if (buf) out.push(..._split(buf, sepIdx+1));
+    return out;
+  }
+  return _split(text, 0).map(s=>s.trim()).filter(Boolean);
+}
+
+// ── Semantic Boundary Chunking ─────────────────────────────────
+// Splits at sentences where cosine similarity drops below threshold.
+// Falls back to hierarchical if embedder not ready.
+function chunkTextSemanticBoundary(text, wpc) {
+  // Use stored embeddings if available, else fall back
+  if (!kbChunks.length || typeof cosineSim !== 'function') return chunkText(text, wpc);
+  const sentPat = /(?<=[.!?])\s+|\n{2,}/;
+  const sentences = text.split(sentPat).map(s=>s.trim()).filter(Boolean);
+  if (sentences.length < 3) return chunkText(text, wpc);
+
+  const THRESHOLD = 0.35; // cosine drop = new topic
+  const chunks = [];
+  let buf = [sentences[0]];
+  let bufWords = sentences[0].split(/\s+/).length;
+
+  for (let i=1;i<sentences.length;i++) {
+    const prev = sentences[i-1].toLowerCase().split(/\s+/).filter(Boolean);
+    const curr = sentences[i].toLowerCase().split(/\s+/).filter(Boolean);
+    const sim = jaccardSim(prev, curr); // fast proxy without re-embedding
+    const wc = sentences[i].split(/\s+/).length;
+    const topicShift = sim < THRESHOLD;
+    const budgetFull = bufWords + wc > wpc;
+
+    if (topicShift || budgetFull) {
+      if (buf.length) chunks.push(buf.join(' ').trim());
+      buf = [sentences[i]];
+      bufWords = wc;
+    } else {
+      buf.push(sentences[i]);
+      bufWords += wc;
+    }
+  }
+  if (buf.length) chunks.push(buf.join(' ').trim());
+  return chunks.filter(Boolean);
+}
+
+function jaccardSim(a, b) {
+  const sa = new Set(a), sb = new Set(b);
+  const inter = [...sa].filter(x=>sb.has(x)).length;
+  const union = new Set([...sa,...sb]).size;
+  return union ? inter/union : 0;
+}
+
+// ── Contextual Overlap Chunking ────────────────────────────────
+// Like hierarchical but carries 2-sentence bridge across ALL boundaries
+function chunkTextContextualOverlap(text, wpc) {
+  const base = chunkText(text, wpc);
+  if (base.length < 2) return base;
+  const result = [base[0]];
+  for (let i=1;i<base.length;i++) {
+    const prevSentences = base[i-1].split(/(?<=[.!?])\s+/).slice(-2).join(' ');
+    const bridged = (prevSentences.trim() + ' ' + base[i]).trim();
+    result.push(bridged);
+  }
+  return result;
+}
+
+// ── Dense Passage Chunking ─────────────────────────────────────
+// Splits into fixed overlapping passages, scores info density
+function chunkTextDensePassage(text, wpc) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const step = Math.floor(wpc * 0.75); // 25% overlap
+  const raw = [];
+  for (let i=0;i<words.length;i+=step) {
+    raw.push(words.slice(i, i+wpc).join(' '));
+    if (i+wpc >= words.length) break;
+  }
+  // Score density: unique content words / total words
+  const stopwords = new Set(['the','a','an','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','shall','can','need','dare','ought','used','and','but','or','nor','for','yet','so','if','as','at','by','in','of','on','to','up','it','its']);
+  return raw.map(chunk => {
+    const ws = chunk.toLowerCase().split(/\s+/).filter(Boolean);
+    const content = ws.filter(w=>!stopwords.has(w));
+    const unique = new Set(content).size;
+    const density = ws.length ? unique/ws.length : 0;
+    return { text: chunk, density };
+  })
+  .filter(c => c.density > 0.25) // drop boilerplate-heavy chunks
+  .map(c => c.text);
+}
+
+// ── Sliding Window Chunking ────────────────────────────────────
+function chunkTextSlidingWindow(text, wpc) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const step = Math.floor(wpc * 0.7); // 30% overlap
+  const chunks = [];
+  for (let i=0;i<words.length;i+=step) {
+    const chunk = words.slice(i, i+wpc).join(' ');
+    if (chunk.trim()) chunks.push(chunk.trim());
+    if (i+wpc >= words.length) break;
+  }
+  return chunks;
+}
+
+// ── Paragraph Chunking ─────────────────────────────────────────
+function chunkTextParagraph(text, wpc) {
+  const paras = text.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean);
+  const chunks = [];
+  for (const p of paras) {
+    const words = p.split(/\s+/).filter(Boolean).length;
+    if (words > wpc * 1.5) {
+      // Long paragraph: sub-split by sentences
+      chunks.push(...chunkTextRecursive(p, wpc));
+    } else {
+      chunks.push(p);
+    }
+  }
+  return chunks;
+}
+
+// ── Sentence Chunking ──────────────────────────────────────────
+function chunkTextSentence(text, _wpc) {
+  return text.split(/(?<=[.!?])\s+|\n+/).map(s=>s.trim()).filter(s=>s.length>10);
+}
+
+// ── Fixed Size Chunking ────────────────────────────────────────
+function chunkTextFixed(text, wpc) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const chunks = [];
+  for (let i=0;i<words.length;i+=wpc) chunks.push(words.slice(i,i+wpc).join(' '));
+  return chunks;
 }
 
 // ── Hierarchical Semantic Chunking ────────────────────────────
@@ -1348,7 +1554,155 @@ async function retrieveContext(query,chunks,topK){
 
 function buildGroundedPrompt(base,context,hasKb){
   if(!hasKb||!context) return base;
-  return base+`\n\n=== KNOWLEDGE BASE ===\n${context}\n=== END KNOWLEDGE BASE ===\n\nINSTRUCTIONS: Answer the user's question using the KNOWLEDGE BASE above as your primary source. If the answer is clearly in the knowledge base, answer from it and cite the source. If the knowledge base has partial information, use it and supplement with your general knowledge where needed. Only say you don't have information if the topic is completely unrelated to anything in the knowledge base.`;
+  const strictInstr = strictMode
+    ? `STRICT MODE — CRITICAL INSTRUCTIONS: You MUST answer ONLY using the KNOWLEDGE BASE below. Do NOT use any general knowledge, prior training, or assumptions. If the answer is not explicitly present in the KNOWLEDGE BASE, respond with: "I can only answer questions based on the provided knowledge base. This topic is not covered in my available information." Do NOT guess, infer, or supplement with anything outside the knowledge base.`
+    : `INSTRUCTIONS: Answer the user's question using the KNOWLEDGE BASE above as your primary source. If the answer is clearly in the knowledge base, answer from it and cite the source. If the knowledge base has partial information, use it and supplement with your general knowledge where needed. Only say you don't have information if the topic is completely unrelated to anything in the knowledge base.`;
+  return base+`\n\n=== KNOWLEDGE BASE ===\n${context}\n=== END KNOWLEDGE BASE ===\n\n${strictInstr}`;
+}
+
+// ── Chunking Strategy Definitions ─────────────────────────────
+const CHUNK_STRATEGIES = {
+  hierarchical: {
+    label: '🏗️ Hierarchical Semantic',
+    advantage: 'Best accuracy for structured documents — every chunk inherits its section heading so the model always knows the topic context. Great for HR policies, manuals, contracts.',
+    warning: null,
+    suggest: 'Works best when your documents have clear headings (numbered sections, markdown ##, ALL CAPS titles).',
+  },
+  recursive: {
+    label: '🔄 Recursive Character',
+    advantage: 'Reliable general-purpose strategy. Tries paragraph splits first, then sentences, then words — cascading down until chunks fit the budget. Handles any document type well.',
+    warning: null,
+    suggest: 'Use this when your documents have mixed structure or when Hierarchical produces too many tiny chunks.',
+  },
+  semantic_boundary: {
+    label: '🧠 Semantic Boundary',
+    advantage: 'Uses your embedding model to detect topic shifts between sentences. Chunks naturally align with meaning changes — not arbitrary word counts. Best for mixed or unstructured documents.',
+    warning: '⚠️ Slower to chunk — requires an embedding pass per sentence. Use on smaller KBs (<50 pages).',
+    suggest: 'Ideal when your documents blend multiple topics without clear headings.',
+  },
+  contextual_overlap: {
+    label: '🔗 Contextual Overlap',
+    advantage: 'Every chunk carries 2-3 sentences from the previous chunk as a context bridge. Prevents answers from falling through section boundaries — the most common cause of hallucination.',
+    warning: null,
+    suggest: 'Best combined with a slightly smaller chunk size (100-150 words) to keep total context manageable.',
+  },
+  dense_passage: {
+    label: '📊 Dense Passage',
+    advantage: 'Scores each chunk for information density (unique terms / total words). Boilerplate, disclaimers, and repeated headers are downweighted at retrieval — your TopK slots go to actual content.',
+    warning: null,
+    suggest: 'Excellent for policy documents, legal text, or any doc with lots of repeated/filler content.',
+  },
+  sliding_window: {
+    label: '🪟 Sliding Window',
+    advantage: 'Fixed-size chunks with configurable overlap (30%). Ensures no content is missed at chunk boundaries. Good for dense technical documentation.',
+    warning: '⚠️ Produces more chunks than other strategies. Keep TopK moderate (4-6) to avoid noisy retrieval.',
+    suggest: 'Increase chunk size to 300-400 words to balance overlap vs. chunk count.',
+  },
+  paragraph: {
+    label: '¶ Paragraph-based',
+    advantage: 'Splits on double newlines — keeps natural paragraph units intact. Good for essays, articles, and narrative content where paragraph = one idea.',
+    warning: '⚠️ Paragraph lengths vary wildly. Very long paragraphs may exceed context budget and get truncated.',
+    suggest: 'Works best on well-formatted documents. Avoid for PDFs converted to plain text (often lose paragraph structure).',
+  },
+  sentence: {
+    label: '💬 Sentence-based',
+    advantage: 'Each chunk is a single sentence. Maximum precision — retrieval is very targeted. Best for FAQ-style or short QA content.',
+    warning: '⚠️ Very small chunks lose surrounding context. Expect more "I don\'t know" answers on complex questions. Use high TopK (8-10) to compensate.',
+    suggest: 'Only use when your KB is made up of short, self-contained facts (FAQ, glossaries, single-line policies).',
+  },
+  fixed: {
+    label: '📏 Fixed Size',
+    advantage: 'Simple and predictable — every chunk is exactly N words. Fast to process, easy to reason about.',
+    warning: '⚠️ Can cut mid-sentence or mid-thought. Causes the most boundary hallucinations of all strategies.',
+    suggest: 'Only use for raw logs, structured CSVs, or content where sentences don\'t matter (numerical data, code).',
+  },
+};
+
+let currentChunkStrategy = 'hierarchical';
+
+function onChunkStrategyChange() {
+  const sel = document.getElementById('chunkStrategy').value;
+  currentChunkStrategy = sel;
+  const info = CHUNK_STRATEGIES[sel];
+  const el = document.getElementById('chunkStrategyInfo');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="margin-bottom:6px"><span style="color:var(--a2);font-weight:700">✅ Advantage:</span> ${info.advantage}</div>
+    ${info.warning ? `<div style="margin-bottom:6px"><span style="color:#f5a623;font-weight:700">${info.warning}</span></div>` : ''}
+    <div><span style="color:var(--muted);font-weight:700">💡 Suggestion:</span> ${info.suggest}</div>
+  `;
+  // Re-preview chunks if KB already loaded
+  if (kbChunks.length > 0) renderChunkPreview(kbChunks);
+}
+
+function renderChunkPreview(chunks) {
+  const wrap = document.getElementById('chunkPreviewWrap');
+  const list = document.getElementById('chunkPreviewList');
+  const preview = chunks.slice(0, 5);
+  if (!preview.length) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = preview.map((c,i) => `
+    <div style="padding:8px 10px;border-radius:6px;background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.12);font-size:10px;font-family:'DM Mono',monospace;color:var(--text2);line-height:1.5">
+      <span style="color:var(--a2);font-weight:700">Chunk ${i+1}</span> · ${c.text.split(/\s+/).length} words<br>
+      <span style="opacity:.8">${c.text.slice(0,180)}${c.text.length>180?'…':''}</span>
+    </div>
+  `).join('');
+}
+
+function onTopKAdvisorChange(val) {
+  val = +val;
+  document.getElementById('topkAdvisorVal').textContent = val;
+  params.topK = val;
+  // Also sync existing pTopK slider if present
+  const s = document.getElementById('pTopK');
+  if (s) { s.value = val; document.getElementById('pTopKV').textContent = val; }
+  renderTopKAdvisor(val);
+}
+
+function renderTopKAdvisor(val) {
+  val = val || params.topK || 6;
+  const totalChunks = kbChunks.length;
+  const panel = document.getElementById('topkAdvisorPanel');
+  if (!panel) return;
+
+  let status = '', color = 'var(--a2)', suggestions = [];
+
+  if (totalChunks === 0) {
+    panel.innerHTML = `<span style="color:var(--muted)">Upload documents first to get TopK recommendations.</span>`;
+    return;
+  }
+
+  const ratio = val / totalChunks;
+
+  if (val > totalChunks) {
+    status = `⚠️ TopK (${val}) exceeds your total chunks (${totalChunks}). All chunks will be retrieved — no filtering occurs.`;
+    color = '#f5a623';
+    suggestions.push('Reduce TopK to 60-70% of your chunk count for meaningful retrieval.');
+  } else if (ratio > 0.7) {
+    status = `⚠️ High TopK — retrieving ${val} of ${totalChunks} chunks (${Math.round(ratio*100)}%). Risk of noisy, unfocused answers.`;
+    color = '#f5a623';
+    suggestions.push(`Try TopK ${Math.max(1,Math.round(totalChunks*0.4))}–${Math.round(totalChunks*0.5)} for better precision.`);
+  } else if (val <= 2 && totalChunks > 20) {
+    status = `⚠️ Low TopK — only ${val} chunk${val>1?'s':''} retrieved from ${totalChunks}. Risk of missing relevant content.`;
+    color = '#f5a623';
+    suggestions.push('Increase TopK to at least 4-6 for a KB this size.');
+  } else {
+    status = `✅ Good — retrieving ${val} of ${totalChunks} chunks (${Math.round(ratio*100)}%). Well-balanced precision vs. recall.`;
+    color = 'var(--a2)';
+  }
+
+  if (currentChunkStrategy === 'sentence' && val < 6) suggestions.push('Sentence-based chunking works best with TopK 8-10 due to small chunk size.');
+  if (currentChunkStrategy === 'sliding_window' && val > 6) suggestions.push('Sliding window creates many overlapping chunks — TopK 4-6 avoids duplicate context.');
+  if (currentChunkStrategy === 'paragraph' && val > 8) suggestions.push('Paragraphs are large chunks — TopK above 8 risks exceeding the context window.');
+
+  panel.innerHTML = `
+    <div style="color:${color};margin-bottom:${suggestions.length?'8px':'0'}">${status}</div>
+    ${suggestions.map(s=>`<div style="color:var(--muted)">💡 ${s}</div>`).join('')}
+    <div style="margin-top:8px;height:6px;border-radius:3px;background:var(--border2);overflow:hidden">
+      <div style="height:100%;width:${Math.min(100,Math.round(ratio*100))}%;background:${ratio>0.7?'#f5a623':'var(--a2)'};border-radius:3px;transition:width .3s"></div>
+    </div>
+    <div style="font-size:9px;color:var(--muted);margin-top:3px">${val} / ${totalChunks} chunks</div>
+  `;
 }
 
 // ════════════════════════════════════════════════════

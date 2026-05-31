@@ -1133,7 +1133,7 @@ const db = createDB();
 // ═══════════════════════════════════════════
 let user=null, slms=[], activeSlm=null, engine=null;
 let chatHistory=[]; // [{role:'user'|'assistant', content:string}]
-const MAX_HISTORY_TURNS = 6; // keep last 6 turns (3 user + 3 assistant)
+const MAX_HISTORY_TURNS = 20; // keep last 20 turns (10 user + 10 assistant)
 let isGen=false, fbShown=false, authMode='login';
 
 const EXITS=['bye','goodbye','exit','quit','done','finish',"that's all",'thats all','see you','cya',"i'm done",'all done'];
